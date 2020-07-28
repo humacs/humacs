@@ -1,12 +1,16 @@
 [submodule "chemacs"]
 	path = chemacs
 	url = https://github.com/plexus/chemacs
+	branch = master
 [submodule "spacemacs"]
 	path = spacemacs
 	url = https://github.com/humacs/spacemacs
+	branch = main
 [submodule ".spacemacs.d"]
 	path = spacemacs-config
 	url = https://github.com/humacs/.spacemacs.d
+	branch = main
 [submodule "doom-emacs"]
 	path = doom-emacs
 	url = https://github.com/hlissner/doom-emacs
+	branch = master
