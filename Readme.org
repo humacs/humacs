@@ -13,12 +13,10 @@ cd humacs
 
 ** resulting symlinks
 
-#+NAME: resulting symlinks
 #+begin_src shell
 ls -laF ~/ | grep humacs | awk '{print $9, $10, $11}'
 #+end_src
 
-#+RESULTS: resulting symlinks
 #+begin_example
 .emacs@ -> /Users/hh/humacs/chemacs/.emacs
 .emacs-profile@ -> /Users/hh/humacs/.emacs-profile

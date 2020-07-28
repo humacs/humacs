@@ -20,3 +20,8 @@ cd humacs
 ```shell
 ls -laF ~/ | grep humacs | awk '{print $9, $10, $11}'
 ```
+
+    .emacs@ -> /Users/hh/humacs/chemacs/.emacs
+    .emacs-profile@ -> /Users/hh/humacs/.emacs-profile
+    .emacs-profiles.el@ -> /Users/hh/humacs/.emacs-profiles.el
+    humacs/
