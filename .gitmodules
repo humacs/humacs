@@ -14,3 +14,7 @@
 	path = doom-emacs
 	url = https://github.com/hlissner/doom-emacs
 	branch = master
+[submodule "prelude"]
+	path = prelude
+	url = https://github.com/bbatsov/prelude
+	branch = master
