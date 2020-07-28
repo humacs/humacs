@@ -17,9 +17,19 @@ cd humacs
 ls -laF ~/ | grep humacs | awk '{print $9, $10, $11}'
 #+end_src
 
+#+RESULTS:
 #+begin_example
 .emacs@ -> /Users/hh/humacs/chemacs/.emacs
 .emacs-profile@ -> /Users/hh/humacs/.emacs-profile
 .emacs-profiles.el@ -> /Users/hh/humacs/.emacs-profiles.el
 humacs/
 #+end_example
+** running different profiles
+
+#+begin_src shell
+emacs --with-profile spacemacs
+#+end_src
+
+#+begin_src shell
+emacs --with-profile doom
+#+end_src
