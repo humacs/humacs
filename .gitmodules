@@ -1,0 +1,12 @@
+[submodule "chemacs"]
+	path = chemacs
+	url = https://github.com/plexus/chemacs
+[submodule "spacemacs"]
+	path = spacemacs
+	url = https://github.com/humacs/spacemacs
+[submodule ".spacemacs.d"]
+	path = spacemacs-config
+	url = https://github.com/humacs/.spacemacs.d
+[submodule "doom-emacs"]
+	path = doom-emacs
+	url = https://github.com/hlissner/doom-emacs
