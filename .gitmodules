@@ -7,7 +7,7 @@
 	url = https://github.com/humacs/spacemacs
 	branch = main
 [submodule ".spacemacs.d"]
-	path = spacemacs-config
+	path = ii-config
 	url = https://github.com/humacs/.spacemacs.d
 	branch = main
 [submodule "doom-emacs"]
