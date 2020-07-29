@@ -1,4 +1,5 @@
 FROM ubuntu:20.04
+ENV TERM=screen-256color
 RUN DEBIAN_FRONTEND=noninteractive \
   apt update \
   && apt upgrade -y \
@@ -42,4 +43,3 @@ RUN mkdir -p /etc/sudoers.d && \
   ln -sf /etc/skel/humacs/chemacs/.emacs ../ && \
   useradd -m -G users,sudo -u 2000 -s /bin/bash humacs
 WORKDIR /home/humacs
-USER humacs
