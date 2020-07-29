@@ -104,7 +104,7 @@ It should only modify the values of Spacemacs settings."
    (lambda ()
      "Overriding Banner Folder"
      (defconst spacemacs-banner-directory
-       "~/humacs/wil-spacemacs-config/banners/" )
+       (concat dotspacemacs-directory "banners/"))
      ))
    (setq-default
    ;; If non-nil then enable support for the portable dumper. You'll need
@@ -490,6 +490,8 @@ This function defines the environment variables for your Emacs session. By
 default it calls `spacemacs/load-spacemacs-env' which loads the environment
 variables declared in `~/.spacemacs.env' or `~/.spacemacs.d/.spacemacs.env'.
 See the header of this file for more information."
+
+  (setq  spacemacs-env-vars-file (concat dotspacemacs-directory "../" user-login-name "-wil.env"))
   (spacemacs/load-spacemacs-env))
 
 (defun dotspacemacs/user-init ()
@@ -498,7 +500,7 @@ This function is called immediately after `dotspacemacs/init', before layer
 configuration.
 It is mostly for variables that should be set before packages are loaded.
 If you are unsure, try setting them in `dotspacemacs/user-config' first."
-  (setq custom-file (concat dotspacemacs-directory "../" user-login-name "-wil-spacemacs-custom.el"))
+  (setq custom-file (concat dotspacemacs-directory "../" user-login-name "-wil-custom.el"))
   (load custom-file)
   )
 
