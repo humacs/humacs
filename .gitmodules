@@ -6,10 +6,6 @@
 	path = spacemacs
 	url = https://github.com/humacs/spacemacs
 	branch = main
-[submodule ".spacemacs.d"]
-	path = ii-config
-	url = https://github.com/humacs/.spacemacs.d
-	branch = main
 [submodule "doom-emacs"]
 	path = doom-emacs
 	url = https://github.com/hlissner/doom-emacs
@@ -18,3 +14,7 @@
 	path = prelude
 	url = https://github.com/bbatsov/prelude
 	branch = master
+[submodule "ii-config"]
+	path = ii-config
+	url = https://github.com/humacs/.spacemacs.d
+	branch = main
