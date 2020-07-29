@@ -3,7 +3,7 @@
 
 ** Install
 
-Can be to pretty much anywhere
+Can be to pretty much anywhere, symlinks are made from .emacs* to this folder via **install.sh**.
 
 #+begin_src shell
 git clone --recursive https://github.com/humacs/humacs
@@ -31,5 +31,7 @@ emacs --with-profile spacemacs
 #+end_src
 
 #+begin_src shell
+~/humacs/doom-emacs/bin/doom install
+~/humacs/doom-emacs/bin/doom sync
 emacs --with-profile doom
 #+end_src
