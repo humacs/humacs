@@ -1,0 +1,100 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "humacs.fullname" . }}
+  labels:
+    {{- include "humacs.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  serviceName: {{ include "humacs.fullname" . }}
+  selector:
+    matchLabels:
+      {{- include "humacs.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "humacs.selectorLabels" . | nindent 8 }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      serviceAccountName: {{ include "humacs.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - /bin/bash
+            - -c
+            - "/usr/local/bin/simple-init.sh $INIT_ORG_FILE"
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          env:
+            - name: TZ
+              value: {{ .Values.options.timezone | quote }}
+            - name: GIT_COMMITTER_EMAIL
+              value: {{ .Values.options.gitEmail | quote }}
+            - name: GIT_COMMITTER_NAME
+              value: {{ .Values.options.gitName | quote }}
+            - name: GIT_AUTHOR_EMAIL
+              value: {{ .Values.options.gitEmail | quote }}
+            - name: GIT_AUTHOR_NAME
+              value: {{ .Values.options.gitName | quote }}
+            - name: INIT_DEFAULT_REPOS_FOLDER
+              value: {{ .Values.options.workingDirectory | quote }}
+            - name: INIT_DEFAULT_REPOS
+              value:
+              {{- range .Values.options.repos }}
+                {{ . }}
+              {{- end }}
+            - name: INIT_DEFAULT_DIR
+              value: {{ .Values.options.workingDirectory | quote }}
+            - name: INIT_ORG_FILE
+              value: {{ .Values.options.workingFile | quote }}
+            - name: INIT_PREFINISH_BLOCK
+              value: {{ .Values.options.preinitScript | quote }}
+        {{- with .Values.extraEnvVars }}
+            {{- toYaml . | nindent 12 }}
+        {{- end }}
+        {{- if or .Values.options.hostDockerSocket .Values.options.hostTmp }}
+          volumeMounts:
+            {{- if .Values.options.hostDockerSocket }}
+            - name: var-run-docker-sock
+              mountPath: /var/run/docker.sock
+            {{- end }}
+            {{- if .Values.options.hostTmp }}
+            - name: tmp
+              mountPath: /tmp
+            {{- end }}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- if or .Values.options.hostDockerSocket .Values.options.hostTmp }}
+      volumes:
+        {{- if .Values.options.hostDockerSocket }}
+        - name: var-run-docker-sock
+          hostPath:
+            path: /var/run/docker.sock
+            type: Socket
+        {{- end }}
+        {{- if .Values.options.hostTmp }}
+        - name: tmp
+          hostPath:
+            path: /tmp
+        {{- end }}
+    {{- end }}

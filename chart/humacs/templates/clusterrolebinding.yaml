@@ -1,0 +1,14 @@
+{{- if .Values.clusterRoleBinding.create }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "humacs.fullname" . }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ .Values.clusterRoleBinding.roleName }}
+subjects:
+- kind: ServiceAccount
+  name: {{ include "humacs.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+{{- end }}
