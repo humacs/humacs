@@ -1,0 +1,18 @@
+#!/bin/bash
+
+echo "Preparing your environment; waiting for your tmate session to be ready..."
+
+TMATE_SOCKET_NAME=${1:-default}
+TMATE_SOCKET_FULL_PATH="/tmp/ii.$TMATE_SOCKET_NAME.target.iisocket"
+if [ ! -S "$TMATE_SOCKET_FULL_PATH" ]
+then
+    # wait for socket to appear
+    while read i; do
+        if [ "/tmp/$i" = $TMATE_SOCKET_FULL_PATH ]; then break; fi
+        echo "found socket: ${i}"
+    done \
+        < <(inotifywait  -e create,open --format '%f' --quiet /tmp --monitor)
+fi
+
+tmate -S $TMATE_SOCKET_FULL_PATH wait-for tmate-ready
+tmate -S $TMATE_SOCKET_FULL_PATH at
