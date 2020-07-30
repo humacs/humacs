@@ -35,6 +35,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
   iputils-ping \
   file
 ADD . /etc/skel/humacs
+ADD bin /usr/local/bin
 RUN mkdir -p /etc/sudoers.d && \
   echo "%sudo    ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/sudo && \
   cd /etc/skel/humacs && \
