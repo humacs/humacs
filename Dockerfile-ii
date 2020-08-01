@@ -3,9 +3,9 @@ ENV KUBEMACS_VERSION=0.0.2 \
   EMACS_VERSION=26.3 \
   DOCKER_VERSION=19.03.5 \
   KIND_VERSION=0.8.1 \
-  KUBECTL_VERSION=1.18.3 \
-  GO_VERSION=1.13.6 \
-  TILT_VERSION=0.15.0 \
+  KUBECTL_VERSION=1.18.6 \
+  GO_VERSION=1.15rc1 \
+  TILT_VERSION=0.16.1 \
   TMATE_VERSION=2.4.0 \
   BAZEL_VERSION=2.2.0 \
   HELM_VERSION=2.16.9 \
@@ -41,6 +41,26 @@ RUN curl -fsSL https://download.docker.com/linux/static/stable/x86_64/docker-${D
     chmod +x /usr/local/bin/bazel && bazel && \
   /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get golang.org/x/tools/gopls@latest \
     && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/stamblerre/gocode
+
+RUN DEBIAN_FRONTEND=noninteractive \
+  apt-get install --no-install-recommends -y \
+  tree \
+  iproute2 \
+  net-tools \
+  tcpdump \
+  htop \
+  iftop \
+  tmux \
+  language-pack-en \
+  fonts-powerline
+
+RUN usermod -u 1000 humacs && \
+    groupmod -g 1000 humacs && \
+    find /home/humacs -group 2000 -exec chgrp -h humacs {} \; && \
+    find /home/humacs -user 2000 -exec chown -h humacs {} \;
+
+RUN localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
+ENV LANG en_US.utf8
 
 RUN echo ii > /etc/skel/.emacs-profile
 
