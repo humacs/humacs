@@ -35,6 +35,8 @@ RUN DEBIAN_FRONTEND=noninteractive \
   iputils-ping \
   file
 ADD . /etc/skel/humacs
+COPY homedir/.tmate.conf /etc/skel
+COPY homedir/.tmux.conf /etc/skel
 ADD bin /usr/local/bin
 RUN mkdir -p /etc/sudoers.d && \
   echo "%sudo    ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/sudo && \
