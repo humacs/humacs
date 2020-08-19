@@ -44,5 +44,6 @@ RUN mkdir -p /etc/sudoers.d && \
   ln -sf /etc/skel/humacs/.emacs-profiles.el ../ && \
   ln -sf /etc/skel/humacs/.emacs-profile ../ && \
   ln -sf /etc/skel/humacs/chemacs/.emacs ../ && \
-  useradd -m -G users,sudo -u 2000 -s /bin/bash humacs
+  useradd -m -G users,sudo -u 1000 -s /bin/bash humacs
+RUN su humacs -c 'cd && emacs -batch -l ~/.emacs'
 WORKDIR /home/humacs
