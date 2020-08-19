@@ -5,11 +5,11 @@
 options:
   hostDockerSocket: false
   hostTmp: false
-  timezone: "Pacific/Auckland"
+  timezone: Pacific/Auckland
   gitName: ""
   gitEmail: ""
   repos: []
-  workingDirectory: "/home/humacs"
+  workingDirectory: /home/humacs
   workingFile: /home/humacs
   preinitScript: |
     (
@@ -20,7 +20,7 @@ extraEnvVars: []
 
 image:
   repository: humacs/humacs
-  tag: 1.0.0
+  tag: 2020.08.19
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
