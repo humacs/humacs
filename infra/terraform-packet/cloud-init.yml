@@ -1,0 +1,60 @@
+# Cloud Init
+
+users:
+  - default
+  - name: humacs
+    gecos: Humacs
+    primary_group: humacs
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: users, admin
+    ssh_import_id: gh:bobymcbobs
+    lock_passwd: false
+
+packages:
+  - emacs-nox
+  - tree
+  - iproute2
+  - net-tools
+  - tcpdump
+  - htop
+  - iftop
+  - tmux
+  - tmate
+  - bash-completion
+  - less
+  - xz-utils
+  - sudo
+  - curl
+  - ca-certificates
+  - libcap2-bin
+  - git
+  - openssh-client
+  - postgresql-client-12
+  - jq
+  - inotify-tools
+  - xtermcontrol
+  - nodejs
+  - gnupg2
+  - tzdata
+  - wget
+  - python3-dev
+  - xz-utils
+  - apache2-utils
+  - sqlite3
+  - silversearcher-ag
+  - build-essential
+  - vim
+  - rsync
+  - unzip
+  - iputils-ping
+  - file
+
+runcmds:
+  - git clone https://github.com/humacs/humacs /etc/skel/humacs
+  - sh -c "cd /etc/skel/humacs && \
+    ln -sf /etc/skel/humacs/.emacs-profiles.el ../ && \
+    ln -sf /etc/skel/humacs/.emacs-profile ../ && \
+    ln -sf /etc/skel/humacs/chemacs/.emacs ../"
+
+output:
+  all: '| tee -a /var/log/cloud-init-output.log'

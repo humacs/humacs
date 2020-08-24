@@ -1,0 +1,214 @@
+#+TITLE: Packet Terraform
+
+* Cloud Init
+#+begin_src yaml :tangle ./cloud-init.yml
+  users:
+    - default
+    - name: humacs
+      gecos: Humacs
+      primary_group: humacs
+      sudo: ALL=(ALL) NOPASSWD:ALL
+      groups: users, admin
+      ssh_import_id: gh:bobymcbobs
+      lock_passwd: false
+
+  packages:
+    - emacs-nox
+    - tree
+    - iproute2
+    - net-tools
+    - tcpdump
+    - htop
+    - iftop
+    - tmux
+    - tmate
+    - bash-completion
+    - less
+    - xz-utils
+    - sudo
+    - curl
+    - ca-certificates
+    - libcap2-bin
+    - git
+    - openssh-client
+    - postgresql-client-12
+    - jq
+    - inotify-tools
+    - xtermcontrol
+    - nodejs
+    - gnupg2
+    - tzdata
+    - wget
+    - python3-dev
+    - xz-utils
+    - apache2-utils
+    - sqlite3
+    - silversearcher-ag
+    - build-essential
+    - vim
+    - rsync
+    - unzip
+    - iputils-ping
+    - file
+
+  runcmds:
+    - git clone https://github.com/humacs/humacs /etc/skel/humacs
+    - sh -c "cd /etc/skel/humacs && \
+      ln -sf /etc/skel/humacs/.emacs-profiles.el ../ && \
+      ln -sf /etc/skel/humacs/.emacs-profile ../ && \
+      ln -sf /etc/skel/humacs/chemacs/.emacs ../"
+
+  output:
+    all: '| tee -a /var/log/cloud-init-output.log'
+#+end_src
+
+* Terraform
+** Define
+Define the compute:
+#+begin_src terraform :tangle ./terraform.tf
+  variable "auth_token" {
+    description = "Token for Packet API"
+  }
+
+  provider "packet" {
+      auth_token = var.auth_token
+  }
+
+  resource "random_string" "suffix" {
+    length  = 8
+    special = false
+  }
+
+  variable "region" {
+    default     = "nrt1"
+    description = "Packet region"
+  }
+
+  variable "project_id" {
+    description = "Packet region"
+  }
+
+  variable "hostname" {
+    default = "humacs"
+    description = "The hostname for the box"
+  }
+
+  variable "box_type" {
+    default = "c3.small.x86"
+    description = "The size of the box"
+  }
+
+  variable "operating_system" {
+    default = "ubuntu_20_04"
+    description = "The OS for the box"
+  }
+
+  data "template_file" "user_data" {
+    template = "${file("cloud-init.yml")}"
+  }
+
+  data "template_file" "user_data_base64" {
+    template = base64encode(data.template_file.user_data.rendered)
+  }
+
+  output "user_data_base64" {
+    description = "ID of the Packet box"
+    value       = data.template_file.user_data_base64
+  }
+
+  resource "packet_device" "box" {
+    hostname         = "${var.hostname}-${random_string.suffix.result}"
+    plan             = var.box_type
+    facilities       = [var.region]
+    operating_system = var.operating_system
+    billing_cycle    = "hourly"
+    project_id       = var.project_id
+    user_data        = data.template_file.user_data_base64.rendered
+  }
+
+  output "packet_device_id" {
+    description = "ID of the Packet box"
+    value       = packet_device.box.id
+  }
+
+  output "packet_device_state" {
+    description = "State of the Packet box"
+    value       = packet_device.box.state
+  }
+
+  output "packet_device_ip" {
+    description = "IP address of the Packet box"
+    value       = packet_device.box.access_public_ipv4
+  }
+#+end_src
+
+** Init
+Initialize the local environment:
+#+begin_src shell
+  terraform init
+#+end_src
+
+#+RESULTS:
+#+begin_example
+
+[0m[1mInitializing the backend...[0m
+
+[0m[1mInitializing provider plugins...[0m
+
+The following providers do not have any version constraints in configuration,
+so the latest version was installed.
+
+To prevent automatic upgrades to new major versions that may contain breaking
+changes, it is recommended to add version = "..." constraints to the
+corresponding provider blocks in configuration, with the constraint strings
+suggested below.
+
+,* provider.packet: version = "~> 3.0"
+,* provider.random: version = "~> 2.3"
+,* provider.template: version = "~> 2.1"
+
+[0m[1m[32mTerraform has been successfully initialized![0m[32m[0m
+[0m[32m
+You may now begin working with Terraform. Try running "terraform plan" to see
+any changes that are required for your infrastructure. All Terraform commands
+should now work.
+
+If you ever set or change modules or backend configuration for Terraform,
+rerun this command to reinitialize your working directory. If you forget, other
+commands will detect it and remind you to do so if necessary.[0m
+#+end_example
+
+** Plan
+Plan and ensure that the resources to create are correct:
+#+begin_src shell :async yes
+  terraform plan
+#+end_src
+
+#+RESULTS:
+#+begin_example
+#+end_example
+
+** Set credentials
+   Use the following strings in a ~:~ minibuffer:
+#+begin_src elisp :results none
+  (setenv "PACKET_PROJECT_ID" (read-from-minibuffer "PACKET_PROJECT_ID: "))
+  (setenv "PACKET_AUTH_TOKEN" (read-from-minibuffer "PACKET_AUTH_TOKEN: "))
+#+end_src
+
+#+name: get-packet-project-id
+#+begin_src elisp
+  (getenv "PACKET_PROJECT_ID")
+#+end_src
+
+#+name: get-packet-auth-token
+#+begin_src elisp
+  (getenv "PACKET_AUTH_TOKEN")
+#+end_src
+
+** Create the compute
+   Set the env of ~PACKET_AUTH_TOKEN~ to communicate to the Packet API
+#+begin_src tmate :window packet-terraform :session packet-terraform :noweb yes
+  export TF_VAR_project_id=<<get-packet-project-id()>>
+      export TF_VAR_auth_token=<<get-packet-auth-token()>>
+  terraform apply -auto-approve -var "project_id=$PACKET_PROJECT_ID" -var "auth_token=$PACKET_AUTH_TOKEN"
+#+end_src
