@@ -29,7 +29,7 @@ variable "hostname" {
 }
 
 variable "box_type" {
-  default = "c3.small.x86"
+  default = "x1.small.x86"
   description = "The size of the box"
 }
 
@@ -38,27 +38,22 @@ variable "operating_system" {
   description = "The OS for the box"
 }
 
+variable "owner" {
+  description = "The name of Humacs"
+}
+
 data "template_file" "user_data" {
   template = "${file("cloud-init.yml")}"
 }
 
-data "template_file" "user_data_base64" {
-  template = base64encode(data.template_file.user_data.rendered)
-}
-
-output "user_data_base64" {
-  description = "ID of the Packet box"
-  value       = data.template_file.user_data_base64
-}
-
 resource "packet_device" "box" {
-  hostname         = "${var.hostname}-${random_string.suffix.result}"
+  hostname         = "${var.hostname}-${var.owner != "" ? var.owner : random_string.suffix.result}"
   plan             = var.box_type
   facilities       = [var.region]
   operating_system = var.operating_system
   billing_cycle    = "hourly"
   project_id       = var.project_id
-  user_data        = data.template_file.user_data_base64.rendered
+  user_data        = data.template_file.user_data.rendered
 }
 
 output "packet_device_id" {

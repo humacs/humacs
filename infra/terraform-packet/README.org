@@ -1,17 +1,25 @@
 #+TITLE: Packet Terraform
 
 * Cloud Init
-#+begin_src yaml :tangle ./cloud-init.yml
+#+begin_src yaml :tangle ./cloud-init.yml :comments none
+  #cloud-config
+
   users:
     - default
     - name: humacs
       gecos: Humacs
       primary_group: humacs
       sudo: ALL=(ALL) NOPASSWD:ALL
-      groups: users, admin
-      ssh_import_id: gh:bobymcbobs
+      groups: users, admin, docker
+      ssh_authorized_keys:
+        - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDfOBYW4JREdUNAUY7k/XWKzH4pdx5GI+IfI67iyak7dvnv0sk3mfVHtNounEQuwW06vRiYLmKAG6BP4i97uvNVfoOIOdUSoaqiM/Q3OMPNUykKqh3kliMgX/tJJEsC27HtiDxrkxmgXbflE/JKc+3pSAYsjJkbeWUb2jmcpH8N2OpxeOLLOUeqZfQNsXVXUbfWFK2IcXUJNXUbuzZ4GiLifEoUfppD37e7V3HpNF+zDFim+5g/CYhqfrmlJ1ZCP2UG2Y8AVHl4N4NP2VHXvhl1dU7GkulU+cBA3BV/WF2e8J3cQCl+OFfRmztGeG4xKQPacNjE73bYI14jTSLOqcvhjwMFkr8t0MUCxmlDj1Nua6f3Js7Ft0zILpI20A4stV7h8f41VIehtNL4O+S21ps5dXz8UWcw90RZOmLSp6FPjFpedGqZcBH8ytMyGFiT4eag3SKQeIjNK2mgeaLqZOD+sEqRVWaQ89EX/loliep53cspa6a6hCUfW7WNuJqBtIUv+z9jfdT+Hv6TiLCQ82uQEhEr1KiWgOfNO7auds1cEoippoxnG9q9+Acw6Fe8laK3L3blHHatjxuMAn4Fp5N5GKBh/GxKMhf1CbMET3Q8HkgkuQqN5pXT+aR/517PYfXTMoGFZHWd87HBGg2MdpxBFnZ5LiqV0ByJvvuigh6C7w== caleb@titanlt
+      shell: /bin/bash
       lock_passwd: false
 
+  timezone: Pacific/Auckland
+
+  package_update: true
+  package_upgrade: true
   packages:
     - emacs-nox
     - tree
@@ -50,13 +58,24 @@
     - unzip
     - iputils-ping
     - file
+    - docker.io
 
-  runcmds:
-    - git clone https://github.com/humacs/humacs /etc/skel/humacs
-    - sh -c "cd /etc/skel/humacs && \
-      ln -sf /etc/skel/humacs/.emacs-profiles.el ../ && \
-      ln -sf /etc/skel/humacs/.emacs-profile ../ && \
-      ln -sf /etc/skel/humacs/chemacs/.emacs ../"
+  runcmd:
+    - curl -Lo /usr/local/bin/kind https://github.com/kubernetes-sigs/kind/releases/download/v0.8.1/kind-$(uname)-amd64
+    - chmod +x /usr/local/bin/kind
+    - curl -L https://storage.googleapis.com/kubernetes-release/release/v1.18.8/bin/linux/amd64/kubectl -o /usr/local/bin/kubectl
+    - chmod +x /usr/local/bin/kubectl
+    - curl -L https://github.com/tmate-io/tmate/releases/download/2.4.0/tmate-2.4.0-static-linux-amd64.tar.xz | tar --directory /usr/local/bin --extract --xz --strip-components 1 tmate-2.4.0-static-linux-amd64/tmate
+    - chmod +x /usr/local/bin/kind
+    - curl -L https://get.helm.sh/helm-v3.3.0-linux-amd64.tar.gz | tar --directory /usr/local/bin --extract -xz --strip-components 1 linux-amd64/helm
+    - chgrp users /var/run/docker.sock
+    - git clone --recursive https://github.com/humacs/humacs /etc/skel/humacs
+    - cd /etc/skel/humacs && \
+      /usr/bin/ln -sf /etc/skel/humacs/.emacs-profiles.el ../ && \
+      /usr/bin/ln -sf /etc/skel/humacs/.emacs-profile ../ && \
+      /usr/bin/ln -sf /etc/skel/humacs/chemacs/.emacs ../
+    - su humacs -c 'cp -r /etc/skel/humacs /home/humacs/humacs'
+    - su humacs -c 'cd /home/humacs/humacs && ./install.sh'
 
   output:
     all: '| tee -a /var/log/cloud-init-output.log'
@@ -94,7 +113,7 @@ Define the compute:
   }
 
   variable "box_type" {
-    default = "c3.small.x86"
+    default = "x1.small.x86"
     description = "The size of the box"
   }
 
@@ -103,27 +122,22 @@ Define the compute:
     description = "The OS for the box"
   }
 
+  variable "owner" {
+    description = "The name of Humacs"
+  }
+
   data "template_file" "user_data" {
     template = "${file("cloud-init.yml")}"
   }
 
-  data "template_file" "user_data_base64" {
-    template = base64encode(data.template_file.user_data.rendered)
-  }
-
-  output "user_data_base64" {
-    description = "ID of the Packet box"
-    value       = data.template_file.user_data_base64
-  }
-
   resource "packet_device" "box" {
-    hostname         = "${var.hostname}-${random_string.suffix.result}"
+    hostname         = "${var.hostname}-${var.owner != "" ? var.owner : random_string.suffix.result}"
     plan             = var.box_type
     facilities       = [var.region]
     operating_system = var.operating_system
     billing_cycle    = "hourly"
     project_id       = var.project_id
-    user_data        = data.template_file.user_data_base64.rendered
+    user_data        = data.template_file.user_data.rendered
   }
 
   output "packet_device_id" {
@@ -206,9 +220,10 @@ Plan and ensure that the resources to create are correct:
 #+end_src
 
 ** Create the compute
-   Set the env of ~PACKET_AUTH_TOKEN~ to communicate to the Packet API
+   Create a box, setting it's name to have your $USER appended
 #+begin_src tmate :window packet-terraform :session packet-terraform :noweb yes
+  export TF_VAR_owner="$USER"
   export TF_VAR_project_id=<<get-packet-project-id()>>
       export TF_VAR_auth_token=<<get-packet-auth-token()>>
-  terraform apply -auto-approve -var "project_id=$PACKET_PROJECT_ID" -var "auth_token=$PACKET_AUTH_TOKEN"
+  terraform apply
 #+end_src
