@@ -1,0 +1,107 @@
+# kind Cluster apiVersion
+
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+
+containerdConfigPatches:
+- |-
+  [plugins."io.containerd.grpc.v1.cri".registry.mirrors."registry:5000"]
+    endpoint = ["http://registry:5000"]
+
+# kind worker nodes
+# Note we may in the host docker socket and TMP
+
+nodes:
+  # First entry under nodes
+  - role: worker
+    extraMounts:
+    # - containerPath: /var/local-path-provisioner
+    #   hostPath: /tmp/workspace/pvcs
+    #   readOnly: False
+    - containerPath: /var/run/docker.sock
+      hostPath: /var/run/docker.sock
+      readOnly: False
+    - containerPath: /var/host/tmp
+      hostPath: /tmp
+      readOnly: False
+
+# audit-{policy,webhook}.yaml
+# On master we need audit-{policy,sink}.yaml for apiserver.
+
+# Second entry under nodes
+  - role: control-plane
+    extraMounts:
+    - containerPath: /etc/kubernetes/pki/audit
+      hostPath: audit
+      readOnly: True
+    kubeadmConfigPatches:
+    - |
+      apiVersion: kubeadm.k8s.io/v1beta2
+      kind: InitConfiguration
+      nodeRegistration:
+        kubeletExtraArgs:
+          node-labels: "ingress-ready=true"
+          authorization-mode: "AlwaysAllow"
+    # - containerPath: /etc/kubernetes/audit-sink.yaml
+    #   hostPath: audit-sink.yaml
+    #   readOnly: True
+
+# extraPortMappings
+# We export postgres, web, and tilt sometimes.
+
+# PortMappings for control-plane
+    extraPortMappings:
+    - containerPort: 80
+      hostPort: 80
+    - containerPort: 443
+      hostPort: 443
+    - containerPort: 5432
+      hostPort: 5432
+    - containerPort: 6443
+      hostPort: 6443
+    - containerPort: 10350
+      hostPort: 10350
+
+# ingress kubeadmConfigPatches
+# Since we run our own ingress, our node needs to be labeled **ingress-ready=true**
+
+# control-plane config patches
+    kubeadmConfigPatches:
+    - |
+      apiVersion: kubeadm.k8s.io/v1beta2
+      kind: InitConfiguration
+      nodeRegistration:
+        kubeletExtraArgs:
+          node-labels: "ingress-ready=true"
+          authorization-mode: "AlwaysAllow"
+
+# patch/add apiServer/certSANs for domains
+# This helps us use internet hosts + ssl.
+
+kubeadmConfigPatchesJSON6902:
+- group: kubeadm.k8s.io
+  version: v1beta2
+  kind: ClusterConfiguration
+  patch: |
+    - op: add
+      path: /apiServer/certSANs/-
+      value: '*.ii.nz'
+    - op: add
+      path: /apiServer/certSANs/-
+      value: '*.ii.coop'
+    - op: add
+      path: /apiServer/certSANs/-
+      value: '*.sharing.io'
+
+# app apiServer extrArgs
+
+kubeadmConfigPatches:
+- |
+  apiVersion: kubeadm.k8s.io/v1beta2
+  kind: ClusterConfiguration
+  metadata:
+    name: config
+  apiServer:
+    extraArgs:
+      "audit-webhook-config-file": "/etc/kubernetes/pki/audit/sink.yaml"
+      "audit-policy-file": "/etc/kubernetes/pki/audit/policy.yaml"
