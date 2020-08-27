@@ -34,14 +34,6 @@ nodes:
     - containerPath: /etc/kubernetes/pki/audit
       hostPath: audit
       readOnly: True
-    kubeadmConfigPatches:
-    - |
-      apiVersion: kubeadm.k8s.io/v1beta2
-      kind: InitConfiguration
-      nodeRegistration:
-        kubeletExtraArgs:
-          node-labels: "ingress-ready=true"
-          authorization-mode: "AlwaysAllow"
     # - containerPath: /etc/kubernetes/audit-sink.yaml
     #   hostPath: audit-sink.yaml
     #   readOnly: True
