@@ -73,7 +73,7 @@
     - /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get golang.org/x/tools/gopls@latest && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/stamblerre/gocode
     - chgrp users /var/run/docker.sock
     - mkdir /usr/share/humacs
-    - curl -L https://raw.githubusercontent.com/kubemacs/kubemacs/master/kind-configs/kind-cluster%2Bregistry.yaml > /usr/share/humacs/kind-cluster+registry.yaml
+    - curl -L https://raw.githubusercontent.com/humacs/humacs/main/kind-configs/kind-config.yaml > /usr/share/humacs/kind-cluster+registry.yaml
     - su humacs -c 'echo export "PATH=\$PATH:/usr/local/go/bin" >> /home/humacs/.bashrc'
     - su humacs -c 'bazel'
     - su humacs -c 'git clone --recursive https://github.com/humacs/humacs /home/humacs/humacs'
