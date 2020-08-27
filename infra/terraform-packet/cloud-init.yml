@@ -69,7 +69,6 @@ runcmd:
   - /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get golang.org/x/tools/gopls@latest && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/stamblerre/gocode
   - chgrp users /var/run/docker.sock
   - mkdir /usr/share/humacs
-  - curl -L https://raw.githubusercontent.com/humacs/humacs/main/kind-configs/kind-config.yaml > /usr/share/humacs/kind-cluster+registry.yaml
   - su humacs -c 'echo export "PATH=\$PATH:/usr/local/go/bin" >> /home/humacs/.bashrc'
   - su humacs -c 'bazel'
   - su humacs -c 'git clone --recursive https://github.com/humacs/humacs /home/humacs/humacs'
@@ -78,7 +77,7 @@ runcmd:
   - su humacs -c 'cp /home/humacs/humacs/homedir/.tmux.conf /home/humacs'
   - su humacs -c 'cp /home/humacs/humacs/homedir/.gitconfig /home/humacs'
   - su humacs -c 'git clone https://github.com/cncf/apisnoop /home/humacs/apisnoop'
-  - su humacs -c 'kind create cluster --config /usr/share/humacs/kind-cluster+registry.yaml'
+  - su humacs -c 'kind create cluster --config /home/humacs/humacs/kind-configs/kind-config.yaml --image kindest/node:v1.19.0'
   - su humacs -c 'kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml'
   - su humacs -c 'echo Waiting for nginx-ingress && kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=90s'
   - su humacs -c 'cd /home/humacs/apisnoop && export CURRENT_IP=127.0.0.1 NEW_IP=$(curl -4 ifconfig.co) && sed -i s:$CURRENT_IP:$NEW_IP:g kustomize/*yaml'
