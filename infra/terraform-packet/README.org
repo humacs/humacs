@@ -6,13 +6,14 @@
 
   users:
     - default
-    - name: humacs
-      gecos: Humacs
-      primary_group: humacs
+    - name: ii
+      gecos: ii am Humacs
+      primary_group: ii
       sudo: ALL=(ALL) NOPASSWD:ALL
       groups: users, admin, docker
       ssh_authorized_keys:
         - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDfOBYW4JREdUNAUY7k/XWKzH4pdx5GI+IfI67iyak7dvnv0sk3mfVHtNounEQuwW06vRiYLmKAG6BP4i97uvNVfoOIOdUSoaqiM/Q3OMPNUykKqh3kliMgX/tJJEsC27HtiDxrkxmgXbflE/JKc+3pSAYsjJkbeWUb2jmcpH8N2OpxeOLLOUeqZfQNsXVXUbfWFK2IcXUJNXUbuzZ4GiLifEoUfppD37e7V3HpNF+zDFim+5g/CYhqfrmlJ1ZCP2UG2Y8AVHl4N4NP2VHXvhl1dU7GkulU+cBA3BV/WF2e8J3cQCl+OFfRmztGeG4xKQPacNjE73bYI14jTSLOqcvhjwMFkr8t0MUCxmlDj1Nua6f3Js7Ft0zILpI20A4stV7h8f41VIehtNL4O+S21ps5dXz8UWcw90RZOmLSp6FPjFpedGqZcBH8ytMyGFiT4eag3SKQeIjNK2mgeaLqZOD+sEqRVWaQ89EX/loliep53cspa6a6hCUfW7WNuJqBtIUv+z9jfdT+Hv6TiLCQ82uQEhEr1KiWgOfNO7auds1cEoippoxnG9q9+Acw6Fe8laK3L3blHHatjxuMAn4Fp5N5GKBh/GxKMhf1CbMET3Q8HkgkuQqN5pXT+aR/517PYfXTMoGFZHWd87HBGg2MdpxBFnZ5LiqV0ByJvvuigh6C7w== caleb@titanlt
+        - ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAgEAsUXHYuDzE6fs2KkCj91qSqpMXyxozb9gDKcx3mlh87hCegevld75gQAhujVYGRgJLsdf7W0/lX81clCRP1FjbaYYrPkVWGR291U6K5rkL9kZqd9dC0h9iCvFTKdKC7sA/uaolFPWav3QFWdEp3geNNuAm/NKSckUs9yGgr1inANQNsHFl0JFzU34D2Kt43rKA0Qz3kkDKCnXzl+wltIKq5f1SH1HDlv0hoLgikVwg5CLLKCsZ8IFuxur1pdb26uM0vtFp2LJUNad6hK8RsU6p/NeTtOLjbKGsLkqCgSvoPxCAIbFKWIRuAfGd6CrNc2kAD4qM45jAvI9dLuzbopVfhXS16F0i3EzL8/VWuCk7l2mYRdjHAy+9fJksx1zx2wfeEXSoSUX8/ROxpWZaDA8gLAxUrp/hqHU351QDDEdunMfmlrGc6ixyIaxMugRuNsNB4eY91mmbiljeoSCs1GFbVRhC8KejdKpo266hSDdS7f1sV9dnxVhHBhCxWzN7+mfk4KzpjEVFoDR73X8IUOLGFikORl918i86bH2uqJ5zZLvOA4a0BqaRIExmAi7wQrm4iLcDH3THMpvEuy4965JZz1uPJYtGBD/Zj1O2sMA8K6zvSB/8q86fe1VdwIJxOHh50HqAH1jPHHfkxIdrL4nBmvF9Pkzpg/OWlyVjqWmWj0= hh
       shell: /bin/bash
       lock_passwd: false
 
@@ -35,6 +36,8 @@
     - xz-utils
     - sudo
     - curl
+    - psmisc
+    - whowatch
     - ca-certificates
     - libcap2-bin
     - git
@@ -64,7 +67,8 @@
     - set -x
     - curl -Lo /usr/local/bin/kind https://github.com/kubernetes-sigs/kind/releases/download/v0.8.1/kind-$(uname)-amd64
     - chmod +x /usr/local/bin/kind
-    - curl -L https://storage.googleapis.com/kubernetes-release/release/v1.18.8/bin/linux/amd64/kubectl -o /usr/local/bin/kubectl
+    # - curl -L https://storage.googleapis.com/kubernetes-release/release/v1.18.8/bin/linux/amd64/kubectl -o /usr/local/bin/kubectl
+    - curl -Lo /usr/local/bin/kubectl https://github.com/humacs/humacs/releases/download/0.0.1-alpha/kubectl
     - chmod +x /usr/local/bin/kubectl
     - |
       (
@@ -72,32 +76,32 @@
         curl -L https://get.helm.sh/helm-v3.3.0-linux-amd64.tar.gz | tar --directory /usr/local/bin --extract -xz --strip-components 1 linux-amd64/helm;
         curl -L https://dl.google.com/go/go1.15.linux-amd64.tar.gz | tar --directory /usr/local --extract --ungzip;
         curl -L -o /usr/local/bin/bazel https://github.com/bazelbuild/bazel/releases/download/2.2.0/bazel-2.2.0-linux-x86_64 && chmod +x /usr/local/bin/bazel;
-        /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get golang.org/x/tools/gopls@latest && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/stamblerre/gocode;
-        su humacs -c 'bazel';
-        su humacs -c 'git clone https://github.com/kubernetes/kubernetes /home/humacs/kubernetes';
-        su humacs -c 'cd && emacs -batch -l ~/.emacs'
-      ) &
+        /bin/env GOCACHE=/usr/local/go/cache GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get golang.org/x/tools/gopls@latest;
+        /bin/env GOCACHE=/usr/local/go/cache GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/stamblerre/gocode;
+        su ii -c 'bazel';
+        su ii -c 'git clone https://github.com/kubernetes/kubernetes ~/kubernetes';
+      ) 2>&1 > /var/log/cloud-init-background.log &
     - chgrp users /var/run/docker.sock
     - mkdir /usr/share/humacs
-    - su humacs -c 'echo export "PATH=\$PATH:/usr/local/go/bin" >> /home/humacs/.bashrc'
-    - su humacs -c 'git clone --recursive https://github.com/humacs/humacs /home/humacs/humacs'
-    - su humacs -c 'cd /home/humacs/humacs && ./install.sh'
-    - su humacs -c 'cp /home/humacs/humacs/homedir/.tmate.conf /home/humacs'
-    - su humacs -c 'cp /home/humacs/humacs/homedir/.tmux.conf /home/humacs'
-    - su humacs -c 'cp /home/humacs/humacs/homedir/.gitconfig /home/humacs'
-    - su humacs -c 'git clone https://github.com/cncf/apisnoop /home/humacs/apisnoop'
-    - su humacs -c 'cd /home/humacs/humacs/kind-configs && kind create cluster --config /home/humacs/humacs/kind-configs/kind-config.yaml --image kindest/node:v1.19.0'
-    - su humacs -c 'kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml'
-    - su humacs -c 'echo Waiting for nginx-ingress && kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=90s'
-    - su humacs -c 'cd /home/humacs/apisnoop && export CURRENT_IP=127.0.0.1 NEW_IP=$(curl -4 ifconfig.co) && sed -i s:$CURRENT_IP:$NEW_IP:g kustomize/*yaml'
-    - su humacs -c 'cd /home/humacs/apisnoop && kubectl apply -k kustomize'
-    - su humacs -c 'kubectl -n apisnoop wait pod --for=condition=ready --selector=io.apisnoop.db=postgres --timeout=90s'
-    - su humacs -c 'kubectl -n apisnoop port-forward svc/postgres 5432 2>&1 > /dev/null' &
+    - su ii -c 'echo export "PATH=\$PATH:/usr/local/go/bin" >> ~/.bashrc'
+    - su ii -c 'git clone --recursive https://github.com/humacs/humacs ~/humacs'
+    - su ii -c 'cd ~/humacs && ./install.sh'
+    - su ii -c 'cd ~/humacs && cp .tmate.conf ~/ && cp tmux.conf ~/ && cp .gitconfig ~/'
+    - su ii -c 'git clone https://github.com/cncf/apisnoop ~/apisnoop'
+    - su ii -c 'cd ~/humacs/kind-configs && kind create cluster --config kind-config.yaml --image kindest/node:v1.19.0'
+    - su ii -c 'kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml'
+    - su ii -c 'echo Waiting for nginx-ingress && kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=90s'
+    - su ii -c 'cd ~/apisnoop && export CURRENT_IP=127.0.0.1 NEW_IP=$(curl -4 ifconfig.co) && sed -i s:$CURRENT_IP:$NEW_IP:g kustomize/*yaml'
+    - su ii -c 'cd ~/apisnoop && kubectl apply -k kustomize'
+    - su ii -c 'kubectl -n apisnoop wait pod --for=condition=ready --selector=io.apisnoop.db=postgres --timeout=90s'
+    - su ii -c 'kubectl -n apisnoop port-forward svc/postgres 5432 2>&1 > /dev/null' &
+    - su ii -c 'curl -L https://github.com/humacs/humacs/releases/download/0.0.1-alpha/spacemacs-elpa-cache-2020.08.28.tgz | tar xvzfC - ~/humacs/spacemacs'
+    - su ii -c 'cd && emacs -batch -l ~/.emacs'
+    - su ii -c 'touch ~/.cloud-warnings.skip'
 
   output:
     all: '| tee -a /var/log/cloud-init-output.log'
 #+end_src
-
 * Terraform
 ** Define
 Define the compute:
@@ -116,7 +120,8 @@ Define the compute:
   }
 
   variable "region" {
-    default     = "sv15"
+    # default     = "sin3"
+    default     = "sjc1"
     description = "Packet region"
   }
 
@@ -130,6 +135,7 @@ Define the compute:
   }
 
   variable "box_type" {
+    # default = "x1.small.x86"
     default = "c3.small.x86"
     description = "The size of the box"
   }
@@ -148,7 +154,7 @@ Define the compute:
   }
 
   resource "packet_device" "box" {
-    hostname         = "${var.hostname}-${var.owner != "" ? var.owner : random_string.suffix.result}"
+    hostname         = "${var.owner != "" ? var.owner : random_string.suffix.result}-${var.hostname}"
     plan             = var.box_type
     facilities       = [var.region]
     operating_system = var.operating_system
@@ -185,6 +191,10 @@ Initialize the local environment:
 [0m[1mInitializing the backend...[0m
 
 [0m[1mInitializing provider plugins...[0m
+- Checking for available provider plugins...
+- Downloading plugin for provider "packet" (terraform-providers/packet) 3.0.1...
+- Downloading plugin for provider "random" (hashicorp/random) 2.3.0...
+- Downloading plugin for provider "template" (hashicorp/template) 2.1.2...
 
 The following providers do not have any version constraints in configuration,
 so the latest version was installed.
@@ -238,9 +248,64 @@ Plan and ensure that the resources to create are correct:
 
 ** Create the compute
    Create a box, setting it's name to have your $USER appended
-#+begin_src tmate :window packet-terraform :session packet-terraform :noweb yes
+
+#+begin_src tmate :window terraform-apply :session packet-terraform :noweb yes
   export TF_VAR_owner="$USER"
   export TF_VAR_project_id=<<get-packet-project-id()>>
       export TF_VAR_auth_token=<<get-packet-auth-token()>>
+  terraform destroy
   terraform apply
+  yes
+  ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -A ii@$(terraform output packet_device_ip) tail -f /var/log/cloud-init-output.log
+#+end_src
+
+#+begin_src tmate :window packet-terraform :session packet-terraform :noweb yes :dir .
+  terraform destroy
+  yes
+  terraform apply
+  yes
+  ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -A ii@$(terraform output packet_device_ip) tail -f /var/log/cloud-init-output.log
+#+end_src
+
+#+begin_src tmate :window ssh-2 :session packet-terraform
+  cd ~/t/humacs/infra/terraform-packet
+  ssh -A ii@$(terraform output packet_device_ip)
+#+end_src
+
+#+begin_src iterm
+  whoaim
+#+end_src
+* aoeu
+#+begin_src bash :dir /ssh:humacs@136.144.55.93:/home/humacs
+pwd
+ip a
+#+end_src
+
+#+RESULTS:
+#+begin_src bash
+/home/humacs
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+2: eno1: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN group default qlen 1000
+    link/ether 3c:ec:ef:6a:f0:5e brd ff:ff:ff:ff:ff:ff
+3: eno2: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN group default qlen 1000
+    link/ether 3c:ec:ef:6a:f0:5f brd ff:ff:ff:ff:ff:ff
+4: enp1s0f0: <BROADCAST,MULTICAST,SLAVE,UP,LOWER_UP> mtu 1500 qdisc mq master bond0 state UP group default qlen 1000
+    link/ether 1c:34:da:5c:28:80 brd ff:ff:ff:ff:ff:ff
+5: enp1s0f1: <BROADCAST,MULTICAST,SLAVE,UP,LOWER_UP> mtu 1500 qdisc mq master bond0 state UP group default qlen 1000
+    link/ether 1c:34:da:5c:28:80 brd ff:ff:ff:ff:ff:ff
+6: bond0: <BROADCAST,MULTICAST,MASTER,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+    link/ether 1c:34:da:5c:28:80 brd ff:ff:ff:ff:ff:ff
+    inet 136.144.55.93/31 brd 255.255.255.255 scope global bond0
+       valid_lft forever preferred_lft forever
+    inet 10.67.18.129/31 brd 255.255.255.255 scope global bond0:0
+       valid_lft forever preferred_lft forever
+    inet6 2604:1380:45e1:2400::1/127 scope global
+       valid_lft forever preferred_lft forever
+    inet6 fe80::1e34:daff:fe5c:2880/64 scope link
+       valid_lft forever preferred_lft forever
 #+end_src

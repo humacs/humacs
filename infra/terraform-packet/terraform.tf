@@ -15,7 +15,8 @@ resource "random_string" "suffix" {
 }
 
 variable "region" {
-  default     = "sv15"
+  # default     = "sin3"
+  default     = "sjc1"
   description = "Packet region"
 }
 
@@ -29,6 +30,7 @@ variable "hostname" {
 }
 
 variable "box_type" {
+  # default = "x1.small.x86"
   default = "c3.small.x86"
   description = "The size of the box"
 }
@@ -47,7 +49,7 @@ data "template_file" "user_data" {
 }
 
 resource "packet_device" "box" {
-  hostname         = "${var.hostname}-${var.owner != "" ? var.owner : random_string.suffix.result}"
+  hostname         = "${var.owner != "" ? var.owner : random_string.suffix.result}-${var.hostname}"
   plan             = var.box_type
   facilities       = [var.region]
   operating_system = var.operating_system
