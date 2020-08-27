@@ -57,31 +57,38 @@ packages:
   - docker.io
 
 runcmd:
+  - set -x
   - curl -Lo /usr/local/bin/kind https://github.com/kubernetes-sigs/kind/releases/download/v0.8.1/kind-$(uname)-amd64
   - chmod +x /usr/local/bin/kind
   - curl -L https://storage.googleapis.com/kubernetes-release/release/v1.18.8/bin/linux/amd64/kubectl -o /usr/local/bin/kubectl
   - chmod +x /usr/local/bin/kubectl
-  - curl -L https://github.com/tmate-io/tmate/releases/download/2.4.0/tmate-2.4.0-static-linux-amd64.tar.xz | tar --directory /usr/local/bin --extract --xz --strip-components 1 tmate-2.4.0-static-linux-amd64/tmate
-  - chmod +x /usr/local/bin/kind
-  - curl -L https://get.helm.sh/helm-v3.3.0-linux-amd64.tar.gz | tar --directory /usr/local/bin --extract -xz --strip-components 1 linux-amd64/helm
-  - curl -L https://dl.google.com/go/go1.15.linux-amd64.tar.gz | tar --directory /usr/local --extract --ungzip
-  - curl -L -o /usr/local/bin/bazel https://github.com/bazelbuild/bazel/releases/download/2.2.0/bazel-2.2.0-linux-x86_64 && chmod +x /usr/local/bin/bazel
-  - /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get golang.org/x/tools/gopls@latest && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/stamblerre/gocode
+  - |
+    (
+      curl -L https://github.com/tmate-io/tmate/releases/download/2.4.0/tmate-2.4.0-static-linux-amd64.tar.xz | tar --directory /usr/local/bin --extract --xz --strip-components 1 tmate-2.4.0-static-linux-amd64/tmate;
+      curl -L https://get.helm.sh/helm-v3.3.0-linux-amd64.tar.gz | tar --directory /usr/local/bin --extract -xz --strip-components 1 linux-amd64/helm;
+      curl -L https://dl.google.com/go/go1.15.linux-amd64.tar.gz | tar --directory /usr/local --extract --ungzip;
+      curl -L -o /usr/local/bin/bazel https://github.com/bazelbuild/bazel/releases/download/2.2.0/bazel-2.2.0-linux-x86_64 && chmod +x /usr/local/bin/bazel;
+      /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get golang.org/x/tools/gopls@latest && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/stamblerre/gocode;
+      su humacs -c 'bazel';
+      su humacs -c 'git clone https://github.com/kubernetes/kubernetes /home/humacs/kubernetes';
+      su humacs -c 'cd && emacs -batch -l ~/.emacs'
+    ) &
   - chgrp users /var/run/docker.sock
   - mkdir /usr/share/humacs
   - su humacs -c 'echo export "PATH=\$PATH:/usr/local/go/bin" >> /home/humacs/.bashrc'
-  - su humacs -c 'bazel'
   - su humacs -c 'git clone --recursive https://github.com/humacs/humacs /home/humacs/humacs'
   - su humacs -c 'cd /home/humacs/humacs && ./install.sh'
   - su humacs -c 'cp /home/humacs/humacs/homedir/.tmate.conf /home/humacs'
   - su humacs -c 'cp /home/humacs/humacs/homedir/.tmux.conf /home/humacs'
   - su humacs -c 'cp /home/humacs/humacs/homedir/.gitconfig /home/humacs'
   - su humacs -c 'git clone https://github.com/cncf/apisnoop /home/humacs/apisnoop'
-  - su humacs -c 'kind create cluster --config /home/humacs/humacs/kind-configs/kind-config.yaml --image kindest/node:v1.19.0'
+  - su humacs -c 'cd /home/humacs/humacs/kind-configs && kind create cluster --config /home/humacs/humacs/kind-configs/kind-config.yaml --image kindest/node:v1.19.0'
   - su humacs -c 'kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml'
   - su humacs -c 'echo Waiting for nginx-ingress && kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=90s'
   - su humacs -c 'cd /home/humacs/apisnoop && export CURRENT_IP=127.0.0.1 NEW_IP=$(curl -4 ifconfig.co) && sed -i s:$CURRENT_IP:$NEW_IP:g kustomize/*yaml'
   - su humacs -c 'cd /home/humacs/apisnoop && kubectl apply -k kustomize'
+  - su humacs -c 'kubectl -n apisnoop wait pod --for=condition=ready --selector=io.apisnoop.db=postgres --timeout=90s'
+  - su humacs -c 'kubectl -n apisnoop port-forward svc/postgres 5432 2>&1 > /dev/null' &
 
 output:
   all: '| tee -a /var/log/cloud-init-output.log'
