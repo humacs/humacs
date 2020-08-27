@@ -68,14 +68,25 @@
     - curl -L https://github.com/tmate-io/tmate/releases/download/2.4.0/tmate-2.4.0-static-linux-amd64.tar.xz | tar --directory /usr/local/bin --extract --xz --strip-components 1 tmate-2.4.0-static-linux-amd64/tmate
     - chmod +x /usr/local/bin/kind
     - curl -L https://get.helm.sh/helm-v3.3.0-linux-amd64.tar.gz | tar --directory /usr/local/bin --extract -xz --strip-components 1 linux-amd64/helm
+    - curl -L https://dl.google.com/go/go1.15.linux-amd64.tar.gz | tar --directory /usr/local --extract --ungzip
+    - curl -L -o /usr/local/bin/bazel https://github.com/bazelbuild/bazel/releases/download/2.2.0/bazel-2.2.0-linux-x86_64 && chmod +x /usr/local/bin/bazel
+    - /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get golang.org/x/tools/gopls@latest && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/stamblerre/gocode
     - chgrp users /var/run/docker.sock
-    - git clone --recursive https://github.com/humacs/humacs /etc/skel/humacs
-    - cd /etc/skel/humacs && \
-      /usr/bin/ln -sf /etc/skel/humacs/.emacs-profiles.el ../ && \
-      /usr/bin/ln -sf /etc/skel/humacs/.emacs-profile ../ && \
-      /usr/bin/ln -sf /etc/skel/humacs/chemacs/.emacs ../
-    - su humacs -c 'cp -r /etc/skel/humacs /home/humacs/humacs'
+    - mkdir /usr/share/humacs
+    - curl -L https://raw.githubusercontent.com/kubemacs/kubemacs/master/kind-configs/kind-cluster%2Bregistry.yaml > /usr/share/humacs/kind-cluster+registry.yaml
+    - su humacs -c 'echo export "PATH=\$PATH:/usr/local/go/bin" >> /home/humacs/.bashrc'
+    - su humacs -c 'bazel'
+    - su humacs -c 'git clone --recursive https://github.com/humacs/humacs /home/humacs/humacs'
     - su humacs -c 'cd /home/humacs/humacs && ./install.sh'
+    - su humacs -c 'cp /home/humacs/humacs/homedir/.tmate.conf /home/humacs'
+    - su humacs -c 'cp /home/humacs/humacs/homedir/.tmux.conf /home/humacs'
+    - su humacs -c 'cp /home/humacs/humacs/homedir/.gitconfig /home/humacs'
+    - su humacs -c 'git clone https://github.com/cncf/apisnoop /home/humacs/apisnoop'
+    - su humacs -c 'kind create cluster --config /usr/share/humacs/kind-cluster+registry.yaml'
+    - su humacs -c 'kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml'
+    - su humacs -c 'echo Waiting for nginx-ingress && kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=90s'
+    - su humacs -c 'cd /home/humacs/apisnoop && export CURRENT_IP=127.0.0.1 NEW_IP=$(curl -4 ifconfig.co) && sed -i s:$CURRENT_IP:$NEW_IP:g kustomize/*yaml'
+    - su humacs -c 'cd /home/humacs/apisnoop && kubectl apply -k kustomize'
 
   output:
     all: '| tee -a /var/log/cloud-init-output.log'
