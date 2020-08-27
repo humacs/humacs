@@ -15,7 +15,7 @@ resource "random_string" "suffix" {
 }
 
 variable "region" {
-  default     = "sv15"
+  default     = "syd2"
   description = "Packet region"
 }
 
@@ -29,7 +29,7 @@ variable "hostname" {
 }
 
 variable "box_type" {
-  default = "c3.small.x86"
+  default = "x1.small.x86"
   description = "The size of the box"
 }
 

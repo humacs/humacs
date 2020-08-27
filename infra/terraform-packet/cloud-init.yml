@@ -60,7 +60,8 @@ runcmd:
   - set -x
   - curl -Lo /usr/local/bin/kind https://github.com/kubernetes-sigs/kind/releases/download/v0.8.1/kind-$(uname)-amd64
   - chmod +x /usr/local/bin/kind
-  - curl -L https://storage.googleapis.com/kubernetes-release/release/v1.18.8/bin/linux/amd64/kubectl -o /usr/local/bin/kubectl
+    # this is only here since speed for SJC1 is slow for downloading kubectl
+  - curl -L https://github.com/humacs/humacs/releases/download/0.0.1-alpha/kubectl -o /usr/local/bin/kubectl
   - chmod +x /usr/local/bin/kubectl
   - |
     (
