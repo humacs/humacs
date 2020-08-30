@@ -61,24 +61,35 @@ packages:
 
 runcmd:
   - set -x
-  - curl -Lo /usr/local/bin/kind https://github.com/kubernetes-sigs/kind/releases/download/v0.8.1/kind-$(uname)-amd64
-  - chmod +x /usr/local/bin/kind
-  # - curl -L https://storage.googleapis.com/kubernetes-release/release/v1.18.8/bin/linux/amd64/kubectl -o /usr/local/bin/kubectl
-  - curl -Lo /usr/local/bin/kubectl https://github.com/humacs/humacs/releases/download/0.0.1-alpha/kubectl
-  - chmod +x /usr/local/bin/kubectl
+  # kind and kubectl are our main requirements
+  - |
+    curl -Lo /usr/local/bin/kind \
+      https://github.com/kubernetes-sigs/kind/releases/download/v0.8.1/kind-$(uname)-amd64
+    chmod +x /usr/local/bin/kind
+    curl -Lo /usr/local/bin/kubectl \
+      https://storage.googleapis.com/kubernetes-release/release/v1.18.8/bin/linux/amd64/kubectl
+    chmod +x /usr/local/bin/kubectl
+  # - curl -Lo /usr/local/bin/kubectl https://github.com/humacs/humacs/releases/download/0.0.1-alpha/kubectl
+  # tmate, helm, go, bazel, and the k8s src are needed for development
+  # but can be deferred to the background
   - |
     (
-      curl -L https://github.com/tmate-io/tmate/releases/download/2.4.0/tmate-2.4.0-static-linux-amd64.tar.xz | tar --directory /usr/local/bin --extract --xz --strip-components 1 tmate-2.4.0-static-linux-amd64/tmate;
-      curl -L https://get.helm.sh/helm-v3.3.0-linux-amd64.tar.gz | tar --directory /usr/local/bin --extract -xz --strip-components 1 linux-amd64/helm;
-      curl -L https://dl.google.com/go/go1.15.linux-amd64.tar.gz | tar --directory /usr/local --extract --ungzip;
-      curl -L -o /usr/local/bin/bazel https://github.com/bazelbuild/bazel/releases/download/2.2.0/bazel-2.2.0-linux-x86_64 && chmod +x /usr/local/bin/bazel;
-      /bin/env GOCACHE=/usr/local/go/cache GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get golang.org/x/tools/gopls@latest;
-      /bin/env GOCACHE=/usr/local/go/cache GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/stamblerre/gocode;
+      curl -L https://github.com/tmate-io/tmate/releases/download/2.4.0/tmate-2.4.0-static-linux-amd64.tar.xz \
+      | tar --directory /usr/local/bin --extract --xz --strip-components 1 tmate-2.4.0-static-linux-amd64/tmate
+      curl -L https://get.helm.sh/helm-v3.3.0-linux-amd64.tar.gz \
+      | tar --directory /usr/local/bin --extract -xz --strip-components 1 linux-amd64/helm
+      curl -L https://dl.google.com/go/go1.15.linux-amd64.tar.gz \
+      | tar --directory /usr/local --extract --ungzip
+      /bin/env GOCACHE=/usr/local/go/cache GO111MODULE=on GOPATH=/usr/local/go \
+        /usr/local/go/bin/go get golang.org/x/tools/gopls@latest
+      /bin/env GOCACHE=/usr/local/go/cache GO111MODULE=on GOPATH=/usr/local/go \
+        /usr/local/go/bin/go get -u github.com/stamblerre/gocode
+      curl -Lo /usr/local/bin/bazel \
+        https://github.com/bazelbuild/bazel/releases/download/2.2.0/bazel-2.2.0-linux-x86_64
+      chmod +x /usr/local/bin/bazel
       su ii -c 'bazel';
       su ii -c 'git clone https://github.com/kubernetes/kubernetes ~/kubernetes';
     ) 2>&1 > /var/log/cloud-init-background.log &
-  - chgrp users /var/run/docker.sock
-  - mkdir /usr/share/humacs
   - su ii -c 'echo export "PATH=\$PATH:/usr/local/go/bin" >> ~/.bashrc'
   - su ii -c 'git clone --recursive https://github.com/humacs/humacs ~/humacs'
   - su ii -c 'cd ~/humacs && ./install.sh'

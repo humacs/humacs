@@ -65,24 +65,35 @@
 
   runcmd:
     - set -x
-    - curl -Lo /usr/local/bin/kind https://github.com/kubernetes-sigs/kind/releases/download/v0.8.1/kind-$(uname)-amd64
-    - chmod +x /usr/local/bin/kind
-    # - curl -L https://storage.googleapis.com/kubernetes-release/release/v1.18.8/bin/linux/amd64/kubectl -o /usr/local/bin/kubectl
-    - curl -Lo /usr/local/bin/kubectl https://github.com/humacs/humacs/releases/download/0.0.1-alpha/kubectl
-    - chmod +x /usr/local/bin/kubectl
+    # kind and kubectl are our main requirements
+    - |
+      curl -Lo /usr/local/bin/kind \
+        https://github.com/kubernetes-sigs/kind/releases/download/v0.8.1/kind-$(uname)-amd64
+      chmod +x /usr/local/bin/kind
+      curl -Lo /usr/local/bin/kubectl \
+        https://storage.googleapis.com/kubernetes-release/release/v1.18.8/bin/linux/amd64/kubectl
+      chmod +x /usr/local/bin/kubectl
+    # - curl -Lo /usr/local/bin/kubectl https://github.com/humacs/humacs/releases/download/0.0.1-alpha/kubectl
+    # tmate, helm, go, bazel, and the k8s src are needed for development
+    # but can be deferred to the background
     - |
       (
-        curl -L https://github.com/tmate-io/tmate/releases/download/2.4.0/tmate-2.4.0-static-linux-amd64.tar.xz | tar --directory /usr/local/bin --extract --xz --strip-components 1 tmate-2.4.0-static-linux-amd64/tmate;
-        curl -L https://get.helm.sh/helm-v3.3.0-linux-amd64.tar.gz | tar --directory /usr/local/bin --extract -xz --strip-components 1 linux-amd64/helm;
-        curl -L https://dl.google.com/go/go1.15.linux-amd64.tar.gz | tar --directory /usr/local --extract --ungzip;
-        curl -L -o /usr/local/bin/bazel https://github.com/bazelbuild/bazel/releases/download/2.2.0/bazel-2.2.0-linux-x86_64 && chmod +x /usr/local/bin/bazel;
-        /bin/env GOCACHE=/usr/local/go/cache GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get golang.org/x/tools/gopls@latest;
-        /bin/env GOCACHE=/usr/local/go/cache GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/stamblerre/gocode;
+        curl -L https://github.com/tmate-io/tmate/releases/download/2.4.0/tmate-2.4.0-static-linux-amd64.tar.xz \
+        | tar --directory /usr/local/bin --extract --xz --strip-components 1 tmate-2.4.0-static-linux-amd64/tmate
+        curl -L https://get.helm.sh/helm-v3.3.0-linux-amd64.tar.gz \
+        | tar --directory /usr/local/bin --extract -xz --strip-components 1 linux-amd64/helm
+        curl -L https://dl.google.com/go/go1.15.linux-amd64.tar.gz \
+        | tar --directory /usr/local --extract --ungzip
+        /bin/env GOCACHE=/usr/local/go/cache GO111MODULE=on GOPATH=/usr/local/go \
+          /usr/local/go/bin/go get golang.org/x/tools/gopls@latest
+        /bin/env GOCACHE=/usr/local/go/cache GO111MODULE=on GOPATH=/usr/local/go \
+          /usr/local/go/bin/go get -u github.com/stamblerre/gocode
+        curl -Lo /usr/local/bin/bazel \
+          https://github.com/bazelbuild/bazel/releases/download/2.2.0/bazel-2.2.0-linux-x86_64
+        chmod +x /usr/local/bin/bazel
         su ii -c 'bazel';
         su ii -c 'git clone https://github.com/kubernetes/kubernetes ~/kubernetes';
       ) 2>&1 > /var/log/cloud-init-background.log &
-    - chgrp users /var/run/docker.sock
-    - mkdir /usr/share/humacs
     - su ii -c 'echo export "PATH=\$PATH:/usr/local/go/bin" >> ~/.bashrc'
     - su ii -c 'git clone --recursive https://github.com/humacs/humacs ~/humacs'
     - su ii -c 'cd ~/humacs && ./install.sh'
@@ -253,10 +264,47 @@ Plan and ensure that the resources to create are correct:
   export TF_VAR_owner="$USER"
   export TF_VAR_project_id=<<get-packet-project-id()>>
       export TF_VAR_auth_token=<<get-packet-auth-token()>>
-  terraform destroy
-  terraform apply
-  yes
+  terraform destroy || true
+  terraform apply -auto-approve
   ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -A ii@$(terraform output packet_device_ip) tail -f /var/log/cloud-init-output.log
+#+end_src
+
+
+#+begin_src shell
+  ssh -o "StrictHostKeyChecking=no" -A ii@$(terraform output packet_device_ip) kubectl get nodes
+#+end_src
+
+#+begin_src elisp :results none
+  (setenv "PACKET_BOX"
+   (concat "/scp:ii@"
+    (string-trim-right
+     (shell-command-to-string "terraform output packet_device_ip"))
+                   ":/home/ii"))
+#+end_src
+
+#+begin_src bash :dir (getenv "PACKET_BOX") :async yes
+  ls -la
+#+end_src
+
+#+RESULTS:
+#+begin_src bash
+total 48
+drwxr-xr-x  8 ii   ii   4096 Aug 30 19:44 .
+drwxr-xr-x  3 root root 4096 Aug 30 19:08 ..
+drwxrwxr-x  9 ii   ii   4096 Aug 30 19:09 apisnoop
+-rw-------  1 ii   ii    145 Aug 30 19:44 .bash_history
+-rw-r--r--  1 ii   ii    220 Feb 26  2020 .bash_logout
+-rw-r--r--  1 ii   ii   3807 Aug 30 19:09 .bashrc
+drwxr-xr-x  3 ii   ii   4096 Aug 30 19:42 .cache
+-rw-rw-r--  1 ii   ii      0 Aug 30 19:12 .cloud-warnings.skip
+lrwxrwxrwx  1 ii   ii     30 Aug 30 19:09 .emacs -> /home/ii/humacs/chemacs/.emacs
+lrwxrwxrwx  1 ii   ii     30 Aug 30 19:09 .emacs-profile -> /home/ii/humacs/.emacs-profile
+lrwxrwxrwx  1 ii   ii     34 Aug 30 19:09 .emacs-profiles.el -> /home/ii/humacs/.emacs-profiles.el
+drwxrwxr-x 16 ii   ii   4096 Aug 30 19:09 humacs
+drwxr-xr-x  4 ii   ii   4096 Aug 30 19:10 .kube
+drwxrwxr-x 20 ii   ii   4096 Aug 30 19:14 kubernetes
+-rw-r--r--  1 ii   ii    807 Feb 26  2020 .profile
+drwx------  2 ii   ii   4096 Aug 30 19:08 .ssh
 #+end_src
 
 #+begin_src tmate :window packet-terraform :session packet-terraform :noweb yes :dir .
