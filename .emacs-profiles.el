@@ -5,6 +5,8 @@
                  (env . (("SPACEMACSDIR" . "~/humacs/wilinux-config")))))
  ("doom" . ((user-emacs-directory . "~/humacs/doom-emacs")
            (env . (("DOOMDIR" . "~/humacs/doom-config")))))
+ ("zz" . ((user-emacs-directory . "~/humacs/doom-emacs")
+           (env . (("DOOMDIR" . "~/humacs/zz-config")))))
  ("sachac" . ((user-emacs-directory . "~/humacs/sachac")))
  ("prelude" . ((user-emacs-directory . "~/humacs/prelude")))
 )
