@@ -1,0 +1,90 @@
+#+NAME: Humacs from Cluster-API on Packet
+
+* Prelimiary steps
+
+** Local cluster / outside cluster
+*** With Minikube
+#+begin_src tmate :window terraform-apply :session packet-terraform :noweb yes
+  kind create cluster
+#+end_src
+
+*** With Kind
+#+begin_src tmate :window terraform-apply :session packet-terraform :noweb yes
+  minikube start
+#+end_src
+
+** Set credentials
+
+   Use the following strings in a ~:~ minibuffer:
+#+begin_src elisp :results none
+  (setenv "PACKET_PROJECT_ID" (read-from-minibuffer "PACKET_PROJECT_ID: "))
+  (setenv "PACKET_API_KEY" (read-from-minibuffer "PACKET_API_KEY: "))
+  (setenv "LOCAL_SSH_PUB_KEY_PATH" (read-from-minibuffer "LOCAL_SSH_PUB_KEY_PATH: "))
+#+end_src
+
+#+name: get-packet-project-id
+#+begin_src elisp :results silent
+  (getenv "PACKET_PROJECT_ID")
+#+end_src
+
+#+name: get-packet-auth-token
+#+begin_src elisp :results silent
+  (getenv "PACKET_API_KEY")
+#+end_src
+
+#+name: get-local-ssh-pub-key-path
+#+begin_src elisp :results silent
+  (getenv "LOCAL_SSH_PUB_KEY_PATH")
+#+end_src
+
+** Initialize the packet plugin for Cluster-API
+
+#+begin_src tmate :window terraform-apply :session packet-terraform :noweb yes
+  export CLUSTER_NAME="$USER-humacs"
+  export PACKET_PROJECT_ID=<<get-packet-project-id()>>
+      export PACKET_API_KEY=<<get-packet-auth-token()>>
+  clusterctl init --infrastructure=packet
+#+end_src
+
+#+RESULTS:
+#+begin_example
+#+end_example
+
+* Cluster-API
+** Create configuration for the Packet machine
+
+#+begin_src tmate :window terraform-apply :session packet-terraform :noweb yes
+  export CLUSTER_NAME="$USER-humacs"
+  export PROJECT_ID=<<get-packet-project-id()>>
+      export PACKET_API_KEY=<<get-packet-auth-token()>>
+  export FACILITY=sjc1
+  export KUBERNETES_VERSION=v1.19.0
+  export POD_CIDR=172.26.0.0/16
+  export SERVICE_CIDR=172.25.0.0/16
+  export NODE_OS=ubuntu_20_04
+      export SSH_KEY=<<get-local-ssh-pub-key-path>>
+  export CONTROLPLANE_NODE_TYPE=c1.small.x86
+  export WORKER_NODE_TYPE=c1.small.x86
+  export WORKER_MACHINE_COUNT=0
+  clusterctl config cluster "$CLUSTER_NAME" --from ./cluster-packet-template.yaml -n "$CLUSTER_NAME" > cluster-packet-"$CLUSTER_NAME".yaml
+#+end_src
+
+** Create the namespace
+
+#+begin_src tmate :window terraform-apply :session packet-terraform :noweb yes
+  export CLUSTER_NAME="$USER-humacs"
+  kubectl create ns "$CLUSTER_NAME"
+#+end_src
+
+** Create the cluster
+
+#+begin_src tmate :window terraform-apply :session packet-terraform :noweb yes
+  kubectl -n "$CLUSTER_NAME" apply -f cluster-packet-"$CLUSTER_NAME".yaml
+#+end_src
+
+** Get the Kubeconfig
+
+#+begin_src tmate :window terraform-apply :session packet-terraform :noweb yes
+  export CLUSTER_NAME="$USER-humacs"
+  kubectl -n "$CLUSTER_NAME" get secrets "$CLUSTER_NAME"-kubeconfig -o=jsonpath='{.data.value}' | base64 -d
+#+end_src
