@@ -21,6 +21,7 @@ spec:
           audit-policy-file: /etc/kubernetes/pki/audit-policy.yaml
           audit-log-path: "-"
           audit-webhook-config-file: /etc/kubernetes/pki/audit-sink.yaml
+          v: 99
       controllerManager:
         extraArgs:
           cloud-provider: external
