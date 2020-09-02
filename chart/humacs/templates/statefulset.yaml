@@ -58,6 +58,8 @@ spec:
               value: {{ .Values.options.workingFile | quote }}
             - name: INIT_PREFINISH_BLOCK
               value: {{ .Values.options.preinitScript | quote }}
+            - name: HUMACS_PROFILE
+              value: {{ .Values.options.profile | quote }}
         {{- with .Values.extraEnvVars }}
             {{- toYaml . | nindent 12 }}
         {{- end }}

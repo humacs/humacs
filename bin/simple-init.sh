@@ -1,6 +1,6 @@
 #!/bin/bash
 set -x
-cd /home/ii
+cd "$HOME"
 
 # Generate an ssh-key if one doesn't exist
 if [ ! -f ".ssh/id_rsa" ]
@@ -35,6 +35,9 @@ export INIT_DEFAULT_DIR="${INIT_DEFAULT_DIR:-~/}"
 export INIT_DEFAULT_REPOS="${INIT_DEFAULT_REPOS}"
 export INIT_DEFAULT_REPOS_FOLDER="${INIT_DEFAULT_REPOS_FOLDER}"
 export INIT_PREFINISH_BLOCK="${INIT_PREFINISH_BLOCK}"
+export HUMACS_PROFILE="${HUMACS_PROFILE:-ii}"
+
+echo "$HUMACS_PROFILE" > ~/.emacs-profile
 
 . /usr/local/bin/ssh-agent-export.sh
 

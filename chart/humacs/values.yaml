@@ -3,6 +3,7 @@
 # Declare variables to be passed into your templates.
 
 options:
+  profile: ii
   hostDockerSocket: false
   hostTmp: false
   timezone: Pacific/Auckland
