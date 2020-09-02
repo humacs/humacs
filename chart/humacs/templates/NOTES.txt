@@ -1,5 +1,5 @@
-0. View logs from the {{ include "humacs.name" . }}-0 Pod
-  kubectl --namespace {{ .Release.Namespace }} logs -f {{ include "humacs.name" . }}-0
+0. View logs from the {{ include "humacs.fullname" . }}-0 Pod
+  kubectl --namespace {{ .Release.Namespace }} logs -f {{ include "humacs.fullname" . }}-0
 
-1. Attach to the tmate session {{ include "humacs.name" . }}
-  kubectl --namespace {{ .Release.Namespace }} exec -it {{ include "humacs.name" . }}-0 -- attach
+1. Attach to the tmate session {{ include "humacs.fullname" . }}
+  kubectl --namespace {{ .Release.Namespace }} exec -it {{ include "humacs.fullname" . }}-0 -- attach
