@@ -51,7 +51,8 @@ spec:
         (
           helm --kubeconfig /etc/kubernetes/admin.conf repo add nginx-ingress https://kubernetes.github.io/ingress-nginx;
           kubectl --kubeconfig /etc/kubernetes/admin.conf create ns nginx-ingress;
-          helm --kubeconfig /etc/kubernetes/admin.conf install nginx-ingress -n nginx-ingress nginx-ingress/ingress-nginx
+          helm --kubeconfig /etc/kubernetes/admin.conf install nginx-ingress -n nginx-ingress nginx-ingress/ingress-nginx;
+          kubectl --kubeconfig /etc/kubernetes/admin.conf wait -n nginx-ingress --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=90s
         )
     - |
         kubectl --kubeconfig /etc/kubernetes/admin.conf get configmap kube-proxy -n kube-system -o yaml | sed -e "s/strictARP: false/strictARP: true/" | kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f - -n kube-system
