@@ -3,12 +3,12 @@
 * Prelimiary steps
 
 ** Local cluster / outside cluster
-*** With Minikube
+*** With Kind
 #+begin_src tmate :window terraform-apply :session packet-terraform :noweb yes
   kind create cluster
 #+end_src
 
-*** With Kind
+*** With Minikube
 #+begin_src tmate :window terraform-apply :session packet-terraform :noweb yes
   minikube start
 #+end_src
@@ -59,8 +59,8 @@
       export PACKET_API_KEY=<<get-packet-auth-token()>>
   export FACILITY=sjc1
   export KUBERNETES_VERSION=v1.19.0
-  export POD_CIDR=172.26.0.0/16
-  export SERVICE_CIDR=172.25.0.0/16
+  export POD_CIDR=10.244.0.0/16
+  export SERVICE_CIDR=10.96.0.0/12
   export NODE_OS=ubuntu_20_04
   export CONTROLPLANE_NODE_TYPE=c1.small.x86
   export WORKER_NODE_TYPE=c1.small.x86
@@ -79,6 +79,7 @@
 ** Create the cluster
 
 #+begin_src tmate :window terraform-apply :session packet-terraform :noweb yes
+  export CLUSTER_NAME="$USER-humacs"
   kubectl -n "$CLUSTER_NAME" apply -f cluster-packet-"$CLUSTER_NAME".yaml
 #+end_src
 
