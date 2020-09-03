@@ -4,261 +4,299 @@
 
 ** Local cluster / outside cluster
 *** With Kind
-#+begin_src tmate :window terraform-apply :session packet-terraform :noweb yes
-  kind create cluster
-#+end_src
+    #+begin_src tmate :window cluster-api-apply :session packet-cluster-api :noweb yes
+      kind create cluster
+    #+end_src
 
 *** With Minikube
-#+begin_src tmate :window terraform-apply :session packet-terraform :noweb yes
-  minikube start
-#+end_src
+    #+begin_src tmate :window cluster-api-apply :session packet-cluster-api :noweb yes
+      minikube start
+    #+end_src
 
 ** Set credentials
 
    Use the following strings in a ~:~ minibuffer:
-#+begin_src elisp :results none
-  (setenv "PACKET_PROJECT_ID" (read-from-minibuffer "PACKET_PROJECT_ID: "))
-  (setenv "PACKET_API_KEY" (read-from-minibuffer "PACKET_API_KEY: "))
-  (setenv "LOCAL_SSH_PUB_KEY_PATH" (read-from-minibuffer "LOCAL_SSH_PUB_KEY_PATH: "))
-#+end_src
+   #+begin_src elisp :results none
+     (setenv "PACKET_PROJECT_ID" (read-from-minibuffer "PACKET_PROJECT_ID: "))
+     (setenv "PACKET_API_KEY" (read-from-minibuffer "PACKET_API_KEY: "))
+     (setenv "LOCAL_SSH_PUB_KEY_PATH" (read-from-minibuffer "LOCAL_SSH_PUB_KEY_PATH: "))
+     (setenv "HUMACS_GIT_EMAIL" (read-from-minibuffer "HUMACS_GIT_EMAIL: "))
+     (setenv "HUMACS_GIT_NAME" (read-from-minibuffer "HUMACS_GIT_NAME: "))
+     (setenv "CLUSTER_NAME" (concat (getenv "USER") "-humacs"))
+   #+end_src
 
-#+name: get-packet-project-id
-#+begin_src elisp :results silent
-  (getenv "PACKET_PROJECT_ID")
-#+end_src
+   #+name: get-packet-project-id
+   #+begin_src elisp :results silent
+     (getenv "PACKET_PROJECT_ID")
+   #+end_src
 
-#+name: get-packet-auth-token
-#+begin_src elisp :results silent
-  (getenv "PACKET_API_KEY")
-#+end_src
+   #+name: get-packet-auth-token
+   #+begin_src elisp :results silent
+     (getenv "PACKET_API_KEY")
+   #+end_src
 
-#+name: get-local-ssh-pub-key-path
-#+begin_src elisp :results silent
-  (getenv "LOCAL_SSH_PUB_KEY_PATH")
-#+end_src
+   #+name: get-local-ssh-pub-key-path
+   #+begin_src elisp :results silent
+     (getenv "LOCAL_SSH_PUB_KEY_PATH")
+   #+end_src
+
+   #+name: get-humacs-git-email
+   #+begin_src elisp :results silent
+     (getenv "HUMACS_GIT_EMAIL")
+   #+end_src
+
+   #+name: get-humacs-git-name
+   #+begin_src elisp :results silent
+     (getenv "HUMACS_GIT_NAME")
+   #+end_src
+
+   #+name: get-cluster-name
+   #+begin_src elisp :results silent
+     (getenv "CLUSTER_NAME")
+   #+end_src
 
 ** Initialize the packet plugin for Cluster-API
 
-#+begin_src tmate :window terraform-apply :session packet-terraform :noweb yes
-  export CLUSTER_NAME="$USER-humacs"
-  export PACKET_PROJECT_ID=<<get-packet-project-id()>>
-      export PACKET_API_KEY=<<get-packet-auth-token()>>
-  clusterctl init --infrastructure=packet
-#+end_src
+   #+begin_src tmate :window cluster-api-apply :session packet-cluster-api :noweb yes
+     export CLUSTER_NAME="$USER-humacs"
+     export PACKET_PROJECT_ID=<<get-packet-project-id()>>
+         export PACKET_API_KEY=<<get-packet-auth-token()>>
+     clusterctl init --infrastructure=packet
+   #+end_src
 
-#+RESULTS:
-#+begin_example
-#+end_example
+   #+RESULTS:
+   #+begin_example
+   #+end_example
 
 * Cluster-API
 ** Create configuration for the Packet machine
 
-#+begin_src tmate :window terraform-apply :session packet-terraform :noweb yes
-  export CLUSTER_NAME="$USER-humacs"
-  export PROJECT_ID=<<get-packet-project-id()>>
-      export PACKET_API_KEY=<<get-packet-auth-token()>>
-  export FACILITY=sjc1
-  export KUBERNETES_VERSION=v1.19.0
-  export POD_CIDR=10.244.0.0/16
-  export SERVICE_CIDR=10.96.0.0/12
-  export NODE_OS=ubuntu_20_04
-  export CONTROLPLANE_NODE_TYPE=c1.small.x86
-  export WORKER_NODE_TYPE=c1.small.x86
-  export WORKER_MACHINE_COUNT=0
-  export SSH_KEY=<<get-local-ssh-pub-key-path()>>
-  clusterctl config cluster "$CLUSTER_NAME" --from ./cluster-packet-template.yaml -n "$CLUSTER_NAME" > cluster-packet-"$CLUSTER_NAME".yaml
-#+end_src
+   #+begin_src tmate :window cluster-api-apply :session packet-cluster-api :noweb yes
+     export CLUSTER_NAME="$USER-humacs"
+     export PROJECT_ID=<<get-packet-project-id()>>
+         export PACKET_API_KEY=<<get-packet-auth-token()>>
+     export FACILITY=sjc1
+     export KUBERNETES_VERSION=v1.19.0
+     export POD_CIDR=10.244.0.0/16
+     export SERVICE_CIDR=10.96.0.0/12
+     export NODE_OS=ubuntu_20_04
+     export CONTROLPLANE_NODE_TYPE=c1.small.x86
+     export WORKER_NODE_TYPE=c1.small.x86
+     export WORKER_MACHINE_COUNT=0
+     export SSH_KEY=<<get-local-ssh-pub-key-path()>>
+     export HUMACS_GIT_EMAIL=<<get-humacs-git-email()>>
+     export HUMACS_GIT_NAME=<<get-humacs-git-name()>>
+     export HUMACS_PROFILE=ii
+     export HUMACS_TZ="Pacific/Auckland"
+     clusterctl config cluster "$CLUSTER_NAME" --from ./cluster-packet-template.yaml -n "$CLUSTER_NAME" > cluster-packet-"$CLUSTER_NAME".yaml
+   #+end_src
 
 ** Create the namespace
 
-#+begin_src tmate :window terraform-apply :session packet-terraform :noweb yes
-  export CLUSTER_NAME="$USER-humacs"
-  kubectl create ns "$CLUSTER_NAME"
-#+end_src
+   #+begin_src tmate :window cluster-api-apply :session packet-cluster-api :noweb yes
+     export CLUSTER_NAME="$USER-humacs"
+     kubectl create ns "$CLUSTER_NAME"
+   #+end_src
 
 ** Create the cluster
 
-#+begin_src tmate :window terraform-apply :session packet-terraform :noweb yes
+   #+begin_src tmate :window cluster-api-apply :session packet-cluster-api :noweb yes
+     export CLUSTER_NAME="$USER-humacs"
+     kubectl -n "$CLUSTER_NAME" apply -f cluster-packet-"$CLUSTER_NAME".yaml
+   #+end_src
+
+** View logs
+
+#+begin_src tmate :window ssh :session packet-cluster-api :noweb yes
   export CLUSTER_NAME="$USER-humacs"
-  kubectl -n "$CLUSTER_NAME" apply -f cluster-packet-"$CLUSTER_NAME".yaml
+  ssh root@$(kubectl -n "$CLUSTER_NAME" get cluster "$CLUSTER_NAME" -o=jsonpath='{.spec.controlPlaneEndpoint.host}')
+  tail -f /var/log/cloud-init-output.log
 #+end_src
 
 ** Get the Kubeconfig
 
-#+begin_src tmate :window terraform-apply :session packet-terraform :noweb yes
-  export CLUSTER_NAME="$USER-humacs"
-  kubectl -n "$CLUSTER_NAME" get secrets "$CLUSTER_NAME"-kubeconfig -o=jsonpath='{.data.value}' | base64 -d > ~/.kube/packet
-#+end_src
+   #+begin_src tmate :window cluster-api-apply :session packet-cluster-api :noweb yes
+     export CLUSTER_NAME="$USER-humacs"
+     kubectl -n "$CLUSTER_NAME" get secrets "$CLUSTER_NAME"-kubeconfig -o=jsonpath='{.data.value}' | base64 -d > ~/.kube/packet-"$CLUSTER_NAME"
+   #+end_src
+
+** Attach to Kubemacs
+   #+begin_src tmate :window humacs-cluster :session packet-cluster-api :noweb yes
+     export CLUSTER_NAME=<<get-cluster-name()>>
+     export KUBECONFIG="$HOME/.kube/packet-$CLUSTER_NAME"
+     kubectl wait -n "$CLUSTER_NAME" --for=condition=ready pod --selector=app.kubernetes.io/name="humacs" --timeout=90s
+     kubectl -n "$CLUSTER_NAME" exec -it "$CLUSTER_NAME"-0 -- attach
+   #+end_src
 
 ** info
 
-#+begin_src bash :var KUBECONFIG=(concat user-home-directory ".kube/packet")
-  export KUBECONFIG
-  kubectl get nodes
-#+end_src
+   #+begin_src bash :var KUBECONFIG=(concat user-home-directory ".kube/packet")
+     export KUBECONFIG
+     kubectl get nodes
+   #+end_src
 
-#+RESULTS:
-#+begin_src bash
-#+end_src
+   #+RESULTS:
+   #+begin_src bash
+   #+end_src
 
-#+begin_src bash :var KUBECONFIG=(concat user-home-directory ".kube/packet")
-  export KUBECONFIG
-  kubectl get cluster -A
-#+end_src
+   #+begin_src bash :var KUBECONFIG=(concat user-home-directory ".kube/packet")
+     export KUBECONFIG
+     kubectl get cluster -A
+   #+end_src
 
-#+RESULTS:
-#+begin_src bash
-#+end_src
+   #+RESULTS:
+   #+begin_src bash
+   #+end_src
 * foo
 
-#+begin_src elisp :results none
-  ;; The IP address of our control plane
-  (setenv "PACKET_MASTER"
-     (shell-command-to-string "kubectl get cluster -n hh-kubemacs hh-kubemacs -o=jsonpath='{.spec.controlPlaneEndpoint.host}'"))
-     ;; (shell-command-to-string "kubectl get cluster -n hh-humacs hh-humacs -o=jsonpath='{.spec.controlPlaneEndpoint.host}'"))
-#+end_src
+  #+begin_src elisp :results none
+    ;; The IP address of our control plane
+    (setenv "PACKET_MASTER"
+            (shell-command-to-string "kubectl get cluster -n hh-kubemacs hh-kubemacs -o=jsonpath='{.spec.controlPlaneEndpoint.host}'"))
+    ;; (shell-command-to-string "kubectl get cluster -n hh-humacs hh-humacs -o=jsonpath='{.spec.controlPlaneEndpoint.host}'"))
+  #+end_src
 
-#+begin_src elisp :results none
-  ;; The tramp url for emacs
-  (setenv "PACKET_TRAMP"
-   (concat "/scp:root@" (getenv "PACKET_MASTER")
-                   ":"))
-#+end_src
+  #+begin_src elisp :results none
+    ;; The tramp url for emacs
+    (setenv "PACKET_TRAMP"
+            (concat "/scp:root@" (getenv "PACKET_MASTER")
+                    ":"))
+  #+end_src
 
-#+begin_src bash :var PACKET_MASTER=(getenv "PACKET_MASTER") :prologue "(" :epilogue ") 2>&1\n:"
-  # works later, but early, we need another way to grab it
-  PACKET_MASTER=$(kubectl get cluster -n hh-humacs hh-humacs -o=jsonpath='{.spec.controlPlaneEndpoint.host}')
-  PACKET_MASTER=$(kubectl get cluster -n hh-kubemacs hh-kubemacs -o=jsonpath='{.spec.controlPlaneEndpoint.host}')
-  ssh -o "StrictHostKeyChecking=no" -A root@$PACKET_MASTER hostname
-#+end_src
+  #+begin_src bash :var PACKET_MASTER=(getenv "PACKET_MASTER") :prologue "(" :epilogue ") 2>&1\n:"
+    # works later, but early, we need another way to grab it
+    PACKET_MASTER=$(kubectl get cluster -n hh-humacs hh-humacs -o=jsonpath='{.spec.controlPlaneEndpoint.host}')
+    PACKET_MASTER=$(kubectl get cluster -n hh-kubemacs hh-kubemacs -o=jsonpath='{.spec.controlPlaneEndpoint.host}')
+    ssh -o "StrictHostKeyChecking=no" -A root@$PACKET_MASTER hostname
+  #+end_src
 
-#+RESULTS:
-#+begin_src bash
-hh-humacs-control-plane-kh5x4
-#+end_src
+  #+RESULTS:
+  #+begin_src bash
+    hh-humacs-control-plane-kh5x4
+  #+end_src
 
-#+begin_src emacs-lisp :wrap "src org"
-  (getenv "PACKET_TRAMP")
-#+end_src
+  #+begin_src emacs-lisp :wrap "src org"
+    (getenv "PACKET_TRAMP")
+  #+end_src
 
-#+RESULTS:
-#+begin_src org
-/scp:root@139.178.89.30:
-#+end_src
+  #+RESULTS:
+  #+begin_src org
+    /scp:root@139.178.89.30:
+  #+end_src
 
 * Debugging why apiserver isn't starting
-#+begin_src bash :dir (getenv "PACKET_TRAMP") :prologue "(" :epilogue ") 2>&1\n:"
-  docker logs $(docker ps -a | grep \"kube-apiserver | awk '{print $13}')
-#+end_src
+  #+begin_src bash :dir (getenv "PACKET_TRAMP") :prologue "(" :epilogue ") 2>&1\n:"
+    docker logs $(docker ps -a | grep \"kube-apiserver | awk '{print $13}')
+  #+end_src
 
-#+RESULTS:
-#+begin_src bash
-Flag --insecure-port has been deprecated, This flag will be removed in a future version.
-I0831 21:13:55.052829       1 server.go:625] external host was not specified, using 139.178.68.93
-I0831 21:13:55.053054       1 server.go:163] Version: v1.19.0
-Error: initializing audit webhook: invalid configuration: no configuration has been provided, try setting KUBERNETES_MASTER environment variable
-#+end_src
+  #+RESULTS:
+  #+begin_src bash
+    Flag --insecure-port has been deprecated, This flag will be removed in a future version.
+    I0831 21:13:55.052829       1 server.go:625] external host was not specified, using 139.178.68.93
+                                                 I0831 21:13:55.053054       1 server.go:163] Version: v1.19.0
+                                                                                              Error: initializing audit webhook: invalid configuration: no configuration has been provided, try setting KUBERNETES_MASTER environment variable
+  #+end_src
 
-#+begin_src bash :dir (getenv "PACKET_TRAMP") :prologue "(" :epilogue ") 2>&1\n:" :async yes :wrap "src yaml"
-  cat /etc/kubernetes/pki/audit-sink.yaml
-#+end_src
+  #+begin_src bash :dir (getenv "PACKET_TRAMP") :prologue "(" :epilogue ") 2>&1\n:" :async yes :wrap "src yaml"
+    cat /etc/kubernetes/pki/audit-sink.yaml
+  #+end_src
 
-#+RESULTS:
-#+begin_src yaml
-apiVersion: v1
-kind: Config
-clusters:
-  - cluster:
-      server: http://10.96.96.96:9900/events
-      name: auditsink-cluster
-contexts:
-  - context:
-      cluster: auditsink-cluster
-      user: ""
-    name: auditsink-context
-current-context: auditsink-context
-users: []
-preferences: {}
-#+end_src
+  #+RESULTS:
+  #+begin_src yaml
+    apiVersion: v1
+    kind: Config
+    clusters:
+      - cluster:
+          server: http://10.96.96.96:9900/events
+          name: auditsink-cluster
+          contexts:
+            - context:
+                cluster: auditsink-cluster
+                user: ""
+                name: auditsink-context
+                current-context: auditsink-context
+                users: []
+                preferences: {}
+  #+end_src
 
-#+begin_src bash :dir (getenv "PACKET_TRAMP") :prologue "(" :epilogue ") 2>&1\n:" :async yes :wrap "src yaml"
-  cat /etc/kubernetes/pki/audit-policy.yaml
-#+end_src
+  #+begin_src bash :dir (getenv "PACKET_TRAMP") :prologue "(" :epilogue ") 2>&1\n:" :async yes :wrap "src yaml"
+    cat /etc/kubernetes/pki/audit-policy.yaml
+  #+end_src
 
-#+RESULTS:
-#+begin_src yaml
-apiVersion: audit.k8s.io/v1
-kind: Policy
-rules:
-  - level: RequestResponse
-#+end_src
-
-
-#+begin_src bash :dir (getenv "PACKET_TRAMP") :prologue "(" :epilogue ") 2>&1\n:" :async yes
-  ls -a /etc/kubernetes | cat
-#+end_src
-
-#+RESULTS:
-#+begin_src bash
-.
-..
-admin.conf
-controller-manager.conf
-kubelet.conf
-manifests
-pki
-scheduler.conf
-#+end_src
-
-#+begin_src bash :dir (getenv "PACKET_TRAMP") :prologue "(" :epilogue ") 2>&1\n:" :async yes
-  ls -a /etc/kubernetes/pki | cat
-#+end_src
-
-#+RESULTS:
-#+begin_src bash
-.
-..
-apiserver.crt
-apiserver-etcd-client.crt
-apiserver-etcd-client.key
-apiserver.key
-apiserver-kubelet-client.crt
-apiserver-kubelet-client.key
-audit-policy.yaml
-audit-sink.yaml
-ca.crt
-ca.key
-etcd
-front-proxy-ca.crt
-front-proxy-ca.key
-front-proxy-client.crt
-front-proxy-client.key
-sa.key
-sa.pub
-#+end_src
-
-#+begin_src bash :dir (getenv "PACKET_TRAMP") :prologue "(" :epilogue ") 2>&1\n:" :async yes
-  ls -a /etc/kubernetes/manifests | cat
-#+end_src
-
-#+RESULTS:
-#+begin_src bash
-.
-..
-etcd.yaml
-kube-apiserver.yaml
-kube-controller-manager.yaml
-kube-scheduler.yaml
-#+end_src
+  #+RESULTS:
+  #+begin_src yaml
+    apiVersion: audit.k8s.io/v1
+    kind: Policy
+    rules:
+      - level: RequestResponse
+  #+end_src
 
 
-#+begin_src bash :dir (getenv "PACKET_TRAMP") :prologue "(" :epilogue ") 2>&1\n:" :async yes :wrap "src yaml"
-  cat /etc/kubernetes/manifests/kube-apiserver.yaml \
-    | yq .spec.containers[0].command -r | cat
-#+end_src
+  #+begin_src bash :dir (getenv "PACKET_TRAMP") :prologue "(" :epilogue ") 2>&1\n:" :async yes
+    ls -a /etc/kubernetes | cat
+  #+end_src
 
-#+RESULTS:
-#+begin_src yaml
+  #+RESULTS:
+  #+begin_src bash
+    .
+    ..
+    admin.conf
+    controller-manager.conf
+    kubelet.conf
+    manifests
+    pki
+    scheduler.conf
+  #+end_src
+
+  #+begin_src bash :dir (getenv "PACKET_TRAMP") :prologue "(" :epilogue ") 2>&1\n:" :async yes
+    ls -a /etc/kubernetes/pki | cat
+  #+end_src
+
+  #+RESULTS:
+  #+begin_src bash
+    .
+    ..
+    apiserver.crt
+    apiserver-etcd-client.crt
+    apiserver-etcd-client.key
+    apiserver.key
+    apiserver-kubelet-client.crt
+    apiserver-kubelet-client.key
+    audit-policy.yaml
+    audit-sink.yaml
+    ca.crt
+    ca.key
+    etcd
+    front-proxy-ca.crt
+    front-proxy-ca.key
+    front-proxy-client.crt
+    front-proxy-client.key
+    sa.key
+    sa.pub
+  #+end_src
+
+  #+begin_src bash :dir (getenv "PACKET_TRAMP") :prologue "(" :epilogue ") 2>&1\n:" :async yes
+    ls -a /etc/kubernetes/manifests | cat
+  #+end_src
+
+  #+RESULTS:
+  #+begin_src bash
+    .
+    ..
+    etcd.yaml
+    kube-apiserver.yaml
+    kube-controller-manager.yaml
+    kube-scheduler.yaml
+  #+end_src
+
+
+  #+begin_src bash :dir (getenv "PACKET_TRAMP") :prologue "(" :epilogue ") 2>&1\n:" :async yes :wrap "src yaml"
+    cat /etc/kubernetes/manifests/kube-apiserver.yaml \
+        | yq .spec.containers[0].command -r | cat
+  #+end_src
+
+  #+RESULTS:
+  #+begin_src yaml
 [
   "kube-apiserver",
   "--advertise-address=139.178.69.79",
@@ -293,3 +331,5 @@ kube-scheduler.yaml
   "--tls-private-key-file=/etc/kubernetes/pki/apiserver.key"
 ]
 #+end_src
+
+,

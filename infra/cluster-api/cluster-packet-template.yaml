@@ -38,24 +38,27 @@ spec:
           netmask 255.255.255.255
         EOF
     - systemctl restart networking
-    - 'kubectl --kubeconfig /etc/kubernetes/admin.conf create secret generic -n kube-system packet-cloud-config --from-literal=cloud-sa.json=''{"apiKey": "{{ .apiKey }}","projectID": "${PROJECT_ID}", "eipTag": "cluster-api-provider-packet:cluster-id:${CLUSTER_NAME}"}'''
-    - kubectl --kubeconfig /etc/kubernetes/admin.conf taint node --all node-role.kubernetes.io/master-
-    - kubectl apply --kubeconfig /etc/kubernetes/admin.conf -f https://github.com/packethost/packet-ccm/releases/download/v1.1.0/deployment.yaml
-    - kubectl apply --kubeconfig /etc/kubernetes/admin.conf -f https://github.com/packethost/csi-packet/raw/master/deploy/kubernetes/setup.yaml
-    - kubectl apply --kubeconfig /etc/kubernetes/admin.conf -f https://github.com/packethost/csi-packet/raw/master/deploy/kubernetes/node.yaml
-    - kubectl apply --kubeconfig /etc/kubernetes/admin.conf -f https://github.com/packethost/csi-packet/raw/master/deploy/kubernetes/controller.yaml
-    - kubectl apply --kubeconfig /etc/kubernetes/admin.conf -f https://github.com/jetstack/cert-manager/releases/download/v0.16.1/cert-manager.yaml
-    - kubectl apply --kubeconfig /etc/kubernetes/admin.conf -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')&env.IPALLOC_RANGE=192.168.0.0/16"
+    - mkdir -p /root/.kube;
+    - cp -i /etc/kubernetes/admin.conf /root/.kube/config
+    - export KUBECONFIG=/root/.kube/config
+    - 'kubectl create secret generic -n kube-system packet-cloud-config --from-literal=cloud-sa.json=''{"apiKey": "{{ .apiKey }}","projectID": "${PROJECT_ID}", "eipTag": "cluster-api-provider-packet:cluster-id:${CLUSTER_NAME}"}'''
+    - kubectl taint node --all node-role.kubernetes.io/master-
+    - kubectl apply -f https://github.com/packethost/packet-ccm/releases/download/v1.1.0/deployment.yaml
+    - kubectl apply -f https://github.com/packethost/csi-packet/raw/master/deploy/kubernetes/setup.yaml
+    - kubectl apply -f https://github.com/packethost/csi-packet/raw/master/deploy/kubernetes/node.yaml
+    - kubectl apply -f https://github.com/packethost/csi-packet/raw/master/deploy/kubernetes/controller.yaml
+    - kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v0.16.1/cert-manager.yaml
+    - kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')&env.IPALLOC_RANGE=192.168.0.0/16"
     - curl -L https://get.helm.sh/helm-v3.3.0-linux-amd64.tar.gz | tar --directory /usr/local/bin --extract -xz --strip-components 1 linux-amd64/helm
     - |
         (
-          helm --kubeconfig /etc/kubernetes/admin.conf repo add nginx-ingress https://kubernetes.github.io/ingress-nginx;
-          kubectl --kubeconfig /etc/kubernetes/admin.conf create ns nginx-ingress;
-          helm --kubeconfig /etc/kubernetes/admin.conf install nginx-ingress -n nginx-ingress nginx-ingress/ingress-nginx;
-          kubectl --kubeconfig /etc/kubernetes/admin.conf wait -n nginx-ingress --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=90s
+          helm repo add nginx-ingress https://kubernetes.github.io/ingress-nginx;
+          kubectl create ns nginx-ingress;
+          helm install nginx-ingress -n nginx-ingress nginx-ingress/ingress-nginx;
+          kubectl wait -n nginx-ingress --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=90s
         )
     - |
-        kubectl --kubeconfig /etc/kubernetes/admin.conf get configmap kube-proxy -n kube-system -o yaml | sed -e "s/strictARP: false/strictARP: true/" | kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f - -n kube-system
+        kubectl get configmap kube-proxy -n kube-system -o yaml | sed -e "s/strictARP: false/strictARP: true/" | kubectl apply -f - -n kube-system
     - |
       cat <<EOF > /root/metallb-system-config.yaml
       apiVersion: v1
@@ -73,10 +76,10 @@ spec:
       EOF
     - |
         (
-          kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manifests/namespace.yaml;
-          kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manifests/metallb.yaml;
-          kubectl --kubeconfig /etc/kubernetes/admin.conf create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)";
-          kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f /root/metallb-system-config.yaml
+          kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manifests/namespace.yaml;
+          kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manifests/metallb.yaml;
+          kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)";
+          kubectl apply -f /root/metallb-system-config.yaml
         )
     - |
         (
@@ -87,7 +90,16 @@ spec:
           export CURRENT_IP=127.0.0.1; # the default
           export NEW_IP={{ .controlPlaneEndpoint }}; # or IP of choice
           sed -i s:$CURRENT_IP:$NEW_IP:g kustomize/*yaml;
-          kubectl --kubeconfig /etc/kubernetes/admin.conf apply -k kustomize
+          kubectl apply -k kustomize
+        )
+    - |
+        (
+          set -x;
+          cd /root;
+          git clone https://github.com/humacs/humacs;
+          cd humacs;
+          kubectl create ns ${CLUSTER_NAME}
+          helm install "${CLUSTER_NAME}" -n "${CLUSTER_NAME}" -f chart/humacs/values/apisnoop.yaml --set options.timezone="${HUMACS_TZ}" --set options.gitName="${HUMACS_GIT_NAME}" --set options.gitEmail="${HUMACS_GIT_EMAIL}" --set options.profile="${HUMACS_PROFILE}" chart/humacs
         )
 
     preKubeadmCommands:
