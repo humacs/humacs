@@ -68,6 +68,16 @@
    #+begin_example
    #+end_example
 
+** Wait until ready
+#+begin_src tmate :window cluster-api-apply :session packet-cluster-api :noweb yes
+  kubectl wait -n cluster-api-provider-packet-system --for=condition=ready pod --selector=control-plane=controller-manager --timeout=90s
+#+end_src
+
+** View logs
+#+begin_src tmate :window cluster-api-apply :session packet-cluster-api :noweb yes
+  kubectl -n cluster-api-provider-packet-system logs -l control-plane=controller-manager -c manager
+#+end_src
+
 * Cluster-API
 ** Create configuration for the Packet machine
 
@@ -105,6 +115,13 @@
      kubectl -n "$CLUSTER_NAME" apply -f cluster-packet-"$CLUSTER_NAME".yaml
    #+end_src
 
+** Get the Kubeconfig
+
+   #+begin_src tmate :window cluster-api-apply :session packet-cluster-api :noweb yes
+     export CLUSTER_NAME="$USER-humacs"
+     kubectl -n "$CLUSTER_NAME" get secrets "$CLUSTER_NAME"-kubeconfig -o=jsonpath='{.data.value}' | base64 -d > ~/.kube/packet-"$CLUSTER_NAME"
+   #+end_src
+
 ** View logs
 
 #+begin_src tmate :window ssh :session packet-cluster-api :noweb yes
@@ -112,13 +129,6 @@
   ssh root@$(kubectl -n "$CLUSTER_NAME" get cluster "$CLUSTER_NAME" -o=jsonpath='{.spec.controlPlaneEndpoint.host}')
   tail -f /var/log/cloud-init-output.log
 #+end_src
-
-** Get the Kubeconfig
-
-   #+begin_src tmate :window cluster-api-apply :session packet-cluster-api :noweb yes
-     export CLUSTER_NAME="$USER-humacs"
-     kubectl -n "$CLUSTER_NAME" get secrets "$CLUSTER_NAME"-kubeconfig -o=jsonpath='{.data.value}' | base64 -d > ~/.kube/packet-"$CLUSTER_NAME"
-   #+end_src
 
 ** Attach to Kubemacs
    #+begin_src tmate :window humacs-cluster :session packet-cluster-api :noweb yes
