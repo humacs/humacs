@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=humacs/humacs:2020.09.03
+ARG BASE_IMAGE=humacs/humacs:2020.09.04
 FROM $BASE_IMAGE
 ENV EMACS_VERSION=26.3 \
   DOCKER_VERSION=19.03.12 \
@@ -58,10 +58,10 @@ RUN DEBIAN_FRONTEND=noninteractive \
   language-pack-en \
   fonts-powerline
 
-RUN mkdir /home/humacs/.kube
-ADD homedir/kubeconfig /home/humacs/.kube/config
+RUN mkdir /home/ii/.kube
+ADD homedir/kubeconfig /home/ii/.kube/config
 
 RUN localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 ENV LANG en_US.utf8
 
-USER humacs
+USER ii
