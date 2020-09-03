@@ -1,6 +1,9 @@
 (
- ("ii" . ((user-emacs-directory . "~/humacs/spacemacs")
-                 (env . (("SPACEMACSDIR" . "~/humacs/ii-config")))))
+ ("default" . ((user-emacs-directory . humacs-emacs-directory)
+               (env . (
+                       ("SPACEMACSDIR" . humacs-spacemacs-directory)
+                       ("DOOMDIR" . humacs-doom-directory)
+                       ))))
  ("wilinux" . ((user-emacs-directory . "~/humacs/spacemacs")
                  (env . (("SPACEMACSDIR" . "~/humacs/wilinux-config")))))
  ("doom" . ((user-emacs-directory . "~/humacs/doom-emacs")
