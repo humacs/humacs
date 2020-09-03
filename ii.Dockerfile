@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=humacs/humacs:2020.08.19
+ARG BASE_IMAGE=humacs/humacs:2020.09.03
 FROM $BASE_IMAGE
 ENV EMACS_VERSION=26.3 \
   DOCKER_VERSION=19.03.12 \
@@ -27,7 +27,7 @@ RUN curl -L https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL
 RUN curl -fsSL \
     https://github.com/windmilleng/tilt/releases/download/v${TILT_VERSION}/tilt.${TILT_VERSION}.linux.x86_64.tar.gz \
     | tar --directory /usr/local/bin --extract --ungzip tilt
-# install golang
+# golang binary
 RUN curl -L https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz \
     | tar --directory /usr/local --extract --ungzip
 # tmate allows others to connect to your session
@@ -36,10 +36,14 @@ RUN curl -L \
     https://github.com/tmate-io/tmate/releases/download/${TMATE_VERSION}/tmate-${TMATE_VERSION}-static-linux-amd64.tar.xz \
     | tar --directory /usr/local/bin --extract --xz \
     --strip-components 1 tmate-${TMATE_VERSION}-static-linux-amd64/tmate
+# helm binary
 RUN curl -L https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz | tar --directory /usr/local/bin --extract -xz --strip-components 1 linux-amd64/helm
+# bazel binary
 RUN curl -L -o /usr/local/bin/bazel https://github.com/bazelbuild/bazel/releases/download/${BAZEL_VERSION}/bazel-${BAZEL_VERSION}-linux-x86_64 && \
-    chmod +x /usr/local/bin/bazel && bazel
+  chmod +x /usr/local/bin/bazel && bazel
+# gopls binary
 RUN /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get golang.org/x/tools/gopls@latest \
+# gocode binary
     && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/stamblerre/gocode
 
 RUN DEBIAN_FRONTEND=noninteractive \
@@ -59,7 +63,5 @@ ADD homedir/kubeconfig /home/humacs/.kube/config
 
 RUN localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 ENV LANG en_US.utf8
-
-RUN echo ii > /etc/skel/.emacs-profile
 
 USER humacs

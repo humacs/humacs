@@ -34,16 +34,16 @@ RUN DEBIAN_FRONTEND=noninteractive \
   unzip \
   iputils-ping \
   file
-ADD . /etc/skel/humacs
+ADD bin /usr/local/bin
+ADD --chown=root:users . /var/local/humacs
+ENV EMACSLOADPATH=/var/local/humacs: \
+  HUMACS_PROFILE=ii
 COPY homedir/.tmate.conf /etc/skel
 COPY homedir/.tmux.conf /etc/skel
-ADD bin /usr/local/bin
 RUN mkdir -p /etc/sudoers.d && \
   echo "%sudo    ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/sudo && \
-  cd /etc/skel/humacs && \
-  ln -sf /etc/skel/humacs/.emacs-profiles.el ../ && \
-  ln -sf /etc/skel/humacs/.emacs-profile ../ && \
-  ln -sf /etc/skel/humacs/chemacs/.emacs ../ && \
   useradd -m -G users,sudo -u 1000 -s /bin/bash humacs
-RUN su humacs -c 'cd && emacs -batch -l ~/.emacs'
+RUN su humacs -c 'curl -L https://github.com/humacs/humacs/releases/download/0.0.1-alpha/spacemacs-elpa-cache-2020.08.28.tgz | tar xvzC /var/local/humacs/spacemacs'
+RUN su humacs -c 'cd && emacs -batch -l /var/local/humacs/default.el'
+
 WORKDIR /home/humacs
