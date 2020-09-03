@@ -35,3 +35,24 @@ emacs --with-profile spacemacs
 ~/humacs/doom-emacs/bin/doom sync
 emacs --with-profile doom
 #+end_src
+* Installing vi Helm
+
+You can have different values, here is one for APISnoop:
+
+#+begin_src shell
+  helm install humacs --namespace humacs -f ./chart/humacs/values/apisnoop.yaml ./chart/humacs/
+#+end_src
+
+#+RESULTS:
+#+begin_example
+NAME: humacs
+LAST DEPLOYED: Mon Aug  3 15:15:42 2020
+NAMESPACE: humacs
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+1. Attach to the tmate session humacs
+  export POD_NAME=$(kubectl get pods --namespace humacs -l "app.kubernetes.io/name=humacs,app.kubernetes.io/instance=humacs" -o jsonpath="{.items[0].metadata.name}")
+  kubectl --namespace humacs exec -it $POD_NAME -- attach
+#+end_example
