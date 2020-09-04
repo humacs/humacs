@@ -22,7 +22,7 @@ extraEnvVars: []
 
 image:
   repository: humacs/ii
-  tag: 2020.09.03
+  tag: 2020.09.04
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []

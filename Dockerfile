@@ -32,18 +32,24 @@ RUN DEBIAN_FRONTEND=noninteractive \
   vim \
   rsync \
   unzip \
+  direnv \
   iputils-ping \
   file
 ADD bin /usr/local/bin
-ADD --chown=root:users . /var/local/humacs
 ENV EMACSLOADPATH=/var/local/humacs: \
-  HUMACS_PROFILE=ii
+  HUMACS_PROFILE=ii \
+  DOOMDIR=/var/local/humacs/zz-config
 COPY homedir/.tmate.conf /etc/skel
 COPY homedir/.tmux.conf /etc/skel
 RUN mkdir -p /etc/sudoers.d && \
   echo "%sudo    ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/sudo && \
-  useradd -m -G users,sudo -u 1000 -s /bin/bash humacs
-RUN su humacs -c 'curl -L https://github.com/humacs/humacs/releases/download/0.0.1-alpha/spacemacs-elpa-cache-2020.08.28.tgz | tar xvzC /var/local/humacs/spacemacs'
-RUN su humacs -c 'cd && emacs -batch -l /var/local/humacs/default.el'
+  useradd -m -G users,sudo -u 1000 -s /bin/bash ii
+ADD --chown=ii:users . /var/local/humacs
+RUN su ii -c 'curl -L https://github.com/humacs/humacs/releases/download/0.0.1-alpha/spacemacs-elpa-cache-2020.08.28.tgz | tar xvzC /var/local/humacs/spacemacs'
+# spacemacs cache
+RUN su ii -c 'cd && emacs -batch -l /var/local/humacs/default.el'
+# doom install/sync
+RUN su ii -c 'cd && yes | /var/local/humacs/doom-emacs/bin/doom install --no-env'
+RUN su ii -c 'cd && yes | /var/local/humacs/doom-emacs/bin/doom sync -e'
 
-WORKDIR /home/humacs
+WORKDIR /home/ii
