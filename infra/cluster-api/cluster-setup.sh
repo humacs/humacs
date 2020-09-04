@@ -12,6 +12,8 @@ kubectl wait -n capi-webhook-system \
         --for=condition=Available \
         --timeout=600s \
         deployment/capi-kubeadm-control-plane-controller-manager
+# Trying to avoid Error from server (InternalError): error when creating "cluster-packet-hh-humacs.yaml": Internal error occurred: failed calling webhook "default.kubeadmcontrolplane.controlplane.cluster.x-k8s.io": Post https://capi-kubeadm-control-plane-webhook-service.capi-webhook-system.svc:443/mutate-controlplane-cluster-x-k8s-io-v1alpha3-kubeadmcontrolplane?timeout=30s: dial tcp 10.103.29.156:443: connect: connection refused
+sleep 10
 kubectl create ns "$CLUSTER_NAME"
 clusterctl config cluster "$CLUSTER_NAME" \
            --from ./cluster-packet-template.yaml \
