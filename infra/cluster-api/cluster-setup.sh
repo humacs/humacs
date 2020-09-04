@@ -2,16 +2,15 @@
 . vars.env
 . secrets.env # look at secrets.env.example
 set -x
-#set -e
 clusterctl init --infrastructure=packet
 kubectl wait -n cluster-api-provider-packet-system \
         --for=condition=ready \
         --selector=control-plane=controller-manager \
-        --timeout=300s \
+        --timeout=600s \
         pod
 kubectl wait -n capi-webhook-system \
         --for=condition=Available \
-        --timeout=300s \
+        --timeout=600s \
         deployment/capi-kubeadm-control-plane-controller-manager
 kubectl create ns "$CLUSTER_NAME"
 clusterctl config cluster "$CLUSTER_NAME" \
@@ -23,7 +22,7 @@ sleep 15 # wait enough for the machine to exist
 kubectl wait -n $CLUSTER_NAME \
         --for=condition=Ready \
         --selector=cluster.x-k8s.io/cluster-name=$CLUSTER_NAME \
-        --timeout=300s \
+        --timeout=600s \
         machine
 UUID=$(kubectl get -n $CLUSTER_NAME \
                --selector=cluster.x-k8s.io/cluster-name=$CLUSTER_NAME\

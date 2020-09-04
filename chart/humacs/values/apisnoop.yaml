@@ -12,7 +12,7 @@ options:
     - https://github.com/cncf/apisnoop
     - https://github.com/kubernetes/kubernetes
   workingDirectory: "/home/ii"
-  workingFile: /home/ii/apisnoop/README.org
+  workingFile: /home/ii/apisnoop/tickets/k8s/mock-ticket.org
   preinitScript: |
     (
       echo 'Welcome to Humacs' 
