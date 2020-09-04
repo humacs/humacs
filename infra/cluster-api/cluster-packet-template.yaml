@@ -41,7 +41,7 @@ spec:
     - mkdir -p /root/.kube;
     - cp -i /etc/kubernetes/admin.conf /root/.kube/config
     - export KUBECONFIG=/root/.kube/config
-    - 'kubectl create secret generic -n kube-system packet-cloud-config --from-literal=cloud-sa.json=''{"apiKey": "{{ .apiKey }}","projectID": "${PROJECT_ID}", "eipTag": "cluster-api-provider-packet:cluster-id:${CLUSTER_NAME}"}'''
+    - 'kubectl create secret generic -n kube-system packet-cloud-config --from-literal=cloud-sa.json=''{"apiKey": "{{ .apiKey }}","projectID": "${PACKET_PROJECT_ID}", "eipTag": "cluster-api-provider-packet:cluster-id:${CLUSTER_NAME}"}'''
     - kubectl taint node --all node-role.kubernetes.io/master-
     - kubectl apply -f https://github.com/packethost/packet-ccm/releases/download/v1.1.0/deployment.yaml
     - kubectl apply -f https://github.com/packethost/csi-packet/raw/master/deploy/kubernetes/setup.yaml
@@ -184,7 +184,7 @@ kind: PacketCluster
 metadata:
   name: "${CLUSTER_NAME}"
 spec:
-  projectID: "${PROJECT_ID}"
+  projectID: "${PACKET_PROJECT_ID}"
   facility: "${FACILITY}"
 ---
 apiVersion: cluster.x-k8s.io/v1alpha3
