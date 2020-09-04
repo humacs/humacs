@@ -1,9 +1,8 @@
 ARG BASE_IMAGE=humacs/humacs:2020.09.04
 FROM $BASE_IMAGE
-ENV EMACS_VERSION=26.3 \
-  DOCKER_VERSION=19.03.12 \
+ENV DOCKER_VERSION=19.03.12 \
   KIND_VERSION=0.8.1 \
-  KUBECTL_VERSION=1.18.8 \
+  KUBECTL_VERSION=1.19.0 \
   GO_VERSION=1.15 \
   TILT_VERSION=0.17.2 \
   TMATE_VERSION=2.4.0 \
@@ -27,6 +26,10 @@ RUN curl -L https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL
 RUN curl -fsSL \
     https://github.com/windmilleng/tilt/releases/download/v${TILT_VERSION}/tilt.${TILT_VERSION}.linux.x86_64.tar.gz \
     | tar --directory /usr/local/bin --extract --ungzip tilt
+# another approach to golang
+RUN curl -sLo /usr/local/bin/gimme \
+  https://raw.githubusercontent.com/travis-ci/gimme/master/gimme \
+  && chmod +x /usr/local/bin/gimme
 # golang binary
 RUN curl -L https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz \
     | tar --directory /usr/local --extract --ungzip
@@ -58,7 +61,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
   language-pack-en \
   fonts-powerline
 
-ENV KUBECONFIG=/var/local/humacs/homedir/kubeconfig
+# ENV KUBECONFIG=/var/local/humacs/homedir/kubeconfig
 
 RUN localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 ENV LANG en_US.utf8
