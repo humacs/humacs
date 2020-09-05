@@ -10,8 +10,8 @@ options:
   gitName: ""
   gitEmail: ""
   repos: []
-  workingDirectory: /home/humacs
-  workingFile: /home/humacs
+  workingDirectory: /home/ii
+  workingFile: /home/ii
   preinitScript: |
     (
       echo 'Welcome to Humacs' 

@@ -1,7 +1,3 @@
-[submodule "chemacs"]
-	path = chemacs
-	url = https://github.com/plexus/chemacs
-	branch = master
 [submodule "spacemacs"]
 	path = spacemacs
 	url = https://github.com/humacs/spacemacs
@@ -9,10 +5,6 @@
 [submodule "doom-emacs"]
 	path = doom-emacs
 	url = https://github.com/hlissner/doom-emacs
-	branch = master
-[submodule "prelude"]
-	path = prelude
-	url = https://github.com/bbatsov/prelude
 	branch = master
 [submodule "ii-config"]
 	path = ii-config

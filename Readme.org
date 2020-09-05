@@ -1,58 +1,43 @@
 #+TITLE: Humacs (emacs for humans!)
 * Humacs
 
-** Install
-
-Can be to pretty much anywhere, symlinks are made from .emacs* to this folder via **install.sh**.
-
+** Usage
+*** Locally
 #+begin_src shell
 git clone --recursive https://github.com/humacs/humacs
-cd humacs
-./install.sh
+export EMACSLOADPATH=$(pwd)/humacs:
+emacs -nw
 #+end_src
-
-** resulting symlinks
-
+*** docker
+Simple:
 #+begin_src shell
-ls -laF ~/ | grep humacs | awk '{print $9, $10, $11}'
+docker run -ti --rm humacs/ii:2020.09.04 emacs
 #+end_src
-
-#+RESULTS:
-#+begin_example
-.emacs@ -> /Users/hh/humacs/chemacs/.emacs
-.emacs-profile@ -> /Users/hh/humacs/.emacs-profile
-.emacs-profiles.el@ -> /Users/hh/humacs/.emacs-profiles.el
-humacs/
-#+end_example
-** running different profiles
-
+With doom and mounted files:
 #+begin_src shell
-emacs --with-profile spacemacs
+docker run -ti --rm \
+  -e HUMACS_PROFILE=doom \
+  -v $(pwd):/workspace humacs/ii:2020.09.04 emacs /workspace
 #+end_src
-
+*** k8s/helm
 #+begin_src shell
-~/humacs/doom-emacs/bin/doom install
-~/humacs/doom-emacs/bin/doom sync
-emacs --with-profile doom
+  NAME=humacs
+  HUMACS_PROFILE=ii # doom, or others
+  HUMACS_TZ="Pacific/Auckland"
+  HUMACS_GIT_NAME="Hippie Hacker"
+  HUMACS_GIT_EMAIL="hh@ii.coop"
+  git clone https://github.com/humacs/humacs
+  cd humacs
+  kubectl create ns "${NAME}"
+  helm install "${NAME}" -n "${NAME}" \
+    -f chart/humacs/values/apisnoop.yaml \
+    --set options.timezone="${HUMACS_TZ}" \
+    --set options.gitName="${HUMACS_GIT_NAME}" \
+    --set options.gitEmail="${HUMACS_GIT_EMAIL}" \
+    --set options.profile="${HUMACS_PROFILE}" \
+    chart/humacs
 #+end_src
-* Installing vi Helm
-
-You can have different values, here is one for APISnoop:
-
+Once up and running, connect via kubectl:
 #+begin_src shell
-  helm install humacs --namespace humacs -f ./chart/humacs/values/apisnoop.yaml ./chart/humacs/
+  kubectl -n $NAME exec $NAME-humacs-0 -- attach
 #+end_src
-
-#+RESULTS:
-#+begin_example
-NAME: humacs
-LAST DEPLOYED: Mon Aug  3 15:15:42 2020
-NAMESPACE: humacs
-STATUS: deployed
-REVISION: 1
-TEST SUITE: None
-NOTES:
-1. Attach to the tmate session humacs
-  export POD_NAME=$(kubectl get pods --namespace humacs -l "app.kubernetes.io/name=humacs,app.kubernetes.io/instance=humacs" -o jsonpath="{.items[0].metadata.name}")
-  kubectl --namespace humacs exec -it $POD_NAME -- attach
-#+end_example
