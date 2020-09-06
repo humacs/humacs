@@ -15,7 +15,9 @@ options:
   workingFile: /home/ii/apisnoop/tickets/k8s/mock-ticket.org
   preinitScript: |
     (
-      echo 'Welcome to Humacs' 
+      echo 'Welcome to Humacs';
+      mkdir -p ~/.kube;
+      cp /var/local/humacs/homedir/kubeconfig ~/.kube/config
     )
 
 extraEnvVars: []
