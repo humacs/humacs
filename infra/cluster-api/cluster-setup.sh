@@ -53,7 +53,7 @@ ssh $UUID@sos.$FACILITY.packet.net
 kubectl -n "$CLUSTER_NAME" \
         get secrets "$CLUSTER_NAME"-kubeconfig \
         -o=jsonpath='{.data.value}' \
-    | base64 -d > ~/.kube/packet-"$CLUSTER_NAME"
+    | base64 --decode > ~/.kube/packet-"$CLUSTER_NAME"
 export KUBECONFIG=~/.kube/packet-"$CLUSTER_NAME"
 kubectl wait -n $CLUSTER_NAME \
         --for=condition=ready \
