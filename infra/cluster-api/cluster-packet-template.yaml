@@ -101,7 +101,13 @@ spec:
           kubectl create ns ${CLUSTER_NAME}
           helm install "${CLUSTER_NAME}" -n "${CLUSTER_NAME}" -f chart/humacs/values/apisnoop.yaml --set options.timezone="${HUMACS_TZ}" --set options.gitName="${HUMACS_GIT_NAME}" --set options.gitEmail="${HUMACS_GIT_EMAIL}" --set options.profile="${HUMACS_PROFILE}" chart/humacs
         )
-
+    - |
+        (
+          mkdir -p /etc/sudoers.d
+          echo "%sudo    ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/sudo
+          cp -a /root/.ssh /etc/skel/.ssh
+          useradd -m -G users,sudo -u 1000 -s /bin/bash ii
+        )
     preKubeadmCommands:
     - mkdir -p /etc/kubernetes/pki
     - |
