@@ -7,7 +7,7 @@ variables:
   DOCKERHUB_ORG: humacs
 
 .registry-login: &registry-login |
-  DOCKERHUB_AUTH=$(echo $DOCKERHUB_USER:$DOCKERHUB_TOKEN | base64)
+  export DOCKERHUB_AUTH=$(echo $DOCKERHUB_USER:$DOCKERHUB_TOKEN | base64)
   cat << EOF > /kaniko/.docker/config.json
   {
     "auths":{
