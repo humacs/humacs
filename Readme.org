@@ -1,43 +1,33 @@
-#+TITLE: Humacs (emacs for humans!)
+#+TITLE: Humacs
+
 * Humacs
 
-** Usage
-*** Locally
-#+begin_src shell
-git clone --recursive https://github.com/humacs/humacs
-export EMACSLOADPATH=$(pwd)/humacs:
-emacs -nw
-#+end_src
-*** docker
-Simple:
-#+begin_src shell
-docker run -ti --rm humacs/ii:2020.09.04 emacs
-#+end_src
-With doom and mounted files:
-#+begin_src shell
-docker run -ti --rm \
-  -e HUMACS_PROFILE=doom \
-  -v $(pwd):/workspace humacs/ii:2020.09.04 emacs /workspace
-#+end_src
-*** k8s/helm
-#+begin_src shell
-  NAME=humacs
-  HUMACS_PROFILE=ii # doom, or others
-  HUMACS_TZ="Pacific/Auckland"
-  HUMACS_GIT_NAME="Hippie Hacker"
-  HUMACS_GIT_EMAIL="hh@ii.coop"
-  git clone https://github.com/humacs/humacs
-  cd humacs
-  kubectl create ns "${NAME}"
-  helm install "${NAME}" -n "${NAME}" \
-    -f chart/humacs/values/apisnoop.yaml \
-    --set options.timezone="${HUMACS_TZ}" \
-    --set options.gitName="${HUMACS_GIT_NAME}" \
-    --set options.gitEmail="${HUMACS_GIT_EMAIL}" \
-    --set options.profile="${HUMACS_PROFILE}" \
-    chart/humacs
-#+end_src
-Once up and running, connect via kubectl:
-#+begin_src shell
-  kubectl -n $NAME exec $NAME-humacs-0 -- attach
-#+end_src
+#+begin_quote
+Macros for Humacs (aka Emacs for everyone)
+#+end_quote
+
+** Features
+
+- Extensible IDE
+- Runs everywhere
+  - Locally (Linux, macOS, Windows)
+  - Docker
+  - Kubernetes
+- Mnemonic based flow
+- Supports multiple configuration profiles in Emacs
+- Integrates with tmate and tmux for pairing
+
+** Philosophy
+
+Vanilla Emacs is inaccessable to most humans, therefore the power of Org mode based documentation and workflows is unavailable.
+
+Literate programming and DevOps when combined together make the documentation also executable - meaning for reproducable easily documented creations.
+
+** Installation and deployment
+
+To install or deploy, please checkout the [[./docs/DEPLOYMENT.org][deployment]] docs.
+
+** License
+Copyright 2020 ii.
+This project is licensed under the [BSD 2-clause](https://en.wikipedia.org/wiki/BSD_licenses#2-clause) and is [Open Source](https://en.wikipedia.org/wiki/Open_source).
+This program comes with absolutely no warranty.

@@ -1,60 +1,35 @@
 - [Humacs](#sec-1)
-  - [Usage](#sec-1-1)
-    - [Locally](#sec-1-1-1)
-    - [docker](#sec-1-1-2)
-    - [k8s/helm](#sec-1-1-3)
+  - [Features](#sec-1-1)
+  - [Philosophy](#sec-1-2)
+  - [Installation and deployment](#sec-1-3)
+  - [License](#sec-1-4)
 
 
 # Humacs<a id="sec-1"></a>
 
-## Usage<a id="sec-1-1"></a>
+> Macros for Humacs (aka Emacs for everyone)
 
-### Locally<a id="sec-1-1-1"></a>
+## Features<a id="sec-1-1"></a>
 
-```shell
-git clone --recursive https://github.com/humacs/humacs
-export EMACSLOADPATH=$(pwd)/humacs:
-emacs -nw
-```
+-   Extensible IDE
+-   Runs everywhere
+    -   Locally (Linux, macOS, Windows)
+    -   Docker
+    -   Kubernetes
+-   Mnemonic based flow
+-   Supports multiple configuration profiles in Emacs
+-   Integrates with tmate and tmux for pairing
 
-### docker<a id="sec-1-1-2"></a>
+## Philosophy<a id="sec-1-2"></a>
 
-Simple:
+Vanilla Emacs is inaccessable to most humans, therefore the power of Org mode based documentation and workflows is unavailable.
 
-```shell
-docker run -ti --rm humacs/ii:2020.09.04 emacs
-```
+Literate programming and DevOps when combined together make the documentation also executable - meaning for reproducable easily documented creations.
 
-With doom and mounted files:
+## Installation and deployment<a id="sec-1-3"></a>
 
-```shell
-docker run -ti --rm \
-  -e HUMACS_PROFILE=doom \
-  -v $(pwd):/workspace humacs/ii:2020.09.04 emacs /workspace
-```
+To install or deploy, please checkout the [deployment](./docs/DEPLOYMENT.md) docs.
 
-### k8s/helm<a id="sec-1-1-3"></a>
+## License<a id="sec-1-4"></a>
 
-```shell
-NAME=humacs
-HUMACS_PROFILE=ii # doom, or others
-HUMACS_TZ="Pacific/Auckland"
-HUMACS_GIT_NAME="Hippie Hacker"
-HUMACS_GIT_EMAIL="hh@ii.coop"
-git clone https://github.com/humacs/humacs
-cd humacs
-kubectl create ns "${NAME}"
-helm install "${NAME}" -n "${NAME}" \
-  -f chart/humacs/values/apisnoop.yaml \
-  --set options.timezone="${HUMACS_TZ}" \
-  --set options.gitName="${HUMACS_GIT_NAME}" \
-  --set options.gitEmail="${HUMACS_GIT_EMAIL}" \
-  --set options.profile="${HUMACS_PROFILE}" \
-  chart/humacs
-```
-
-Once up and running, connect via kubectl:
-
-```shell
-kubectl -n $NAME exec $NAME-humacs-0 -- attach
-```
+Copyright 2020 ii. This project is licensed under the [BSD 2-clause](<https://en.wikipedia.org/wiki/BSD_licenses#2-clause>) and is [Open Source](<https://en.wikipedia.org/wiki/Open_source>). This program comes with absolutely no warranty.
