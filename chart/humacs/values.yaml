@@ -67,3 +67,12 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+extraVolumes: []
+  # - name: home-ii
+  #   persistentVolumeClaim:
+  #     claimName: pv0001
+
+extraVolumeMounts: []
+  # - name: home-ii
+  #   mountPath: /home/ii

@@ -63,7 +63,6 @@ spec:
         {{- with .Values.extraEnvVars }}
             {{- toYaml . | nindent 12 }}
         {{- end }}
-        {{- if or .Values.options.hostDockerSocket .Values.options.hostTmp }}
           volumeMounts:
             {{- if .Values.options.hostDockerSocket }}
             - name: var-run-docker-sock
@@ -73,7 +72,9 @@ spec:
             - name: tmp
               mountPath: /tmp
             {{- end }}
-        {{- end }}
+          {{- if .Values.extraVolumeMounts }}
+            {{ toYaml .Values.extraVolumeMounts | trim | nindent 12 }}
+          {{ end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -86,7 +87,6 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-    {{- if or .Values.options.hostDockerSocket .Values.options.hostTmp }}
       volumes:
         {{- if .Values.options.hostDockerSocket }}
         - name: var-run-docker-sock
@@ -99,4 +99,6 @@ spec:
           hostPath:
             path: /tmp
         {{- end }}
-    {{- end }}
+      {{- if .Values.extraVolumes }}
+        {{ toYaml .Values.extraVolumes | trim | nindent 8 }}
+      {{ end }}
