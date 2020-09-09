@@ -1,5 +1,8 @@
 #!/bin/bash
-set -x
+
+if [ $DEBUG = true ]; then
+    set -x
+fi
 cd "$HOME"
 
 # Generate an ssh-key if one doesn't exist

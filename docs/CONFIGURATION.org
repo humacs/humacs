@@ -21,6 +21,7 @@ Environment variables to configure environments
 
 | Variables                 | Description                                            | Default                           |
 |---------------------------+--------------------------------------------------------+-----------------------------------|
+| DEBUG                     | ~set -x~ debug on shell blocks                         | ~false~                           |
 | GIT_AUTHOR_EMAIL          | (required) the default email to use for commits        | ~""~                              |
 | GIT_AUTHOR_NAME           | (required) the default name to use for commits         | ~""~                              |
 | GIT_COMMITER_EMAIL        | (required) the default email to use for commits        | ~""~                              |

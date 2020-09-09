@@ -82,11 +82,14 @@ Simple init allows the environment to be set up with:
 
 ```shell
 docker run -ti --rm \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v /tmp:/tmp \
+  -e DEBUG=true \
   -e GIT_AUTHOR_NAME="ii" \
   -e GIT_AUTHOR_EMAIL="myemail@example.com" \
   -e INIT_ORG_FILE="" \
-  -e INIT_DEFAULT_DIR="/home/ii/" \
+  -e INIT_DEFAULT_DIR="/home/ii" \
   -e INIT_DEFAULT_REPOS="https://github.com/kubernetes/kubernetes https://github.com/cncf/apisnoop" \
-  -e INIT_DEFAULT_REPOS_FOLDER="https"
+  -e INIT_DEFAULT_REPOS_FOLDER="workspace" \
   registry.gitlab.com/humacs/humacs/ii:2020.09.09 simple-init.sh
 ```
