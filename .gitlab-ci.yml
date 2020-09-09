@@ -38,7 +38,6 @@ build-humacs:
   variables:
     REPOSITORY: humacs
   before_script:
-    - *check-env
     - *registry-login
     - *declare-extra-destinations
   script:
@@ -52,7 +51,6 @@ build-ii:
   variables:
     REPOSITORY: ii
   before_script:
-    - *check-env
     - *registry-login
     - *declare-extra-destinations
   script:
