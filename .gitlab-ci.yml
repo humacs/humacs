@@ -12,7 +12,7 @@ variables:
     eval value=\$$var
     if [ ! -n "${value}" ]; then
       envInvalid=true
-      echo "Missing ENV ${value}"
+      echo "Missing ENV ${var}"
     fi
   done
   if [ "$envInvalid" = true ]; then
