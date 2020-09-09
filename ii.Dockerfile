@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=humacs/humacs:2020.09.04
+ARG BASE_IMAGE=registry.gitlab.com/humacs/humacs/humacs:2020.09.09
 FROM $BASE_IMAGE
 ENV DOCKER_VERSION=19.03.12 \
   KIND_VERSION=0.8.1 \
