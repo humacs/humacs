@@ -26,7 +26,7 @@ variables:
   /kaniko/executor \
     --cache=false \
     --context $CI_PROJECT_DIR \
-    --dockerfile $CI_PROJECT_DIR/Dockerfile \
+    --dockerfile $CI_PROJECT_DIR/$CONTAINERFILE \
     --destination $CI_REGISTRY_IMAGE/$REPOSITORY:latest \
     $KANIKO_EXTRA_DESTINATION
 
@@ -37,6 +37,7 @@ build-humacs:
     entrypoint: [""]
   variables:
     REPOSITORY: humacs
+    CONTAINERFILE: Dockerfile
   before_script:
     - *registry-login
     - *declare-extra-destinations
@@ -50,6 +51,7 @@ build-ii:
     entrypoint: [""]
   variables:
     REPOSITORY: ii
+    CONTAINERFILE: ii.Dockerfile
   before_script:
     - *registry-login
     - *declare-extra-destinations
