@@ -3,7 +3,7 @@
 
 Deploying Humacs in several environments.
 
-For configuration, please refer to the [[CONFIGURATION.org][configuration]] docs.
+For configuration, please refer to the [[./CONFIGURATION.org][configuration]] docs.
 
 * Host system
 
@@ -34,7 +34,7 @@ Install Humacs:
   helm install humacs --namespace humacs chart/humacs
 #+end_src
 
-Values are found in the [[CONFIGURATION.org][configuration]] docs.
+Values are found in the [[./CONFIGURATION.org][configuration]] docs.
 
 Once up and running, connect via kubectl:
 #+begin_src shell
