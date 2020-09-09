@@ -66,11 +66,10 @@ cd $INIT_DEFAULT_DIR
     then
         # wait for socket to appear
         echo -n "Waiting for $TMATE_SOCKET_NAME:"
-        while read i; do
-            if [ "$i" = $TMATE_SOCKET_NAME ]; then break; fi
+        until tmate -S $TMATE_SOCKET wait-for tmate-ready; do
             echo -n "."
-        done \
-            < <(inotifywait  -e create,open --format '%f' --quiet /tmp --monitor)
+            sleep 1
+        done
     fi
     tmate -S $TMATE_SOCKET wait-for tmate-ready
     tmate -S $TMATE_SOCKET set-hook -ug client-attached # unset
