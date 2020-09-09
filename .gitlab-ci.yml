@@ -9,9 +9,10 @@ variables:
 .check-env: &check-env |
   envInvalid=false
   for var in DOCKERHUB_USER DOCKERHUB_TOKEN; do
-    if [ ! -n "${!var}" ]; then
+    eval value=\$$var
+    if [ ! -n "${value}" ]; then
       envInvalid=true
-      echo "Missing ENV ${!var}"
+      echo "Missing ENV ${value}"
     fi
   done
   if [ "$envInvalid" = true ]; then
