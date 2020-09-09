@@ -55,7 +55,6 @@ COPY --chown=ii:users infra/ /var/local/humacs/infra/
 COPY --chown=ii:users kind-configs/ /var/local/humacs/kind-configs/
 COPY --chown=ii:users doom-emacs/ /var/local/humacs/doom-emacs/
 COPY --chown=ii:users spacemacs/ /var/local/humacs/spacemacs/
-COPY --chown=ii:users spacemacs-config/ /var/local/humacs/spacemacs-config/
 COPY --chown=ii:users vagrant/ /var/local/humacs/vagrant/
 COPY --chown=ii:users wilinux-config/ /var/local/humacs/wilinux-config/
 COPY --chown=ii:users zz-config/ /var/local/humacs/zz-config/
