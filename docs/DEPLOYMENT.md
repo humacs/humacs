@@ -56,7 +56,7 @@ kubectl -n humacs exec statefulset/humacs -- attach
 Spin up a quick and default environment
 
 ```shell
-docker run -ti --rm humacs/ii:2020.09.04 emacs
+docker run -ti --rm registry.gitlab.com/humacs/humacs/ii:2020.09.09 emacs
 ```
 
 ## Configuring<a id="sec-3-2"></a>
@@ -69,7 +69,7 @@ The following command shows configuring:
 ```shell
 docker run -ti --rm \
   -e HUMACS_PROFILE=doom \
-  -v $(pwd):/home/ii/workspace humacs/ii:2020.09.04 emacs /home/ii/workspace
+  -v $(pwd):/home/ii/workspace registry.gitlab.com/humacs/humacs/ii:2020.09.09 emacs /home/ii/workspace
 ```
 
 ## Simple-Init.sh<a id="sec-3-3"></a>
@@ -88,5 +88,5 @@ docker run -ti --rm \
   -e INIT_DEFAULT_DIR="/home/ii/" \
   -e INIT_DEFAULT_REPOS="https://github.com/kubernetes/kubernetes https://github.com/cncf/apisnoop" \
   -e INIT_DEFAULT_REPOS_FOLDER="https"
-  humacs/ii:2020.09.04 simple-init.sh
+  registry.gitlab.com/humacs/humacs/ii:2020.09.09 simple-init.sh
 ```
