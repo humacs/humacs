@@ -23,8 +23,8 @@ options:
 extraEnvVars: []
 
 image:
-  repository: humacs/ii
-  tag: 2020.09.04
+  repository: registry.gitlab.com/humacs/humacs/ii
+  tag: 2020.09.09
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
