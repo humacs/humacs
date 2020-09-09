@@ -6,6 +6,18 @@ variables:
   GIT_SUBMODULE_STRATEGY: recursive
   DOCKERHUB_ORG: humacs
 
+.check-env: &check-env |
+  envInvalid=false
+  for var in DOCKERHUB_USER DOCKERHUB_TOKEN; do
+    if [ ! -n "${!var}" ]; then
+      envInvalid=true
+      echo "Missing ENV ${!var}"
+    fi
+  done
+  if [ "$envInvalid" = true ]; then
+    exit 1
+  fi
+
 .registry-login: &registry-login |
   export DOCKERHUB_AUTH=$(echo $DOCKERHUB_USER:$DOCKERHUB_TOKEN | base64)
   cat << EOF > /kaniko/.docker/config.json
@@ -26,10 +38,18 @@ variables:
   EOF
 
 .declare-extra-destinations: &declare-extra-destinations |
-  if [ -n "$CI_COMMIT_TAG" ]; then KANIKO_EXTRA_DESTINATION="--destination $CI_REGISTRY_IMAGE/$REPOSITORY:$CI_COMMIT_TAG --destination $DOCKERHUB_ORG/$REPOSITORY:$CI_COMMIT_TAG"; fi
+  if [ -n "$CI_COMMIT_TAG" ]; then
+    export KANIKO_EXTRA_DESTINATION="--destination $CI_REGISTRY_IMAGE/$REPOSITORY:$CI_COMMIT_TAG --destination $DOCKERHUB_ORG/$REPOSITORY:$CI_COMMIT_TAG"
+  fi
 
 .build: &build |
-  /kaniko/executor --cache=false --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $CI_REGISTRY_IMAGE/$REPOSITORY:latest --destination $DOCKERHUB_ORG/$REPOSITORY:latest $KANIKO_EXTRA_DESTINATION
+  /kaniko/executor \
+    --cache=false \
+    --context $CI_PROJECT_DIR \
+    --dockerfile $CI_PROJECT_DIR/Dockerfile \
+    --destination $CI_REGISTRY_IMAGE/$REPOSITORY:latest \
+    --destination $DOCKERHUB_ORG/$REPOSITORY:latest \
+    $KANIKO_EXTRA_DESTINATION
 
 build-humacs:
   stage: build-humacs
@@ -39,6 +59,7 @@ build-humacs:
   variables:
     REPOSITORY: humacs
   before_script:
+    - *check-env
     - *registry-login
     - *declare-extra-destinations
   script:
@@ -52,6 +73,7 @@ build-ii:
   variables:
     REPOSITORY: ii
   before_script:
+    - *check-env
     - *registry-login
     - *declare-extra-destinations
   script:
