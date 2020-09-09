@@ -19,8 +19,8 @@ variables:
 
 .declare-extra-destinations: &declare-extra-destinations |
   if [ -n "$CI_COMMIT_TAG" ]; then
-    export HUMACS_HUMACS_TAG="$CI_REGISTRY_IMAGE/$REPOSITORY:$CI_COMMIT_TAG"
-    export KANIKO_EXTRA_ARGS="--build-arg BASE_IMAGE='$HUMACS_HUMACS_TAG'"
+    export HUMACS_HUMACS_TAG="$CI_REGISTRY_IMAGE/humacs:$CI_COMMIT_TAG"
+    export KANIKO_EXTRA_ARGS="--build-arg BASE_IMAGE=$HUMACS_HUMACS_TAG"
     export KANIKO_EXTRA_DESTINATION="--destination $CI_REGISTRY_IMAGE/$REPOSITORY:$CI_COMMIT_TAG"
   fi
 
