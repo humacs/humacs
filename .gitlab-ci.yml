@@ -57,7 +57,7 @@ build-ii:
     CONTAINERFILE: ii.Dockerfile
   before_script:
     - *registry-login
-    - export KANIKO_EXTRA_ARGS="--build-arg BASE_IMAGE='humacs/humacs:latest'"
+    - export KANIKO_EXTRA_ARGS="--build-arg BASE_IMAGE='$CI_REGISTRY_IMAGE/humacs:latest'"
     - *declare-extra-destinations
   script:
     - *build
