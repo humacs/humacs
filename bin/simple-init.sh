@@ -61,22 +61,29 @@ echo "$HUMACS_PROFILE" > ~/.emacs-profile
 # We need to wait's until the socket exists, and tmate is ready for commands
 # before doing so. (Would be easier if this were a config option for .tmate.conf)
 cd $INIT_DEFAULT_DIR
-(
-    if [ ! -f "$TMATE_SOCKET" ]
-    then
-        # wait for socket to appear
-        echo -n "Waiting for $TMATE_SOCKET_NAME:"
-        until tmate -S $TMATE_SOCKET wait-for tmate-ready; do
-            echo -n "."
-            sleep 1
-        done
-    fi
-    tmate -S $TMATE_SOCKET wait-for tmate-ready
-    tmate -S $TMATE_SOCKET set-hook -ug client-attached # unset
-    tmate -S $TMATE_SOCKET set-hook -g client-attached 'run-shell "tmate new-window osc52-tmate.sh"'
-)&
-
 # This is our primary background process for humacs
 # a tmate session in foreground mode, respawning if it dies
 # A default directory and org file are used to start emacsclient as the main window
-tmate -F -v -S $TMATE_SOCKET new-session -d -c $INIT_DEFAULT_DIR emacsclient --tty $INIT_ORG_FILE
+tmate -F -vvv -S $TMATE_SOCKET \
+      new-session -d \
+      -c $INIT_DEFAULT_DIR \
+      emacsclient --tty $INIT_ORG_FILE \
+      2>&1 > /tmp/humacs-tmate.log &
+if [ ! -f "$TMATE_SOCKET" ]
+then
+    # wait for socket to appear
+    echo -n "Waiting for $TMATE_SOCKET_NAME:"
+    until tmate -S $TMATE_SOCKET wait-for tmate-ready; do
+        echo -n "."
+        sleep 1
+    done
+fi
+tmate -S $TMATE_SOCKET wait-for tmate-ready
+tmate -S $TMATE_SOCKET set-hook -ug client-attached # unset
+tmate -S $TMATE_SOCKET set-hook -g client-attached 'run-shell "tmate new-window osc52-tmate.sh"'
+if [ $_ != $0 ]; then
+    echo  "tmate + humacs Initialized"
+else
+    echo "tmate + humacs logs:"
+    tail -f /tmp/humacs-tmate.log
+fi
