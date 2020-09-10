@@ -46,12 +46,12 @@
 (defvar humacs-spacemacs-directory
   (if (getenv "HUMACS_SPACEMACS_DIRECTORY")
       (getenv "HUMACS_SPACEMACS_DIRECTORY")
-    (concat humacs-directory "ii-config")))
+    (concat humacs-directory "spacemacs-config")))
 
 (defvar humacs-doom-directory
   (if (getenv "HUMACS_DOOM_DIRECTORY")
       (getenv "HUMACS_DOOM_DIRECTORY")
-    (concat humacs-directory "zz-config")))
+    (concat humacs-directory "doom-config")))
 
 (defvar humacs-default-profile
   (if (getenv "HUMACS_PROFILE")

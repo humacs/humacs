@@ -7,9 +7,9 @@
 	url = https://github.com/hlissner/doom-emacs
 	branch = master
 [submodule "ii-config"]
-	path = ii-config
+	path = spacemacs-config
 	url = https://github.com/humacs/.spacemacs.d
 	branch = main
 [submodule "zz-config"]
-	path = zz-config
+	path = doom-config
 	url = https://github.com/zachmandeville/doom.d

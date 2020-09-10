@@ -37,7 +37,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
   file
 ENV EMACSLOADPATH=/var/local/humacs: \
   HUMACS_PROFILE=ii \
-  DOOMDIR=/var/local/humacs/zz-config
+  DOOMDIR=/var/local/humacs/doom-config
 COPY homedir/.tmate.conf /etc/skel
 COPY homedir/.tmux.conf /etc/skel
 RUN mkdir -p /etc/sudoers.d && \
