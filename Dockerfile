@@ -66,8 +66,10 @@ COPY --chown=ii:users infra/ /var/local/humacs/infra/
 COPY --chown=ii:users kind-configs/ /var/local/humacs/kind-configs/
 COPY --chown=ii:users docs/ /var/local/humacs/docs/
 COPY --chown=ii:users homedir/ /var/local/humacs/homedir/
-ADD bin /usr/local/bin
+COPY --chown=ii:users bin/ /var/local/humacs/bin/
+RUN cp -a /var/local/humacs/bin/* /usr/local/bin
 # copy final files from the repo to make it feel more like a repo
 COPY --chown=ii:users Dockerfile .gitignore .gitlab-ci.yml .gitmodules ii.Dockerfile LICENSE Readme.md Readme.org /var/local/humacs/
 
 WORKDIR /home/ii
+USER ii

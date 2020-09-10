@@ -1,5 +1,6 @@
 ARG BASE_IMAGE=registry.gitlab.com/humacs/humacs/humacs:2020.09.09
 FROM $BASE_IMAGE
+USER root # default to ii
 ENV DOCKER_VERSION=19.03.12 \
   KIND_VERSION=0.8.1 \
   KUBECTL_VERSION=1.19.0 \

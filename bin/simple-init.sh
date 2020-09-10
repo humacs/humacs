@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ $DEBUG = true ]; then
+if [[ $DEBUG = true ]]; then
     set -x
 fi
 cd "$HOME"
@@ -64,26 +64,33 @@ cd $INIT_DEFAULT_DIR
 # This is our primary background process for humacs
 # a tmate session in foreground mode, respawning if it dies
 # A default directory and org file are used to start emacsclient as the main window
-tmate -F -vvv -S $TMATE_SOCKET \
-      new-session -d \
-      -c $INIT_DEFAULT_DIR \
-      emacsclient --tty $INIT_ORG_FILE \
-      2>&1 > /tmp/humacs-tmate.log &
-if [ ! -f "$TMATE_SOCKET" ]
-then
-    # wait for socket to appear
-    echo -n "Waiting for $TMATE_SOCKET_NAME:"
+(
+# if [ ! -f "$TMATE_SOCKET" ]
+# then
+#     # wait for socket to appear
+#     echo -n "Waiting for $TMATE_SOCKET_NAME:"
     until tmate -S $TMATE_SOCKET wait-for tmate-ready; do
         echo -n "."
         sleep 1
     done
-fi
+# fi
 tmate -S $TMATE_SOCKET wait-for tmate-ready
 tmate -S $TMATE_SOCKET set-hook -ug client-attached # unset
 tmate -S $TMATE_SOCKET set-hook -g client-attached 'run-shell "tmate new-window osc52-tmate.sh"'
-if [ $_ != $0 ]; then
-    echo  "tmate + humacs Initialized"
-else
-    echo "tmate + humacs logs:"
-    tail -f /tmp/humacs-tmate.log
-fi
+) &
+
+export TERM=xterm
+echo $TERM
+tmate -F -vvv -S $TMATE_SOCKET \
+      new-session -d \
+      -c $INIT_DEFAULT_DIR \
+      emacsclient --tty $INIT_ORG_FILE
+#\
+#       2>&1 > /tmp/humacs-tmate.log &
+
+# if [[ $SOURCED != "true" ]] ; then
+#     echo  "tmate + humacs Initialized"
+# else
+#     echo "tmate + humacs logs:"
+#     tail -f /tmp/humacs-tmate.log
+# fi
