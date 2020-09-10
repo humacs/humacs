@@ -17,11 +17,6 @@ Macros for Humacs (aka Emacs for everyone)
 - Supports multiple configuration profiles in Emacs
 - Integrates with tmate and tmux for pairing
 
-** Philosophy
-
-Vanilla Emacs is inaccessable to most humans, therefore the power of Org mode based documentation and workflows is unavailable.
-
-Literate programming and DevOps when combined together make the documentation also executable - meaning for reproducable easily documented creations.
 
 ** Installation and deployment
 
