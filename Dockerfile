@@ -48,8 +48,8 @@ COPY --chown=ii:users default.el /var/local/humacs/
 # copy each needed directory so it is placed in correctly
 COPY --chown=ii:users spacemacs/ /var/local/humacs/spacemacs/
 COPY --chown=ii:users doom-emacs/ /var/local/humacs/doom-emacs/
-COPY --chown=ii:users ii-config/ /var/local/humacs/ii-config/
-COPY --chown=ii:users zz-config/ /var/local/humacs/zz-config/
+COPY --chown=ii:users spacemacs-config/ /var/local/humacs/spacemacs-config/
+COPY --chown=ii:users doom-config/ /var/local/humacs/doom-config/
 COPY --chown=ii:users wilinux-config/ /var/local/humacs/wilinux-config/
 # spacemacs cache / can go much faster with a prepopulated cache
 RUN su ii -c 'curl -L https://github.com/humacs/humacs/releases/download/0.0.1-alpha/spacemacs-elpa-cache-2020.09.11.tgz | tar xvzC /var/local/humacs/spacemacs'
