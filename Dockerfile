@@ -52,12 +52,12 @@ COPY --chown=ii:users spacemacs-config/ /var/local/humacs/spacemacs-config/
 COPY --chown=ii:users doom-config/ /var/local/humacs/doom-config/
 COPY --chown=ii:users wilinux-config/ /var/local/humacs/wilinux-config/
 # spacemacs cache / can go much faster with a prepopulated cache
-RUN su ii -c 'curl -L https://github.com/humacs/humacs/releases/download/0.0.1-alpha/spacemacs-elpa-cache-2020.09.11.tgz | tar xvzC /var/local/humacs/spacemacs'
+RUN su ii -c 'curl -L https://github.com/humacs/humacs/releases/download/0.0.1-alpha/spacemacs-elpa-cache-2020.09.11.tgz | tar xzC /var/local/humacs/spacemacs'
 RUN su ii -c 'cd && emacs -batch -l /var/local/humacs/default.el && rm .humacs-profiles.el'
 # doom install/sync / can go much faster with a cache
-RUN su ii -c 'curl -L https://github.com/humacs/humacs/releases/download/0.0.1-alpha/doom-.local-cache-2020.09.11.tgz | tar xvzC /var/local/humacs/doom-emacs'
-RUN su ii -c 'cd && yes | /var/local/humacs/doom-emacs/bin/doom install --no-env'
-RUN su ii -c 'cd && yes | /var/local/humacs/doom-emacs/bin/doom sync -e'
+# RUN su ii -c 'curl -L https://github.com/humacs/humacs/releases/download/0.0.1-alpha/doom-.local-cache-2020.09.11.tgz | tar xzC /var/local/humacs/doom-emacs'
+# RUN su ii -c 'cd && yes | /var/local/humacs/doom-emacs/bin/doom install --no-env'
+# RUN su ii -c 'cd && yes | /var/local/humacs/doom-emacs/bin/doom sync -e'
 # These items are not needed for humacs to run, but complete the git repo
 # this allows us to make changes directly to /var/local/humacs and push from there
 COPY --chown=ii:users .git/ /var/local/humacs/.git/
