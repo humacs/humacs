@@ -40,8 +40,6 @@ export INIT_DEFAULT_REPOS_FOLDER="${INIT_DEFAULT_REPOS_FOLDER}"
 export INIT_PREFINISH_BLOCK="${INIT_PREFINISH_BLOCK}"
 export HUMACS_PROFILE="${HUMACS_PROFILE:-ii}"
 
-echo "$HUMACS_PROFILE" > ~/.emacs-profile
-
 . /usr/local/bin/ssh-agent-export.sh
 
 (
@@ -79,8 +77,6 @@ tmate -S $TMATE_SOCKET set-hook -ug client-attached # unset
 tmate -S $TMATE_SOCKET set-hook -g client-attached 'run-shell "tmate new-window osc52-tmate.sh"'
 ) &
 
-export TERM=xterm
-echo $TERM
 tmate -F -vvv -S $TMATE_SOCKET \
       new-session -d \
       -c $INIT_DEFAULT_DIR \
