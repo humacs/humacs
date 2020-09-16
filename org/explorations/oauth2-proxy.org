@@ -1,0 +1,116 @@
+#+TITLE: OAuth2-Proxy
+
+create a namespace.
+
+#+begin_src shell
+  kubectl create ns oauth2-proxy
+#+end_src
+
+create a secret for GitHub OAuth.
+
+#+begin_src shell
+  kubectl -n oauth2-proxy create secret generic oauth2-proxy --from-literal=client-id= --from-literal=client-secret= --from-literal=cookie-secret="$(openssl rand -base64 16)"
+#+end_src
+
+#+begin_src yaml :tangle oauth2-proxy.yaml
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    labels:
+      k8s-app: oauth2-proxy
+    name: oauth2-proxy
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        k8s-app: oauth2-proxy
+    template:
+      metadata:
+        labels:
+          k8s-app: oauth2-proxy
+      spec:
+        containers:
+        - args:
+          - --provider=github
+          # - --github-org=kubernetes
+          - --email-domain=*
+          - --upstream=file:///dev/null
+          - --http-address=0.0.0.0:4180
+          # Register a new application
+          # https://github.com/settings/applications/new
+          env:
+          - name: OAUTH2_PROXY_CLIENT_ID
+            valueFrom:
+              secretKeyRef:
+                name: oauth2-proxy
+                key: client-id
+          - name: OAUTH2_PROXY_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: oauth2-proxy
+                key: client-secret
+          - name: OAUTH2_PROXY_COOKIE_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: oauth2-proxy
+                key: cookie-secret
+          image: quay.io/oauth2-proxy/oauth2-proxy:latest
+          imagePullPolicy: Always
+          name: oauth2-proxy
+          ports:
+          - containerPort: 4180
+            protocol: TCP
+  ---
+  apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      k8s-app: oauth2-proxy
+    name: oauth2-proxy
+  spec:
+    ports:
+    - name: http
+      port: 4180
+      protocol: TCP
+      targetPort: 4180
+    selector:
+      k8s-app: oauth2-proxy
+#+end_src
+
+#+begin_src shell
+  kubectl -n oauth2-proxy apply -f oauth2-proxy.yaml
+#+end_src
+
+#+RESULTS:
+#+begin_example
+deployment.apps/oauth2-proxy configured
+service/oauth2-proxy unchanged
+#+end_example
+
+Install an Ingress manifest
+
+#+begin_src yaml :tangle oauth2-proxy-ingress.yaml
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: oauth2-proxy
+  namespace: oauth2-proxy
+spec:
+  rules:
+  - host: sharing.myname.sharing.io
+    http:
+      paths:
+      - backend:
+          serviceName: oauth2-proxy
+          servicePort: 4180
+        path: /oauth2
+#+end_src
+
+#+begin_src shell
+  kubectl -n oauth2-proxy apply -f oauth2-proxy-ingress.yaml
+#+end_src
+
+#+RESULTS:
+#+begin_example
+ingress.networking.k8s.io/oauth2-proxy configured
+#+end_example

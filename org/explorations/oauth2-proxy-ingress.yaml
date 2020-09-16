@@ -1,0 +1,25 @@
+
+
+# #+RESULTS:
+# #+begin_example
+# deployment.apps/oauth2-proxy unchanged
+# service/oauth2-proxy unchanged
+# #+end_example
+
+# Install an Ingress manifest
+
+
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: oauth2-proxy
+  namespace: oauth2-proxy
+spec:
+  rules:
+  - host: sharing.caleb.sharing.io
+    http:
+      paths:
+      - backend:
+          serviceName: oauth2-proxy
+          servicePort: 4180
+        path: /oauth2
