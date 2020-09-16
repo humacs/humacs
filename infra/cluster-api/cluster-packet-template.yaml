@@ -87,10 +87,9 @@ spec:
           cd /root;
           git clone https://github.com/cncf/apisnoop;
           cd apisnoop;
-          export CURRENT_IP=127.0.0.1; # the default
-          export NEW_IP={{ .controlPlaneEndpoint }}; # or IP of choice
-          sed -i s:$CURRENT_IP:$NEW_IP:g kustomize/*yaml;
-          kubectl apply -k kustomize
+          kubectl create ns apisnoop;
+          helm install snoopdb -n apisnoop charts/snoopdb;
+          helm install auditlogger -n apisnoop charts/auditlogger
         )
     - |
         (
