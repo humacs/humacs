@@ -9,10 +9,11 @@ options:
   gitName: "ii"
   gitEmail: "ii@ii.coop"
   repos:
+    - https://github.com/apisnoop/ticket-writing
     - https://github.com/cncf/apisnoop
     - https://github.com/kubernetes/kubernetes
   workingDirectory: "/home/ii"
-  workingFile: /home/ii/apisnoop/tickets/k8s/mock-ticket.org
+  workingFile: /home/ii/ticket-writing/newticket.org
   preinitScript: |
     (
       echo 'Welcome to Humacs';
