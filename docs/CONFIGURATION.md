@@ -8,34 +8,34 @@ Environment variables to configure environments
 
 # Emacs<a id="sec-1"></a>
 
-| Variables     | Description                                                  | Default |
-|------------- |------------------------------------------------------------ |------- |
-| EMACSLOADPATH | colon string array path for Emacs to load configuration from | `""`    |
+| Variables       | Description                                                  | Default |
+|--------------- |------------------------------------------------------------ |------- |
+| `EMACSLOADPATH` | colon string array path for Emacs to load configuration from | `""`    |
 
 # Humacs<a id="sec-2"></a>
 
-| Variables                | Description               | Default |
-|------------------------ |------------------------- |------- |
-| HUMACS<sub>PROFILE</sub> | the Humacs profile to use | `ii`    |
+| Variables        | Description               | Default |
+|---------------- |------------------------- |------- |
+| `HUMACS_PROFILE` | the Humacs profile to use | `ii`    |
 
 # Humacs in Docker<a id="sec-3"></a>
 
 ### Simple-Init.sh<a id="sec-3-0-1"></a>
 
-| Variables                                               | Description                                            | Default                           |
-|------------------------------------------------------- |------------------------------------------------------ |--------------------------------- |
-| DEBUG                                                   | `set -x` debug on shell blocks                         | `false`                           |
-| GIT<sub>AUTHOR</sub><sub>EMAIL</sub>                    | (required) the default email to use for commits        | `""`                              |
-| GIT<sub>AUTHOR</sub><sub>NAME</sub>                     | (required) the default name to use for commits         | `""`                              |
-| GIT<sub>COMMITER</sub><sub>EMAIL</sub>                  | (required) the default email to use for commits        | `""`                              |
-| GIT<sub>COMMITER</sub><sub>NAME</sub>                   | (required) the default name to use for commits         | `""`                              |
-| TMATE<sub>SOCKET</sub>                                  | the default tmate socket to use for creating sessions  | `/tmp/ii.default.target.iisocket` |
-| TMATE<sub>SOCKET</sub><sub>NAME</sub>                   | the name of the socket file                            | `ii.default.target.iisocket`      |
-| INIT<sub>ORG</sub><sub>FILE</sub>                       | the initial file/folder to load when bringing up Emacs | `\~/`                             |
-| INIT<sub>DEFAULT</sub><sub>DIR</sub>                    | the default directory to open shells in                | `\~/`                             |
-| INIT<sub>DEFAULT</sub><sub>REPOS</sub>                  | spaced string array of default repos to clone          | `""`                              |
-| INIT<sub>DEFAULT</sub><sub>REPOS</sub><sub>FOLDER</sub> | the location of where to clone repos                   | `"/home/ii"`                      |
-| INIT<sub>PREFINISH</sub><sub>BLOCK</sub>                | a shell block to execute (after repos are clone)       | `""`                              |
+| Variables                   | Description                                            | Default                           |
+|--------------------------- |------------------------------------------------------ |--------------------------------- |
+| `DEBUG`                     | `set -x` debug on shell blocks                         | `false`                           |
+| `GIT_AUTHOR_EMAIL`          | (required) the default email to use for commits        | `""`                              |
+| `GIT_AUTHOR_NAME`           | (required) the default name to use for commits         | `""`                              |
+| `GIT_COMMITER_EMAIL`        | (required) the default email to use for commits        | `""`                              |
+| `GIT_COMMITER_NAME`         | (required) the default name to use for commits         | `""`                              |
+| `TMATE_SOCKET`              | the default tmate socket to use for creating sessions  | `/tmp/ii.default.target.iisocket` |
+| `TMATE_SOCKET_NAME`         | the name of the socket file                            | `ii.default.target.iisocket`      |
+| `INIT_ORG_FILE`             | the initial file/folder to load when bringing up Emacs | `~/`                              |
+| `INIT_DEFAULT_DIR`          | the default directory to open shells in                | `~/`                              |
+| `INIT_DEFAULT_REPOS`        | spaced string array of default repos to clone          | `""`                              |
+| `INIT_DEFAULT_REPOS_FOLDER` | the location of where to clone repos                   | `"/home/ii"`                      |
+| `INIT_PREFINISH_BLOCK`      | a shell block to execute (after repos are clone)       | `""`                              |
 
 # Kubernetes (Helm)<a id="sec-4"></a>
 
