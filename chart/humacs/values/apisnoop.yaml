@@ -18,7 +18,9 @@ options:
     (
       echo 'Welcome to Humacs';
       mkdir -p ~/.kube;
-      cp /var/local/humacs/homedir/kubeconfig ~/.kube/config
+      cp /var/local/humacs/homedir/kubeconfig ~/.kube/config;
+      mkdir -p $HOME/go/src/k8s.io;
+      mv $INIT_DEFAULT_REPOS_FOLDER/kubernetes $HOME/go/src/k8s.io/kubernetes
     )
 
 extraEnvVars: []
