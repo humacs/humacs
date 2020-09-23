@@ -107,6 +107,7 @@ spec:
           cp -a /root/.ssh /etc/skel/.ssh
           useradd -m -G users,sudo -u 1000 -s /bin/bash ii
         )
+    - echo "Type [ENTER] [~] [.] when you see Reached target Cloud-init target"
     preKubeadmCommands:
     - mkdir -p /etc/kubernetes/pki
     - |

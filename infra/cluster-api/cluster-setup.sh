@@ -47,7 +47,7 @@ UUID=$(kubectl get -n $CLUSTER_NAME \
                machine \
                -o=jsonpath='{.items[0].spec.providerID}' \
            | sed sXpacket://XX)
-echo "Type [ENTER] [~] [.] when you see Reached target Cloud-init target"
+echo "Viewing Cloud-Init logs of newly provisioned box"
 ssh $UUID@sos.$FACILITY.packet.net
 
 kubectl -n "$CLUSTER_NAME" \
