@@ -69,8 +69,7 @@ mv clusterctl /usr/local/bin/clusterctl
 TODO: We need to generate a string to add to the name 
 7) run `./cluster-setup.sh`
 8) After the script hits  `[  OK  ] Reached target Cloud-init target.` type the following keys in sequence: "enter ~ ."
-9) we have to rebuild the apisnoop image to include that kubeconfig
-10) To open Mock test ticket `spc spc apisnoop/insert-mock-template`
+9) To open Mock test ticket `spc spc apisnoop/insert-mock-template`
 
 Setting up SSH keys
 In a new terminal on local machine:
@@ -104,11 +103,11 @@ The agent has no identities.
 
 `~$ ssh-add`
 
-Identity added: /home/foo/.ssh/id_rsa (foo[@ii.coop](mailto:riaan@ii.coop))
+Identity added: /home/foo/.ssh/id_rsa (foo[@ii.coop](mailto:foo@ii.coop))
 
-`~$ Kind Delete cluster` - To ensure you have no Kind instance running yet
+`~$ kind delete cluster` - To ensure you have no Kind instance running yet
 
-`~$ Kind create cluster`
+`~$ kind create cluster` 
 
 `~$ cd .kube`
 
