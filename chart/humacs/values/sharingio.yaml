@@ -1,0 +1,11 @@
+options:
+  preinitScript: |
+    (
+      echo 'Welcome to Humacs';
+      mkdir -p ~/.kube;
+      cp /var/local/humacs/homedir/kubeconfig ~/.kube/config;
+      mkdir -p $HOME/go/src/k8s.io;
+      mv $INIT_DEFAULT_REPOS_FOLDER/kubernetes $HOME/go/src/k8s.io/kubernetes;
+      export PACKET_API_KEY=$(kubectl -n kube-system get secret packet-cloud-config -o=jsonpath='{.data.cloud-sa\.json}' | base64 -d | jq .apiKey);
+      export PACKET_PROJECT_ID=$(kubectl -n kube-system get secret packet-cloud-config -o=jsonpath='{.data.cloud-sa\.json}' | base64 -d | jq .projectID)
+    )
