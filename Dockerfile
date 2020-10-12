@@ -51,14 +51,14 @@ COPY --chown=ii:users chart/ /var/local/humacs/chart/
 COPY --chown=ii:users docs/ /var/local/humacs/docs/
 COPY --chown=ii:users .git/ /var/local/humacs/.git/
 COPY --chown=ii:users homedir/ /var/local/humacs/homedir/
-COPY --chown=ii:users ii-config/ /var/local/humacs/ii-config/
 COPY --chown=ii:users infra/ /var/local/humacs/infra/
 COPY --chown=ii:users kind-configs/ /var/local/humacs/kind-configs/
+COPY --chown=ii:users spacemacs-config/ /var/local/humacs/spacemacs-config/
+COPY --chown=ii:users wilinux-config/ /var/local/humacs/wilinux-config/
 COPY --chown=ii:users doom-emacs/ /var/local/humacs/doom-emacs/
+COPY --chown=ii:users doom-config/ /var/local/humacs/doom-config/
 COPY --chown=ii:users spacemacs/ /var/local/humacs/spacemacs/
 COPY --chown=ii:users vagrant/ /var/local/humacs/vagrant/
-COPY --chown=ii:users wilinux-config/ /var/local/humacs/wilinux-config/
-COPY --chown=ii:users zz-config/ /var/local/humacs/zz-config/
 RUN su ii -c 'curl -L https://github.com/humacs/humacs/releases/download/0.0.1-alpha/spacemacs-elpa-cache-2020.08.28.tgz | tar xvzC /var/local/humacs/spacemacs'
 # spacemacs cache
 RUN su ii -c 'cd && emacs -batch -l /var/local/humacs/default.el'
