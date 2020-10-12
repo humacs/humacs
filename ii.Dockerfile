@@ -47,7 +47,8 @@ RUN curl -L -o /usr/local/bin/bazel https://github.com/bazelbuild/bazel/releases
 # gopls binary
 RUN /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get golang.org/x/tools/gopls@latest \
 # gocode binary
-    && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/stamblerre/gocode
+  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/stamblerre/gocode \
+  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/go-delve/delve/cmd/dlv
 
 RUN DEBIAN_FRONTEND=noninteractive \
   apt-get install --no-install-recommends -y \
@@ -59,7 +60,11 @@ RUN DEBIAN_FRONTEND=noninteractive \
   iftop \
   tmux \
   language-pack-en \
-  fonts-powerline
+  fonts-powerline \
+  dnsutils \
+  python3-pip
+
+RUN pip3 install yq
 
 # ENV KUBECONFIG=/var/local/humacs/homedir/kubeconfig
 
