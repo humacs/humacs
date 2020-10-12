@@ -14,6 +14,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
   ca-certificates \
   libcap2-bin \
   git \
+  kitty \
   openssh-client \
   postgresql-client-12 \
   jq \
