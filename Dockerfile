@@ -42,6 +42,9 @@ ENV EMACSLOADPATH=/var/local/humacs: \
   DOOMDIR=/var/local/humacs/zz-config
 COPY homedir/.tmate.conf /etc/skel
 COPY homedir/.tmux.conf /etc/skel
+COPY homedir/.bashrc /etc/skel
+COPY homedir/.bash_profile /etc/skel
+COPY homedir/.gitconfig /etc/skel
 RUN mkdir -p /etc/sudoers.d && \
   echo "%sudo    ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/sudo && \
   useradd -m -G users,sudo -u 1000 -s /bin/bash ii
