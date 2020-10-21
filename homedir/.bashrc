@@ -23,5 +23,9 @@ fi
 export PATH=$PATH:"/usr/local/go/bin"
 
 . /usr/local/bin/ssh-agent-export.sh
-export EDITOR=vim
 
+export EDITOR="emacsclient -t"
+
+if [ "$HUMACS_DISTRO" = "ii" ]; then
+    . <(kubectl completion bash)
+fi
