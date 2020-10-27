@@ -98,7 +98,7 @@ spec:
           git clone https://github.com/humacs/humacs;
           cd humacs;
           kubectl create ns ${CLUSTER_NAME}
-          helm install "${CLUSTER_NAME}" -n "${CLUSTER_NAME}" -f chart/humacs/values/apisnoop.yaml -f chart/humacs/values/sharingio.yaml --set options.timezone="${HUMACS_TZ}" --set options.gitName="${HUMACS_GIT_NAME}" --set options.gitEmail="${HUMACS_GIT_EMAIL}" --set options.profile="${HUMACS_PROFILE}" chart/humacs
+          helm install "${CLUSTER_NAME}" -n "${CLUSTER_NAME}" -f chart/humacs/values/apisnoop.yaml -f chart/humacs/values/sharingio.yaml --set options.timezone="${HUMACS_TZ}" --set options.gitName="${HUMACS_GIT_NAME}" --set options.gitEmail="${HUMACS_GIT_EMAIL}" --set options.profile="${HUMACS_PROFILE}" --set image.tag="${HUMACS_IMAGE_VERSION}" chart/humacs
         )
     - |
         (
