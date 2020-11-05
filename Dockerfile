@@ -36,15 +36,16 @@ RUN DEBIAN_FRONTEND=noninteractive \
   unzip \
   direnv \
   iputils-ping \
-  file
+  file \
+  && rm -rf /var/lib/apt/lists/*
 ENV EMACSLOADPATH=/var/local/humacs: \
   HUMACS_PROFILE=ii \
   DOOMDIR=/var/local/humacs/zz-config
 COPY homedir/.tmate.conf /etc/skel
 COPY homedir/.tmux.conf /etc/skel
-COPY homedir/.bashrc /etc/skel
-COPY homedir/.bash_profile /etc/skel
-COPY homedir/.gitconfig /etc/skel
+COPY homedir/.bashrc /etc/skel/.bashrc
+COPY homedir/.bash_profile /etc/skel/.bash_profile
+COPY homedir/.gitconfig /etc/skel/.gitconfig
 RUN mkdir -p /etc/sudoers.d && \
   echo "%sudo    ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/sudo && \
   useradd -m -G users,sudo -u 1000 -s /bin/bash ii

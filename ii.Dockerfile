@@ -51,7 +51,7 @@ RUN /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get golang
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/stamblerre/gocode \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/go-delve/delve/cmd/dlv
 
-RUN DEBIAN_FRONTEND=noninteractive \
+RUN apt-get update --yes && DEBIAN_FRONTEND=noninteractive \
   apt-get install --no-install-recommends -y \
   tree \
   iproute2 \
@@ -63,7 +63,8 @@ RUN DEBIAN_FRONTEND=noninteractive \
   language-pack-en \
   fonts-powerline \
   dnsutils \
-  python3-pip
+  python3-pip \
+  && rm -rf /var/lib/apt/lists/*
 
 RUN pip3 install yq
 
