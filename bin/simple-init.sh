@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ $DEBUG = true ]; then
+if [ "$DEBUG" = true ]; then
     set -x
 fi
 cd "$HOME"
@@ -43,6 +43,10 @@ export HUMACS_PROFILE="${HUMACS_PROFILE:-ii}"
 echo "$HUMACS_PROFILE" > ~/.emacs-profile
 
 . /usr/local/bin/ssh-agent-export.sh
+
+if [ "$REINIT_HOME_FOLDER" = "true" ]; then
+    find /etc/skel -type f -exec cp {} /home/ii \;
+fi
 
 (
     if [ ! -z "$INIT_DEFAULT_REPOS" ]; then
