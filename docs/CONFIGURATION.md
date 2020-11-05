@@ -36,6 +36,7 @@ Environment variables to configure environments
 | `INIT_DEFAULT_REPOS`        | spaced string array of default repos to clone          | `""`                              |
 | `INIT_DEFAULT_REPOS_FOLDER` | the location of where to clone repos                   | `"/home/ii"`                      |
 | `INIT_PREFINISH_BLOCK`      | a shell block to execute (after repos are clone)       | `""`                              |
+| `REINIT_HOME_FOLDER`        | copy `/etc/skel` over `/home/ii`                       | `""`                              |
 
 # Kubernetes (Helm)<a id="sec-4"></a>
 
