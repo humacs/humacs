@@ -46,6 +46,7 @@ COPY homedir/.tmux.conf /etc/skel
 COPY homedir/.bashrc /etc/skel/.bashrc
 COPY homedir/.bash_profile /etc/skel/.bash_profile
 COPY homedir/.gitconfig /etc/skel/.gitconfig
+COPY homedir/kubeconfig /etc/skel/.kube/config
 RUN mkdir -p /etc/sudoers.d && \
   echo "%sudo    ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/sudo && \
   useradd -m -G users,sudo -u 1000 -s /bin/bash ii
