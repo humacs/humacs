@@ -45,7 +45,10 @@ echo "$HUMACS_PROFILE" > ~/.emacs-profile
 . /usr/local/bin/ssh-agent-export.sh
 
 if [ "$REINIT_HOME_FOLDER" = "true" ]; then
-    find /etc/skel -type f -exec cp {} /home/ii \;
+    (
+        cd /etc/skel
+        cp -r . /home/ii
+    )
 fi
 
 (
