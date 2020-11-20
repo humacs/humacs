@@ -64,6 +64,7 @@ RUN apt-get update --yes && DEBIAN_FRONTEND=noninteractive \
   fonts-powerline \
   dnsutils \
   python3-pip \
+  npm \
   && rm -rf /var/lib/apt/lists/*
 
 RUN pip3 install yq
