@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ "$DEBUG" = true ]; then
+if [ "$HUMACS_DEBUG" = true ]; then
     set -x
 fi
 cd "$HOME"
@@ -33,8 +33,8 @@ fi
 export ALTERNATE_EDITOR=""
 export TMATE_SOCKET="${TMATE_SOCKET:-/tmp/ii.default.target.iisocket}"
 export TMATE_SOCKET_NAME=`basename ${TMATE_SOCKET}`
-export INIT_ORG_FILE="${INIT_ORG_FILE:-~/}"
-export INIT_DEFAULT_DIR="${INIT_DEFAULT_DIR:-~/}"
+export INIT_ORG_FILE="${INIT_ORG_FILE:-$HOME}"
+export INIT_DEFAULT_DIR="${INIT_DEFAULT_DIR:-$HOME}"
 export INIT_DEFAULT_REPOS="${INIT_DEFAULT_REPOS}"
 export INIT_DEFAULT_REPOS_FOLDER="${INIT_DEFAULT_REPOS_FOLDER}"
 export INIT_PREFINISH_BLOCK="${INIT_PREFINISH_BLOCK}"
@@ -69,16 +69,7 @@ fi
 # before doing so. (Would be easier if this were a config option for .tmate.conf)
 cd $INIT_DEFAULT_DIR
 (
-    if [ ! -f "$TMATE_SOCKET" ]
-    then
-        # wait for socket to appear
-        echo -n "Waiting for $TMATE_SOCKET_NAME:"
-        until tmate -S $TMATE_SOCKET wait-for tmate-ready; do
-            echo -n "."
-            sleep 1
-        done
-    fi
-    tmate -S $TMATE_SOCKET wait-for tmate-ready
+    /usr/local/bin/tmate-wait-for-socket.sh
     tmate -S $TMATE_SOCKET set-hook -ug client-attached # unset
     tmate -S $TMATE_SOCKET set-hook -g client-attached 'run-shell "tmate new-window osc52-tmate.sh"'
 )&

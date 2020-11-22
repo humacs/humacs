@@ -72,9 +72,10 @@ Simple init allows the environment to be set up with:
 
 #+begin_src shell
   docker run -ti --rm \
+    --user ii \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -v /tmp:/tmp \
-    -e DEBUG=true \
+    -e HUMACS_DEBUG=true \
     -e GIT_AUTHOR_NAME="ii" \
     -e GIT_AUTHOR_EMAIL="myemail@example.com" \
     -e INIT_ORG_FILE="" \
