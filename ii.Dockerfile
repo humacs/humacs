@@ -9,9 +9,30 @@ ENV HUMACS_DISTRO=ii \
   TMATE_VERSION=2.4.0 \
   BAZEL_VERSION=2.2.0 \
   HELM_VERSION=3.3.0 \
+  GH_VERSION=1.3.0 \
+  LEIN_VERSION=stable \
+  CLOJURE_VERSION=1.10.1.697 \
 # GOLANG, path vars
   GOROOT=/usr/local/go \
   PATH="$PATH:/usr/local/go/bin"
+# Software
+RUN apt-get update --yes && DEBIAN_FRONTEND=noninteractive \
+  apt-get install --no-install-recommends -y \
+  tree \
+  iproute2 \
+  net-tools \
+  tcpdump \
+  htop \
+  iftop \
+  tmux \
+  language-pack-en \
+  openjdk-14-jdk \
+  rlwrap \
+  fonts-powerline \
+  dnsutils \
+  python3-pip \
+  npm \
+  && rm -rf /var/lib/apt/lists/*
 # docker client binary
 RUN curl -fsSL https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VERSION}.tgz \
   | tar --directory=/usr/local/bin --extract --ungzip \
@@ -34,6 +55,11 @@ RUN curl -sLo /usr/local/bin/gimme \
 # golang binary
 RUN curl -L https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz \
     | tar --directory /usr/local --extract --ungzip
+# gh cli
+RUN curl -sSL https://github.com/cli/cli/releases/download/v${GH_VERSION}/gh_${GH_VERSION}_linux_amd64.tar.gz \
+    | tar --directory /usr/local --extract --ungzip \
+     --strip-components 1 gh_${GH_VERSION}_linux_amd64/bin/gh \
+    && chmod +x /usr/local/bin/gh
 # tmate allows others to connect to your session
 # they support using self hosted / though we default to using their hosted service
 RUN curl -L \
@@ -51,24 +77,18 @@ RUN /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get golang
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/stamblerre/gocode \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/go-delve/delve/cmd/dlv
 
-RUN apt-get update --yes && DEBIAN_FRONTEND=noninteractive \
-  apt-get install --no-install-recommends -y \
-  tree \
-  iproute2 \
-  net-tools \
-  tcpdump \
-  htop \
-  iftop \
-  tmux \
-  language-pack-en \
-  fonts-powerline \
-  dnsutils \
-  python3-pip \
-  npm \
-  && rm -rf /var/lib/apt/lists/*
+# Leiningen for clojure
+RUN curl -fsSL https://raw.githubusercontent.com/technomancy/leiningen/${LEIN_VERSION}/bin/lein \
+    -o /usr/local/bin/lein \
+    && chmod +x /usr/local/bin/lein \
+    && /usr/local/bin/lein version
+
+# Install Clojure
+RUN curl -OL https://download.clojure.org/install/linux-install-${CLOJURE_VERSION}.sh \
+    && bash linux-install-${CLOJURE_VERSION}.sh \
+    && rm ./linux-install-${CLOJURE_VERSION}.sh
 
 RUN pip3 install yq
-
 # ENV KUBECONFIG=/var/local/humacs/homedir/kubeconfig
 
 RUN localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
