@@ -10,3 +10,6 @@
 	path = spacemacs-config
 	url = https://github.com/humacs/.spacemacs.d
 	branch = main
+[submodule "doom-config"]
+	path = doom-config
+	url = https://github.com/humacs/.doom.d.git
