@@ -40,7 +40,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
   && rm -rf /var/lib/apt/lists/*
 ENV EMACSLOADPATH=/var/local/humacs: \
   HUMACS_PROFILE=ii \
-  DOOMDIR=/var/local/humacs/zz-config
+  DOOMDIR=/var/local/humacs/doom-config
 COPY homedir/.tmate.conf /etc/skel
 COPY homedir/.tmux.conf /etc/skel
 COPY homedir/.bashrc /etc/skel/.bashrc
