@@ -55,6 +55,7 @@ build-ii:
   variables:
     REPOSITORY: ii
     CONTAINERFILE: ii.Dockerfile
+  timeout: 2h
   before_script:
     - *registry-login
     - export KANIKO_EXTRA_ARGS="--build-arg BASE_IMAGE=$CI_REGISTRY_IMAGE/humacs:latest"
