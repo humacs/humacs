@@ -88,6 +88,9 @@ RUN curl -OL https://download.clojure.org/install/linux-install-${CLOJURE_VERSIO
     && bash linux-install-${CLOJURE_VERSION}.sh \
     && rm ./linux-install-${CLOJURE_VERSION}.sh
 
+# Vue Language Server
+RUN npm install --global vls
+
 RUN pip3 install yq
 # ENV KUBECONFIG=/var/local/humacs/homedir/kubeconfig
 
