@@ -88,6 +88,11 @@ RUN curl -OL https://download.clojure.org/install/linux-install-${CLOJURE_VERSIO
     && bash linux-install-${CLOJURE_VERSION}.sh \
     && rm ./linux-install-${CLOJURE_VERSION}.sh
 
+# Clojure-lsp
+RUN curl -fsSL https://github.com/clojure-lsp/clojure-lsp/releases/download/2021.01.20-01.39.32/clojure-lsp \
+    -o /usr/local/bin/clojure-lsp \
+    && chmod +x /usr/local/bin/clojure-lsp
+
 # Vue Language Server
 RUN npm install --global vls
 
