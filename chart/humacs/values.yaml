@@ -20,7 +20,7 @@ options:
 extraEnvVars: []
 
 image:
-  repository: registry.gitlab.com/humacs/humacs/humacs
+  repository: registry.gitlab.com/humacs/humacs/ii
   pullPolicy: IfNotPresent
   tag: ""
 
