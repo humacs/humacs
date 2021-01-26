@@ -1,7 +1,6 @@
 ARG BASE_IMAGE=registry.gitlab.com/humacs/humacs/humacs:2021.01.20
 FROM $BASE_IMAGE
 ENV HUMACS_DISTRO=ii \
-  HUMACS_CONTAINER=yes \
   DOCKER_VERSION=20.10.2 \
   KIND_VERSION=0.10.0 \
   KUBECTL_VERSION=1.20.2 \
@@ -42,6 +41,7 @@ RUN apt-get update --yes && DEBIAN_FRONTEND=noninteractive \
   python-is-python3 \
   shellcheck \
   pipenv \
+  skopeo \
   && rm -rf /var/lib/apt/lists/* \
   && ln -s /usr/bin/fdfind /usr/local/bin/fd
 # docker client binary

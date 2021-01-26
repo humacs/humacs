@@ -1,5 +1,6 @@
 FROM ubuntu:20.04
 ENV TERM=screen-256color \
+  HUMACS_CONTAINER=yes \
   HUMACS_DISTRO=humacs
 RUN DEBIAN_FRONTEND=noninteractive \
   apt update \
