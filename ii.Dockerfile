@@ -41,6 +41,7 @@ RUN apt-get update --yes && DEBIAN_FRONTEND=noninteractive \
   python-is-python3 \
   shellcheck \
   pipenv \
+  fd-find \
   && rm -rf /var/lib/apt/lists/* \
   && ln -s /usr/bin/fdfind /usr/local/bin/fd
 # docker client binary
