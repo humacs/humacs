@@ -27,7 +27,6 @@ variables:
 .build: &build |
   /kaniko/executor \
     --snapshotMode=redo \
-    --use-new-run \
     --cache=false \
     --context $CI_PROJECT_DIR \
     --dockerfile $CI_PROJECT_DIR/$CONTAINERFILE \
