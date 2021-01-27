@@ -36,7 +36,7 @@ variables:
 build-humacs:
   stage: build-humacs
   image:
-    name: gcr.io/kaniko-project/executor:debug-v0.13.0
+    name: gcr.io/kaniko-project/executor:debug-v1.3.0
     entrypoint: [""]
   variables:
     REPOSITORY: humacs
@@ -50,7 +50,7 @@ build-humacs:
 build-ii:
   stage: build-ii
   image:
-    name: gcr.io/kaniko-project/executor:debug-v0.13.0
+    name: gcr.io/kaniko-project/executor:debug-v1.3.0
     entrypoint: [""]
   variables:
     REPOSITORY: ii
