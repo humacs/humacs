@@ -15,7 +15,17 @@ export EMACSLOADPATH=$(pwd)/humacs:
 emacs -nw
 #+end_src
 
-** Notes
+Setting up on your host system with doom profile just means adding env vars for doom.
+
+#+begin_src shell
+git clone --recursive https://github.com/humacs/humacs
+export EMACSLOADPATH=$(pwd)/humacs:
+export DOOMDIR=$(pwd)/humacs/doom-config
+export HUMACS_PROFILE=doom
+emacs -nw
+#+end_src
+
+* Notes
 - the environment variable EMACSLOADPATH must be set on your system for the Humacs configuration to load correctly
 
 * Kubernetes (Helm)
