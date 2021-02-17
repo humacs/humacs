@@ -1,0 +1,35 @@
+#+TITLE: Troubleshoot_doom
+Some very basic steps to check if your doom instance is giving you trouble
+
+* Make sure your env vars is set correctly
+- EMACSLOADPATH :: path to humacs repo, ending with : (e.g. ~/ii/humacs:)
+- DOOMDIR :: path to doom-config in the humacs repo (e.g. ~/ii/humacs/doom-config)
+- HUMACS_PROFILE :: e.g. doom
+- HUMACSDIR :: Easy path to dir, not required but handy
+#+BEGIN_SRC shell :results raw
+echo $EMACSLOADPATH
+echo $DOOMDIR
+echo $HUMACS_PROFILE
+echo $HUMACSDIR
+#+END_SRC
+
+* Run build and sync
+This should update and repair any issues with packages
+#+BEGIN_SRC shell :results raw
+$HUMACSDIR/doom-emacs/bin/doom sync
+#+END_SRC
+
+Not 100% on value of building again, but I do not think it hurts anything
+#+BEGIN_SRC shell :results raw
+$HUMACSDIR/doom-emacs/bin/doom build
+#+END_SRC
+
+* Additional steps
+This will give you some additional info if you are having issues
+#+BEGIN_SRC shell :results raw
+emacs -nw --debut-init
+#+END_SRC
+
+#+BEGIN_SRC shell :results raw
+$HUMACSDIR/doom-emacs/bin/doom doctor
+#+END_SRC
