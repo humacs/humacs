@@ -4,16 +4,15 @@ ENV HUMACS_DISTRO=ii \
   DOCKER_VERSION=20.10.2 \
   KIND_VERSION=0.10.0 \
   KUBECTL_VERSION=1.20.2 \
-  GO_VERSION=1.15 \
-  TILT_VERSION=0.18.5 \
+  GO_VERSION=1.16 \
+  TILT_VERSION=0.18.11 \
   TMATE_VERSION=2.4.0 \
-  BAZEL_VERSION=3.4.1 \
-  HELM_VERSION=3.5.0 \
+  HELM_VERSION=3.5.2 \
   GH_VERSION=1.5.0 \
   LEIN_VERSION=stable \
   CLOJURE_VERSION=1.10.1.697 \
-  CLUSTERCTL_VERSION=0.3.13 \
-  TALOSCTL_VERSION=0.8.1 \
+  CLUSTERCTL_VERSION=0.3.14 \
+  TALOSCTL_VERSION=0.8.4 \
   TERRAFORM_VERSION=0.14.5 \
   DIVE_VERSION=0.9.2 \
   CRICTL_VERSION=1.20.0 \
@@ -42,6 +41,7 @@ RUN apt-get update --yes && DEBIAN_FRONTEND=noninteractive \
   shellcheck \
   pipenv \
   fd-find \
+  gettext-base \
   && rm -rf /var/lib/apt/lists/* \
   && ln -s /usr/bin/fdfind /usr/local/bin/fd
 # docker client binary
@@ -79,9 +79,6 @@ RUN curl -L \
   --strip-components 1 tmate-${TMATE_VERSION}-static-linux-amd64/tmate
 # helm binary
 RUN curl -L https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz | tar --directory /usr/local/bin --extract -xz --strip-components 1 linux-amd64/helm
-# bazel binary
-RUN curl -L -o /usr/local/bin/bazel https://github.com/bazelbuild/bazel/releases/download/${BAZEL_VERSION}/bazel-${BAZEL_VERSION}-linux-x86_64 && \
-  chmod +x /usr/local/bin/bazel && bazel version
 # clusterctl
 RUN curl -L -o /usr/local/bin/clusterctl https://github.com/kubernetes-sigs/cluster-api/releases/download/v${CLUSTERCTL_VERSION}/clusterctl-linux-amd64 && \
   chmod +x /usr/local/bin/clusterctl
