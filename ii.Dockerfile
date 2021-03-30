@@ -1,5 +1,8 @@
 ARG BASE_IMAGE=registry.gitlab.com/humacs/humacs/humacs:2021.01.20
 FROM $BASE_IMAGE
+LABEL maintainer="ii <maintainers@ii.coop>" \
+  com.github.containers.toolbox="true" \
+  com.github.debarshiray.toolbox="true"
 ENV HUMACS_DISTRO=ii \
   DOCKER_VERSION=20.10.5 \
   KIND_VERSION=0.10.0 \
@@ -20,7 +23,7 @@ ENV HUMACS_DISTRO=ii \
   FZF_VERSION=0.26.0 \
 # GOLANG, path vars
   GOROOT=/usr/local/go \
-  PATH="$PATH:/usr/local/go/bin"
+  PATH="$PATH:/usr/local/go/bin:/usr/libexec/flatpak-xdg-utils"
 # Software
 RUN apt-get update --yes && DEBIAN_FRONTEND=noninteractive \
   apt-get install --no-install-recommends -y \
@@ -44,6 +47,9 @@ RUN apt-get update --yes && DEBIAN_FRONTEND=noninteractive \
   pipenv \
   fd-find \
   gettext-base \
+  libcap2-bin \
+  locate \
+  flatpak-xdg-utils \
   && rm -rf /var/lib/apt/lists/* \
   && ln -s /usr/bin/fdfind /usr/local/bin/fd
 # docker client binary
