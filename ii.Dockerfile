@@ -102,8 +102,8 @@ RUN curl -L https://github.com/wagoodman/dive/releases/download/v${DIVE_VERSION}
   | tar --directory /usr/local/bin/ --extract --ungzip dive
 RUN curl -L https://github.com/kubernetes-sigs/cri-tools/releases/download/v${CRICTL_VERSION}/crictl-v${CRICTL_VERSION}-linux-amd64.tar.gz \
   | tar --directory /usr/local/bin --extract --gunzip crictl
-RUN curl -L https://github.com/ahmetb/kubectx/releases/download/v${KUBECTX_VERSION}/kubectx_v${KUBECTX_VERSION}_linux_x86_64.tar.gz | tar --directory /usr/local/bin --extract -xz --strip-components 1 kubectx_v${KUBECTX_VERSION}_linux_x86_64/kubectx
-RUN curl -L  https://github.com/junegunn/fzf/releases/download/${FZF_VERSION}/fzf-${FZF_VERSION}-linux_amd64.tar.gz | tar --directory /usr/local/bin --extract -xz --strip-components 1 fzf-${FZF_VERSION}-linux_amd64/fzf
+RUN curl -L https://github.com/ahmetb/kubectx/releases/download/v${KUBECTX_VERSION}/kubectx_v${KUBECTX_VERSION}_linux_x86_64.tar.gz | tar --directory /usr/local/bin --extract --ungzip kubectx
+RUN curl -L  https://github.com/junegunn/fzf/releases/download/${FZF_VERSION}/fzf-${FZF_VERSION}-linux_amd64.tar.gz | tar --directory /usr/local/bin --extract --ungzip fzf
 # gopls binary
 RUN /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get golang.org/x/tools/gopls@latest \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/owenthereal/upterm \
