@@ -101,6 +101,7 @@ RUN curl -L  https://github.com/junegunn/fzf/releases/download/${FZF_VERSION}/fz
 # gopls binary
 RUN /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get golang.org/x/tools/gopls@latest \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/owenthereal/upterm \
+  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/mikefarah/yq/v4 \
 # gocode binary
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/stamblerre/gocode \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/go-delve/delve/cmd/dlv \
@@ -117,7 +118,7 @@ RUN curl -fsSL https://raw.githubusercontent.com/technomancy/leiningen/${LEIN_VE
 RUN curl -OL https://download.clojure.org/install/linux-install-${CLOJURE_VERSION}.sh \
     && bash linux-install-${CLOJURE_VERSION}.sh \
     && rm ./linux-install-${CLOJURE_VERSION}.sh
-RUN pip3 install yq
-RUN localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
+RUN localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 \
+  && touch /etc/localtime
 ENV LANG en_US.utf8
 USER ii
