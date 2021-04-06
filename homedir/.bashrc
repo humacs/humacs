@@ -71,8 +71,16 @@ export PATH=$PATH:"/usr/local/go/bin"
 
 . /usr/local/bin/ssh-agent-export.sh
 
-export EDITOR="emacsclient -t"
+function editor () {
+    emacsclient -t $* || vim $*
+}
+export EDITOR="editor"
+export GOPATH=${GOPATH:-$(go env GOPATH)}
 
 if [ "$HUMACS_DISTRO" = "ii" ]; then
     . <(kubectl completion bash)
+    . <(clusterctl completion bash)
+    . <(helm completion bash)
+    . <(talosctl completion bash)
+    . <(gh completion -s bash)
 fi
