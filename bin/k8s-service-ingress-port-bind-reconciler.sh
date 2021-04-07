@@ -37,7 +37,12 @@ spec:
   selector:
     app.kubernetes.io/name: humacs
   type: ClusterIP
----
+EOF
+
+        if [ ! "$protocol" = "TCP" ]; then
+            continue
+        fi
+        cat <<EOF | kubectl apply -f -
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
