@@ -17,6 +17,8 @@ if [ -d $SERVICE_ACCOUNT_DIR ]; then
     export IN_CLUSTER=true
     kubectl config set-context $(kubectl config current-context) \
             --namespace=$(cat $SERVICE_ACCOUNT_DIR/namespace)
+
+    /usr/local/bin/k8s-service-ingress-port-bind-reconciler.sh &
 else
     export IN_CLUSTER=false
 fi
@@ -62,8 +64,6 @@ fi
     cd
     eval "$INIT_PREFINISH_BLOCK"
 )
-
-/usr/local/bin/k8s-service-ingress-port-bind-reconciler.sh &
 
 # This background process will ensure tmate attach commands
 # call osc52-tmate.sh to set the ssh/web uri for this session via osc52
