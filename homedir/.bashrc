@@ -77,6 +77,8 @@ function editor () {
 export EDITOR="editor"
 export GOPATH=${GOPATH:-$(go env GOPATH)}
 
+alias e=editor
+
 if [ "$HUMACS_DISTRO" = "ii" ]; then
     . <(kubectl completion bash)
     . <(clusterctl completion bash)
