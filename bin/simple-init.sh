@@ -11,6 +11,7 @@ then
     ssh-keygen -b 4096 -t rsa -f ~/.ssh/id_rsa -q -N ""
 fi
 
+chmod 0600 /etc/skel/.kube/config
 # If we are in cluster, set our default namespace
 SERVICE_ACCOUNT_DIR=/var/run/secrets/kubernetes.io/serviceaccount
 if [ -d $SERVICE_ACCOUNT_DIR ]; then
