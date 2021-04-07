@@ -63,6 +63,8 @@ fi
     eval "$INIT_PREFINISH_BLOCK"
 )
 
+/usr/local/bin/k8s-service-ingress-port-bind-reconciler.sh &
+
 # This background process will ensure tmate attach commands
 # call osc52-tmate.sh to set the ssh/web uri for this session via osc52
 # We need to wait's until the socket exists, and tmate is ready for commands
