@@ -2,7 +2,9 @@ FROM ubuntu:20.04
 ENV TERM=screen-256color \
   HUMACS_CONTAINER=yes \
   HUMACS_DISTRO=humacs \
-  HUMACS_PROFILE=doom
+  HUMACS_PROFILE=doom \
+  EMACSLOADPATH=/var/local/humacs: \
+  DOOMDIR=/var/local/humacs/doom-config
 RUN DEBIAN_FRONTEND=noninteractive \
   apt update \
   && apt upgrade -y \
@@ -40,9 +42,6 @@ RUN DEBIAN_FRONTEND=noninteractive \
   iputils-ping \
   file \
   && rm -rf /var/lib/apt/lists/*
-ENV EMACSLOADPATH=/var/local/humacs: \
-  HUMACS_PROFILE=ii \
-  DOOMDIR=/var/local/humacs/doom-config
 COPY homedir/.tmate.conf /etc/skel
 COPY homedir/.tmux.conf /etc/skel
 COPY homedir/.bashrc /etc/skel/.bashrc
