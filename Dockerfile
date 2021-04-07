@@ -69,7 +69,7 @@ COPY --chown=ii:users vagrant/ /var/local/humacs/vagrant/
 RUN cd /var/local/humacs && git remote remove origin
 RUN su ii -c 'curl -L https://github.com/humacs/humacs/releases/download/0.0.1-alpha/spacemacs-elpa-cache-2020.08.28.tgz | tar xvzC /var/local/humacs/spacemacs'
 # spacemacs cache
-RUN su ii -c 'cd && emacs -batch -l /var/local/humacs/default.el'
+RUN su ii -c 'cd && HUMACS_PROFILE=ii emacs -batch -l /var/local/humacs/default.el'
 # doom install/sync
 RUN su ii -c 'cd && yes | /var/local/humacs/doom-emacs/bin/doom install --no-env'
 RUN su ii -c 'cd && yes | /var/local/humacs/doom-emacs/bin/doom sync -e'
