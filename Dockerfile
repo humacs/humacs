@@ -1,7 +1,8 @@
 FROM ubuntu:20.04
 ENV TERM=screen-256color \
   HUMACS_CONTAINER=yes \
-  HUMACS_DISTRO=humacs
+  HUMACS_DISTRO=humacs \
+  HUMACS_PROFILE=doom
 RUN DEBIAN_FRONTEND=noninteractive \
   apt update \
   && apt upgrade -y \
