@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-set -euo pipefail
 
-[ ! -z $SHARINGIO_PAIR_DISABLE_SVC_INGRESS_BIND_RECONCILER ] && exit 0
+[ ! -z "$SHARINGIO_PAIR_DISABLE_SVC_INGRESS_BIND_RECONCILER" ] && exit 0
 
 LOAD_BALANCER_IP="$(kubectl -n nginx-ingress get svc nginx-ingress-ingress-nginx-controller -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')"
 
