@@ -17,7 +17,7 @@ Environment variables to configure environments
 
 * Humacs in Docker
 
-*** Simple-Init.sh
+*** simple-init.sh
 This script handles bringing up the environment for pairing.
 It ensures the SSH_AUTH_SOCK is set, prepares the home folder, clones all the repos that are declared, and finally sets up a tmate session with Emacs running inside it.
 
