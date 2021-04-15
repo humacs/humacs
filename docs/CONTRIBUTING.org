@@ -1,0 +1,33 @@
+#+TITLE: Contributing
+
+There are many areas in Humacs where you may wish to contribute, in this docs we'll let over those areas.
+
+* Emacs configurations
+Humacs is a highly dynamic multi-distribution Emacs distribution.
+What this means is that many distributions are shipped together.
+The distributions are:
+- doom
+- spacemacs (ii)
+
+* Container images
+The base container image is =Dockerfile=, this contains enough to get going with anything. It is a minimal environment without any domain specific utilities included.
+
+The container image that is used by [[https://ii.coop][ii]] is in =ii.Dockerfile=, it includes all the utilities that ii needs to use for their work.
+
+Both current layers are welcome for contribution.
+A new Dockerfile can be also written for your needs, FROM'ming one of the earlier layers.
+
+* Infra / deployments
+Humacs can be deployed in many ways such as through:
+- your host
+- [[./DEPLOYMENT.org][Docker]]
+- [[./DEPLOYMENT.org][Kubernetes]] (chart/humacs folder)
+  - as well as cluster-api (infra/cluster-api)
+- Vagrant (vagrant folder)
+- Terraform (infra/terraform-packet)
+
+* Docs
+Documentation is in this folder, the docs folder.
+There are already some area specific files relating to usage, deployment, configuration, and so forth.
+
+* Explorations
