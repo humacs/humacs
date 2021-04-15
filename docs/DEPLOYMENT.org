@@ -1,4 +1,3 @@
-# -*- ii: humacs; -*-
 #+TITLE: Deployment
 
 Deploying Humacs in several environments.
@@ -58,7 +57,7 @@ Once up and running, connect via kubectl:
 Spin up a quick and default environment
 
 #+begin_src shell
-docker run -ti --rm registry.gitlab.com/humacs/humacs/ii:2020.09.09 emacs
+docker run -ti --rm registry.gitlab.com/humacs/humacs/ii:2021.04.16 emacs
 #+end_src
 
 ** Configuring
@@ -70,7 +69,7 @@ The following command shows configuring:
 #+begin_src shell
 docker run -ti --rm \
   -e HUMACS_PROFILE=doom \
-  -v $(pwd):/home/ii/workspace registry.gitlab.com/humacs/humacs/ii:2020.09.09 emacs /home/ii/workspace
+  -v $(pwd):/home/ii/workspace registry.gitlab.com/humacs/humacs/ii:2021.04.16 emacs /home/ii/workspace
 #+end_src
 
 ** Simple-Init.sh
@@ -92,5 +91,5 @@ Simple init allows the environment to be set up with:
     -e INIT_DEFAULT_DIR="/home/ii" \
     -e INIT_DEFAULT_REPOS="https://github.com/kubernetes/kubernetes https://github.com/cncf/apisnoop" \
     -e INIT_DEFAULT_REPOS_FOLDER="workspace" \
-    registry.gitlab.com/humacs/humacs/ii:2020.09.09 simple-init.sh
+    registry.gitlab.com/humacs/humacs/ii:2021.04.16 simple-init.sh
 #+end_src

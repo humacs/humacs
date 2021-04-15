@@ -27,7 +27,7 @@ extraEnvVars: []
 
 image:
   repository: registry.gitlab.com/humacs/humacs/ii
-  tag: 2020.09.09
+  tag: 2021.04.16
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
