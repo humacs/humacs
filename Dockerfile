@@ -75,6 +75,6 @@ RUN su ii -c 'cd && yes | /var/local/humacs/doom-emacs/bin/doom install --no-env
 RUN su ii -c 'cd && yes | /var/local/humacs/doom-emacs/bin/doom sync -e'
 ADD bin /usr/local/bin
 # copy final files from the repo to make it feel more like a repo
-COPY --chown=ii:users Dockerfile .gitignore .gitlab-ci.yml .gitmodules ii.Dockerfile LICENSE Readme.md Readme.org /var/local/humacs/
+COPY --chown=ii:users Dockerfile .gitignore .gitlab-ci.yml .gitmodules ii.Dockerfile LICENSE README.org /var/local/humacs/
 
 WORKDIR /home/ii
