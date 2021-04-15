@@ -131,5 +131,6 @@ RUN curl -OL https://download.clojure.org/install/linux-install-${CLOJURE_VERSIO
     && rm ./linux-install-${CLOJURE_VERSION}.sh
 RUN localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 \
   && touch /etc/localtime
-ENV LANG en_US.utf8
+ENV LANG=en_US.utf8 \
+  USER=ii
 USER ii
