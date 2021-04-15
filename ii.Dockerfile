@@ -21,6 +21,7 @@ ENV HUMACS_DISTRO=ii \
   CRICTL_VERSION=1.20.0 \
   KUBECTX_VERSION=0.9.3 \
   FZF_VERSION=0.26.0 \
+  UPTERM_VERSION=0.6.5 \
 # GOLANG, path vars
   GOROOT=/usr/local/go \
   PATH="$PATH:/usr/local/go/bin:/usr/libexec/flatpak-xdg-utils"
@@ -109,9 +110,9 @@ RUN curl -L https://github.com/kubernetes-sigs/cri-tools/releases/download/v${CR
   | tar --directory /usr/local/bin --extract --gunzip crictl
 RUN curl -L https://github.com/ahmetb/kubectx/releases/download/v${KUBECTX_VERSION}/kubectx_v${KUBECTX_VERSION}_linux_x86_64.tar.gz | tar --directory /usr/local/bin --extract --ungzip kubectx
 RUN curl -L  https://github.com/junegunn/fzf/releases/download/${FZF_VERSION}/fzf-${FZF_VERSION}-linux_amd64.tar.gz | tar --directory /usr/local/bin --extract --ungzip fzf
+RUN curl -L https://github.com/owenthereal/upterm/releases/download/v${UPTERM_VERSION}/upterm_linux_amd64.tar.gz | tar --directory /usr/local/bin --extract --ungzip
 # gopls binary
 RUN /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get golang.org/x/tools/gopls@latest \
-  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/owenthereal/upterm \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/mikefarah/yq/v4 \
 # gocode binary
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/stamblerre/gocode \

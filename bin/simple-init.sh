@@ -5,6 +5,8 @@ if [ "$HUMACS_DEBUG" = true ]; then
 fi
 cd "$HOME"
 
+TERM_MULTIPLEXER=${TERM_MULTIPLEXER:-tmate}
+
 # Generate an ssh-key if one doesn't exist
 if [ ! -f ".ssh/id_rsa" ]
 then
@@ -67,18 +69,40 @@ fi
     eval "$INIT_PREFINISH_BLOCK"
 )
 
-# This background process will ensure tmate attach commands
-# call osc52-tmate.sh to set the ssh/web uri for this session via osc52
-# We need to wait's until the socket exists, and tmate is ready for commands
-# before doing so. (Would be easier if this were a config option for .tmate.conf)
-cd $INIT_DEFAULT_DIR
-(
-    /usr/local/bin/tmate-wait-for-socket.sh
-    tmate -S $TMATE_SOCKET set-hook -ug client-attached # unset
-    tmate -S $TMATE_SOCKET set-hook -g client-attached 'run-shell "tmate new-window osc52-tmate.sh"'
-)&
+function shareable_tmate {
+  # This background process will ensure tmate attach commands
+  # call osc52-tmate.sh to set the ssh/web uri for this session via osc52
+  # We need to wait's until the socket exists, and tmate is ready for commands
+  # before doing so. (Would be easier if this were a config option for .tmate.conf)
+  cd $INIT_DEFAULT_DIR
+  (
+      /usr/local/bin/tmate-wait-for-socket.sh
+      tmate -S $TMATE_SOCKET set-hook -ug client-attached # unset
+      tmate -S $TMATE_SOCKET set-hook -g client-attached 'run-shell "tmate new-window osc52-tmate.sh"'
+  )&
 
-# This is our primary background process for humacs
-# a tmate session in foreground mode, respawning if it dies
-# A default directory and org file are used to start emacsclient as the main window
-tmate -F -v -S $TMATE_SOCKET new-session -d -c $INIT_DEFAULT_DIR emacsclient --tty $INIT_ORG_FILE
+  # This is our primary background process for humacs
+  # a tmate session in foreground mode, respawning if it dies
+  # A default directory and org file are used to start emacsclient as the main window
+  tmate -F -v -S $TMATE_SOCKET new-session -d -c $INIT_DEFAULT_DIR emacsclient --tty $INIT_ORG_FILE
+}
+
+function shareable_upterm {
+    upterm host --force-command "tmux -S $TMATE_SOCKET attach" -- tmux -v -S $TMATE_SOCKET new-session -c $INIT_DEFAULT_DIR emacs $INIT_ORG_FILE
+}
+
+case "$TERM_MULTIPLEXER" in
+    "tmate")
+        shareable_tmate
+        break
+    ;;
+    "upterm")
+        shareable_upterm
+        break
+    ;;
+
+    *)
+        echo "error: terminal multiplexer '$TERM_MULTIPLEXER' is unavailable" > /dev/stderr
+        exit 1
+    ;;
+esac
