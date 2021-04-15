@@ -25,7 +25,10 @@ ENV HUMACS_DISTRO=ii \
   GOROOT=/usr/local/go \
   PATH="$PATH:/usr/local/go/bin:/usr/libexec/flatpak-xdg-utils"
 # Software
-RUN apt-get update --yes && DEBIAN_FRONTEND=noninteractive \
+RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" \
+    | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
+  curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg  add - && \
+  apt-get update --yes && DEBIAN_FRONTEND=noninteractive \
   apt-get install --no-install-recommends -y \
   tree \
   iproute2 \
@@ -50,6 +53,7 @@ RUN apt-get update --yes && DEBIAN_FRONTEND=noninteractive \
   libcap2-bin \
   locate \
   flatpak-xdg-utils \
+  google-cloud-sdk \
   && rm -rf /var/lib/apt/lists/* \
   && ln -s /usr/bin/fdfind /usr/local/bin/fd
 # docker client binary
