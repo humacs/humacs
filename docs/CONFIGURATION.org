@@ -18,8 +18,10 @@ Environment variables to configure environments
 * Humacs in Docker
 
 *** Simple-Init.sh
+This script handles bringing up the environment for pairing.
+It ensures the SSH_AUTH_SOCK is set, prepares the home folder, clones all the repos that are declared, and finally sets up a tmate session with Emacs running inside it.
 
-| Variables                   | Description                                            | Default                           |
+| Variable                    | Description                                            | Default                           |
 |-----------------------------+--------------------------------------------------------+-----------------------------------|
 | =HUMACS_DEBUG=              | ~set -x~ debug on shell blocks                         | =false=                           |
 | =GIT_AUTHOR_EMAIL=          | (required) the default email to use for commits        | =""=                              |
@@ -34,6 +36,15 @@ Environment variables to configure environments
 | =INIT_DEFAULT_REPOS_FOLDER= | the location of where to clone repos                   | ="/home/ii"=                      |
 | =INIT_PREFINISH_BLOCK=      | a shell block to execute (after repos are clone)       | =""=                              |
 | =REINIT_HOME_FOLDER=        | copy =/etc/skel= over =/home/ii=                       | =""=                              |
+
+*** k8s-service-ingress-port-bind-reconciler.sh
+This script watches for ports listening on all interfaces and reconciles them into Kubernetes Services and Ingresses for use in [[https://github.com/sharingio/pair][Pair instances]].
+
+| Variable                                             | Description             | Default |
+|------------------------------------------------------+-------------------------+---------|
+| =SHARINGIO_PAIR_DISABLE_SVC_INGRESS_BIND_RECONCILER= | Disables the reconciler | =""=    |
+
+Note: requires to be running Humacs inside of a Kubernetes cluster -
 
 * Kubernetes (Helm)
 
