@@ -33,7 +33,7 @@ Humacs can be configured through environment variables, these are details in the
 
 ** Contributing
 
-All contribution is welcome. For information, please check out the [[./CONTRIBUTING.org][contributing docs]].
+All contribution is welcome. For information, please check out the [[./docs/CONTRIBUTING.org][contributing docs]].
 
 ** License
 Copyright 2020-2021 ii.
