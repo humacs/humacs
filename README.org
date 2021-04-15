@@ -31,7 +31,11 @@ To install or deploy, please checkout the [[./docs/DEPLOYMENT.org][deployment]] 
 
 Humacs can be configured through environment variables, these are details in the [[./docs/CONFIGURATION.org][config docs]].
 
+** Contributing
+
+All contribution is welcome. For information, please check out the [[./CONTRIBUTING.org][contributing docs]].
+
 ** License
-Copyright 2020 ii.
+Copyright 2020-2021 ii.
 This project is licensed under the [BSD 2-clause](https://en.wikipedia.org/wiki/BSD_licenses#2-clause) and is [Open Source](https://en.wikipedia.org/wiki/Open_source).
 This program comes with absolutely no warranty.
