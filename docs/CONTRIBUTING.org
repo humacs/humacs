@@ -31,3 +31,4 @@ Documentation is in this folder, the docs folder.
 There are already some area specific files relating to usage, deployment, configuration, and so forth.
 
 * Explorations
+Upon new discoveries of things, the =org= folder is used to stash away the explorations of miscellaneous things Humacs related.
