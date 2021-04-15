@@ -61,7 +61,7 @@ Note: requires to be running Humacs inside of a Kubernetes cluster -
 | options.preinitScript       | a shell block to execute after cloning repos                    | =(echo 'Welcome to Humacs')=             |
 | extraEnvVars                | declare extra environment variables                             |                                          |
 | image.repository            | the repo where the image lives                                  | registry.gitlab.com/humacs/humacs/humacs |
-| image.tag                   | specifies a tag of from the image to use                        | 2020.09.09                               |
+| image.tag                   | specifies a tag of from the image to use                        | 2021.04.16                               |
 | image.pullPolicy            | Humacs container pull policy                                    | IfNotPresent                             |
 | imagePullSecrets            | references for the registry secrets to pull Humacs from         | =[]=                                     |
 | nameOverride                | expand the name of the chart                                    | =""=                                     |
