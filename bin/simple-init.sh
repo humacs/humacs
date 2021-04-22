@@ -67,6 +67,15 @@ fi
     eval "$INIT_PREFINISH_BLOCK"
 )
 
+if [ "$HUMACS_PROFILE" = "doom" ]; then
+    # ensure that the user and default configs are loaded, based on if the Humacs profile is doom
+    (
+        cd /var/local/humacs/doom-config
+        rm config.el users/*.el
+    )
+    /var/local/humacs/doom-emacs/bin/doom sync
+fi
+
 # This background process will ensure tmate attach commands
 # call osc52-tmate.sh to set the ssh/web uri for this session via osc52
 # We need to wait's until the socket exists, and tmate is ready for commands
