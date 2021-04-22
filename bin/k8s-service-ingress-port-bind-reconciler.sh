@@ -12,7 +12,10 @@ while true; do
         protocol=$(echo ${line} | awk '{print $1}' | grep -o '[a-z]*' | tr '[:lower:]' '[:upper:]')
         portNumber=$(echo ${line} | awk '{print $2}' | cut -d ':' -f2 | grep -o '[0-9]*')
         name=$(echo ${line} | awk '{print $3}' | cut -d '"' -f2)
-        svcName=$(echo "humacs-$name-$portNumber")
+        svcName=$(echo "$name")
+        if kubectl get ingress $name 2>&1 > /dev/null ; then
+            svcName=$(echo "$name-$portNumber")
+        fi
         hostName=$(echo "$svcName.$SHARINGIO_PAIR_BASE_DNS_NAME")
 
         if [ -z $name ]; then
