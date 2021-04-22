@@ -23,7 +23,7 @@ ENV HUMACS_DISTRO=ii \
   FZF_VERSION=0.26.0 \
 # GOLANG, path vars
   GOROOT=/usr/local/go \
-  PATH="$PATH:/usr/local/go/bin:/usr/libexec/flatpak-xdg-utils"
+  PATH="$PATH:/usr/local/go/bin:/usr/libexec/flatpak-xdg-utils:/home/ii/go/bin"
 # Software
 RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" \
     | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
