@@ -59,7 +59,7 @@ if [ "$HUMACS_PROFILE" = "doom" ]; then
     # ensure that the user and default configs are loaded, based on if the Humacs profile is doom
     (
         cd /var/local/humacs/doom-config
-        rm config.el users/*.el
+        rm -f config.el users/*.el
     )
     /var/local/humacs/doom-emacs/bin/doom sync
 fi
