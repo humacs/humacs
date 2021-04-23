@@ -12,9 +12,10 @@ while true; do
         protocol=$(echo ${line} | awk '{print $1}' | grep -o '[a-z]*' | tr '[:lower:]' '[:upper:]')
         portNumber=$(echo ${line} | awk '{print $2}' | cut -d ':' -f2 | grep -o '[0-9]*')
         name=$(echo ${line} | awk '{print $3}' | cut -d '"' -f2)
-        svcName=$(echo "$name")
-        if kubectl get ingress $name 2>&1 > /dev/null ; then
-            svcName=$(echo "$name-$portNumber")
+        svcName="$name"
+        if kubectl get ingress -l io.sharing.pair/managed=true 2> /dev/null | grep -q $name && \
+            [ ! $(kubectl get ingress -l io.sharing.pair/managed=true -o json | jq -r ".items[] | select(.metadata.name==\"$name\") | .metadata.labels.\"io.sharing.pair/port\"") = "$portNumber" ]; then
+            svcName="$name-$portNumber"
         fi
         hostName=$(echo "$svcName.$SHARINGIO_PAIR_BASE_DNS_NAME")
 
@@ -29,6 +30,7 @@ metadata:
   name: $svcName
   labels:
     io.sharing.pair/managed: "true"
+    io.sharing.pair/port: "${portNumber}"
 spec:
   externalIPs:
   - ${LOAD_BALANCER_IP}
@@ -52,6 +54,7 @@ metadata:
   name: $svcName
   labels:
     io.sharing.pair/managed: "true"
+    io.sharing.pair/port: "${portNumber}"
 spec:
   rules:
   - host: $hostName
@@ -70,7 +73,7 @@ spec:
     secretName: letsencrypt-prod
 
 EOF
-        svcNames="$svcName\n$svcNames"
+        svcNames="$svcName $svcNames"
     done < <(echo "$listening")
 
     liveSvcs=$(kubectl get svc -l io.sharing.pair/managed=true -o=jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}')
@@ -78,7 +81,7 @@ EOF
         if [ -z $line ]; then
             continue
         fi
-        if echo $svcNames | grep -q $line; then
+        if echo $svcNames | grep -q -E "(^| )$line( |$)"; then
             echo "live: $line"
         else
             echo "gone: $line"
