@@ -1,9 +1,11 @@
 ARG BASE_IMAGE=registry.gitlab.com/humacs/humacs/humacs:2021.01.20
 FROM $BASE_IMAGE
+ARG HUMACS_IMAGE=""
 LABEL maintainer="ii <maintainers@ii.coop>" \
   com.github.containers.toolbox="true" \
   com.github.debarshiray.toolbox="true"
 ENV HUMACS_DISTRO=ii \
+  HUMACS_IMAGE="$HUMACS_IMAGE" \
   DOCKER_VERSION=20.10.6 \
   KIND_VERSION=0.10.0 \
   KUBECTL_VERSION=1.20.2 \
