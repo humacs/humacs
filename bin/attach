@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ ! -z "$TMUX" ] && [ -z "$HUMACS_FORCE_ATTACH" ]; then
+    echo "Already attached"
+    exit 0
+fi
+
 echo "Preparing your environment; waiting for your tmate session to be ready..."
 
 TMATE_SOCKET_NAME=${1:-default}
