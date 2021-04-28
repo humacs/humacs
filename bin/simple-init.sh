@@ -5,6 +5,15 @@ if [ "$HUMACS_DEBUG" = true ]; then
 fi
 cd "$HOME"
 
+export TMATE_SOCKET="${TMATE_SOCKET:-/tmp/ii.default.target.iisocket}"
+export TMATE_SOCKET_NAME=`basename ${TMATE_SOCKET}`
+if tmate -S $TMATE_SOCKET wait-for tmate-ready 2> /dev/null; then
+    set +x
+    echo "Already initialised with tmate ready."
+    echo "Use: attach"
+    exit 0
+fi
+
 # Generate an ssh-key if one doesn't exist
 if [ ! -f ".ssh/id_rsa" ]
 then
@@ -34,8 +43,6 @@ if [ -z "$GIT_AUTHOR_NAME" ]; then
 fi
 
 export ALTERNATE_EDITOR=""
-export TMATE_SOCKET="${TMATE_SOCKET:-/tmp/ii.default.target.iisocket}"
-export TMATE_SOCKET_NAME=`basename ${TMATE_SOCKET}`
 export INIT_ORG_FILE="${INIT_ORG_FILE:-$HOME}"
 export INIT_DEFAULT_DIR="${INIT_DEFAULT_DIR:-$HOME}"
 export INIT_DEFAULT_REPOS="${INIT_DEFAULT_REPOS}"
