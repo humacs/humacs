@@ -1,3 +1,12 @@
 #!/bin/bash
 
-docker run -it --rm --privileged --pid=host justincormack/nsenter1 /bin/bash $*
+IMAGE=${HUMACS_IMAGE:-alpine:edge}
+
+ARGS=$*
+if [ $# -eq 0 ]; then
+    ARGS=bash
+fi
+
+EXEC_USER=${EXEC_USER:-root}
+
+docker run -it --rm --privileged --pid=host $IMAGE nsenter -t 1 -m -u -n -i su $EXEC_USER -c "cd; /bin/bash -c \"$ARGS\""
