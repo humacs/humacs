@@ -50,7 +50,8 @@ COPY homedir/.gitconfig /etc/skel/.gitconfig
 COPY homedir/kubeconfig /etc/skel/.kube/config
 RUN mkdir -p /etc/sudoers.d && \
   echo "%sudo    ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/sudo && \
-  useradd -m -G users,sudo -u 1000 -s /bin/bash ii
+  useradd -m -G users,sudo -u 1000 -s /bin/bash ii && \
+  chgrp 0775 /usr/local/lib && chgrp users /usr/local/lib
 # required for emacs initialization
 COPY --chown=ii:users default.el /var/local/humacs/
 # copy each needed directory so it is placed in correctly
