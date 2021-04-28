@@ -78,7 +78,7 @@ alias e=editor
 
 if [ "$HUMACS_DISTRO" = "ii" ]; then
     . <(kubectl completion bash)
-    . <(clusterctl completion bash)
+    . <(clusterctl completion bash 2> /dev/null)
     . <(helm completion bash)
     . <(talosctl completion bash)
     . <(gh completion -s bash)
