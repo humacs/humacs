@@ -71,9 +71,6 @@ export PATH=$PATH:"/usr/local/go/bin"
 
 . /usr/local/bin/ssh-agent-export.sh
 
-function editor () {
-    emacsclient -t $* || vim $*
-}
 export EDITOR="editor"
 export GOPATH=${GOPATH:-$(go env GOPATH)}
 
