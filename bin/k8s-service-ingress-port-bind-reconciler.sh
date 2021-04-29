@@ -4,6 +4,8 @@
 
 LOAD_BALANCER_IP="$(kubectl -n nginx-ingress get svc nginx-ingress-ingress-nginx-controller -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')"
 
+echo "Watching for processes listening on all interfaces..."
+
 while true; do
     listening=$(ss -tunlp 2>&1 | awk '{print $1 " " $5 " " $7}' | grep -E ':[0-9]' | grep -E '(\*|0.0.0.0):' || true)
     svcNames=""
