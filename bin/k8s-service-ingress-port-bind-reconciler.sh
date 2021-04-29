@@ -1,31 +1,32 @@
 #!/usr/bin/env bash
 
 [ ! -z "$SHARINGIO_PAIR_DISABLE_SVC_INGRESS_BIND_RECONCILER" ] && exit 0
-if [ ! -d /var/run/secrets/kubernetes.io/serviceaccount ]; then
-  echo "Unable to find Kubernetes ServiceAccount token. Please make sure that '$0' + Humacs is being run in-cluster." > /dev/stderr
-  exit 1
-fi
 
-LOAD_BALANCER_IP="${SHARINGIO_PAIR_LOAD_BALANCER_IP}"
+LOAD_BALANCER_IP="$(kubectl -n nginx-ingress get svc nginx-ingress-ingress-nginx-controller -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')"
 
 while true; do
-    listening=$(ss -tunlp | grep -e ':[0-9]' | grep -E "(\*|0.0.0.0):" | awk '{print $1 " " $5 " " $7}' || true)
+    listening=$(ss -tunlp 2>&1 | awk '{print $1 " " $5 " " $7}' | grep -E ':[0-9]' | grep -E '(\*|0.0.0.0):' || true)
     svcNames=""
 
     while IFS= read -r line; do
         protocol=$(echo ${line} | awk '{print $1}' | grep -o '[a-z]*' | tr '[:lower:]' '[:upper:]')
         portNumber=$(echo ${line} | awk '{print $2}' | cut -d ':' -f2 | grep -o '[0-9]*')
-        name=$(echo ${line} | awk '{print $3}' | cut -d '"' -f2)
+        pid=$(echo ${line} | sed 's/.*pid=//g' | sed 's/,.*//g')
+        overrideHost=$(cat /proc/$pid/environ | tr '\0' '\n' | grep SHARINGIO_PAIR_SET_HOSTNAME | cut -d '=' -f2)
+        processName=$(echo ${line} | awk '{print $3}' | cut -d '"' -f2)
+        if [ -z "$processName" ]; then
+            continue
+        fi
+        name=$processName
+        if [ -n "$overrideHost" ]; then
+          name=$overrideHost
+        fi
         svcName="$name"
         if kubectl get ingress -l io.sharing.pair/managed=true 2> /dev/null | grep -q $name && \
             [ ! $(kubectl get ingress -l io.sharing.pair/managed=true -o json | jq -r ".items[] | select(.metadata.name==\"$name\") | .metadata.labels.\"io.sharing.pair/port\"") = "$portNumber" ]; then
             svcName="$name-$portNumber"
         fi
         hostName=$(echo "$svcName.$SHARINGIO_PAIR_BASE_DNS_NAME")
-
-        if [ -z $name ]; then
-            continue
-        fi
 
         cat <<EOF | kubectl apply -f -
 apiVersion: v1
