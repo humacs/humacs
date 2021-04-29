@@ -12,11 +12,11 @@ while true; do
         protocol=$(echo ${line} | awk '{print $1}' | grep -o '[a-z]*' | tr '[:lower:]' '[:upper:]')
         portNumber=$(echo ${line} | awk '{print $2}' | cut -d ':' -f2 | grep -o '[0-9]*')
         pid=$(echo ${line} | sed 's/.*pid=//g' | sed 's/,.*//g')
-        overrideHost=$(cat /proc/$pid/environ | tr '\0' '\n' | grep SHARINGIO_PAIR_SET_HOSTNAME | cut -d '=' -f2)
         processName=$(echo ${line} | awk '{print $3}' | cut -d '"' -f2)
         if [ -z "$processName" ]; then
             continue
         fi
+        overrideHost=$(cat /proc/$pid/environ | tr '\0' '\n' | grep SHARINGIO_PAIR_SET_HOSTNAME | cut -d '=' -f2)
         name=$processName
         if [ -n "$overrideHost" ]; then
           name=$overrideHost
