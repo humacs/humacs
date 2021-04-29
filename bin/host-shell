@@ -8,5 +8,6 @@ if [ $# -eq 0 ]; then
 fi
 
 EXEC_USER=${EXEC_USER:-root}
+EXEC_PWD=${EXEC_PWD:-$PWD}
 
-docker run -it --rm --privileged --pid=host $IMAGE nsenter -t 1 -m -u -n -i su $EXEC_USER -c "cd; /bin/bash -c \"$ARGS\""
+docker run -it --rm --privileged --pid=host $IMAGE nsenter -t 1 -m -u -n -i su $EXEC_USER -c "cd $EXEC_PWD; /bin/bash -c \"$ARGS\""
