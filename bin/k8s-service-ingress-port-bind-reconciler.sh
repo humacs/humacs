@@ -38,6 +38,7 @@ metadata:
   labels:
     io.sharing.pair/managed: "true"
     io.sharing.pair/port: "${portNumber}"
+    io.sharing.pair/pid: "$pid"
 spec:
   externalIPs:
   - ${LOAD_BALANCER_IP}
@@ -62,6 +63,7 @@ metadata:
   labels:
     io.sharing.pair/managed: "true"
     io.sharing.pair/port: "${portNumber}"
+    io.sharing.pair/pid: "$pid"
 spec:
   rules:
   - host: $hostName
