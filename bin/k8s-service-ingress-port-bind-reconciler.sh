@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 
 [ ! -z "$SHARINGIO_PAIR_DISABLE_SVC_INGRESS_BIND_RECONCILER" ] && exit 0
+if [ ! -d /var/run/secrets/kubernetes.io/serviceaccount ]; then
+  echo "Unable to find Kubernetes ServiceAccount token. Please make sure that '$0' + Humacs is being run in-cluster." > /dev/stderr
+  exit 1
+fi
 
-LOAD_BALANCER_IP="$(kubectl -n nginx-ingress get svc nginx-ingress-ingress-nginx-controller -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')"
+LOAD_BALANCER_IP="${SHARINGIO_PAIR_LOAD_BALANCER_IP}"
 
 while true; do
     listening=$(ss -tunlp | grep -e ':[0-9]' | grep -E "(\*|0.0.0.0):" | awk '{print $1 " " $5 " " $7}' || true)
