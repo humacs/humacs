@@ -82,4 +82,5 @@ if [ "$HUMACS_DISTRO" = "ii" ]; then
     . <(helm completion bash)
     . <(talosctl completion bash)
     . <(gh completion -s bash)
+    complete -C /usr/local/go/bin/mc mc
 fi
