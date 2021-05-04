@@ -112,6 +112,15 @@ RUN curl -L https://github.com/kubernetes-sigs/cri-tools/releases/download/v${CR
   | tar --directory /usr/local/bin --extract --gunzip crictl
 RUN curl -L https://github.com/ahmetb/kubectx/releases/download/v${KUBECTX_VERSION}/kubectx_v${KUBECTX_VERSION}_linux_x86_64.tar.gz | tar --directory /usr/local/bin --extract --ungzip kubectx
 RUN curl -L  https://github.com/junegunn/fzf/releases/download/${FZF_VERSION}/fzf-${FZF_VERSION}-linux_amd64.tar.gz | tar --directory /usr/local/bin --extract --ungzip fzf
+# Leiningen for clojure
+RUN curl -fsSL https://raw.githubusercontent.com/technomancy/leiningen/${LEIN_VERSION}/bin/lein \
+    -o /usr/local/bin/lein \
+    && chmod +x /usr/local/bin/lein \
+    && /usr/local/bin/lein version
+# Install Clojure
+RUN curl -OL https://download.clojure.org/install/linux-install-${CLOJURE_VERSION}.sh \
+    && bash linux-install-${CLOJURE_VERSION}.sh \
+    && rm ./linux-install-${CLOJURE_VERSION}.sh
 # gopls binary
 RUN /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get golang.org/x/tools/gopls@latest \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/owenthereal/upterm \
@@ -124,15 +133,6 @@ RUN /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get golang
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get github.com/motemen/gore/cmd/gore \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get golang.org/x/tools/cmd/guru \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get github.com/minio/mc
-# Leiningen for clojure
-RUN curl -fsSL https://raw.githubusercontent.com/technomancy/leiningen/${LEIN_VERSION}/bin/lein \
-    -o /usr/local/bin/lein \
-    && chmod +x /usr/local/bin/lein \
-    && /usr/local/bin/lein version
-# Install Clojure
-RUN curl -OL https://download.clojure.org/install/linux-install-${CLOJURE_VERSION}.sh \
-    && bash linux-install-${CLOJURE_VERSION}.sh \
-    && rm ./linux-install-${CLOJURE_VERSION}.sh
 RUN localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 \
   && touch /etc/localtime
 ENV LANG=en_US.utf8 \
