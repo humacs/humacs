@@ -64,19 +64,22 @@ if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
 
+echo "Hello"
+
 if [ -d "$HOME/go/bin" ]; then
     export PATH=$PATH:"$HOME/go/bin"
+    export PATH=$PATH:"/usr/local/go/bin"
 fi
-export PATH=$PATH:"/usr/local/go/bin"
 
 . /usr/local/bin/ssh-agent-export.sh
 
 export EDITOR="editor"
-export GOPATH=${GOPATH:-$(go env GOPATH)}
 
 alias e=editor
 
 if [ "$HUMACS_DISTRO" = "ii" ]; then
+    export GOPATH=${GOPATH:-$(go env GOPATH)}
+
     . <(kubectl completion bash)
     . <(clusterctl completion bash 2> /dev/null)
     . <(helm completion bash)
