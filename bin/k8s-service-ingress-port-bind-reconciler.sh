@@ -28,7 +28,7 @@ while true; do
             [ ! $(kubectl get ingress -l io.sharing.pair/managed=true -o json | jq -r ".items[] | select(.metadata.name==\"$name\") | .metadata.labels.\"io.sharing.pair/port\"") = "$portNumber" ]; then
             svcName="$name-$portNumber"
         fi
-        hostName=$(echo "$svcName.$SHARINGIO_PAIR_BASE_DNS_NAME")
+        hostName="$svcName.$SHARINGIO_PAIR_BASE_DNS_NAME"
 
         cat <<EOF | kubectl apply -f -
 apiVersion: v1
@@ -44,7 +44,7 @@ spec:
   - ${LOAD_BALANCER_IP}
   ports:
   - name: $name
-    port: $portNumber
+    port: 10${portNumber}
     protocol: $protocol
     targetPort: $portNumber
   selector:
@@ -73,7 +73,7 @@ spec:
           service:
             name: $svcName
             port:
-              number: $portNumber
+              number: 10${portNumber}
         path: /
         pathType: ImplementationSpecific
   tls:
