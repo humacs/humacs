@@ -64,8 +64,6 @@ if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
 
-echo "Hello"
-
 if [ -d "$HOME/go/bin" ]; then
     export PATH=$PATH:"$HOME/go/bin"
     export PATH=$PATH:"/usr/local/go/bin"
