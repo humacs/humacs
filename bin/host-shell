@@ -1,6 +1,6 @@
 #!/bin/bash
 
-IMAGE=${HUMACS_IMAGE:-alpine:edge}
+IMAGE=${IMAGE:-alpine:edge}
 
 ARGS=$*
 if [ $# -eq 0 ]; then
