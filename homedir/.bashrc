@@ -74,7 +74,7 @@ fi
 export EDITOR="editor"
 
 alias e=editor
-alias cdr="cd $(git rev-parse --show-toplevel)"
+alias cdr="cd \$(git rev-parse --show-toplevel)"
 
 if [ "$HUMACS_DISTRO" = "ii" ]; then
     export GOPATH=${GOPATH:-$(go env GOPATH)}
