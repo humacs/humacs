@@ -30,6 +30,10 @@ while true; do
         fi
         hostName="$svcName.$SHARINGIO_PAIR_BASE_DNS_NAME"
 
+        if [ $portNumber -lt 1000 ]; then
+          portNumber="1${portNumber}"
+        fi
+
         cat <<EOF | kubectl apply -f -
 apiVersion: v1
 kind: Service
@@ -44,7 +48,7 @@ spec:
   - ${LOAD_BALANCER_IP}
   ports:
   - name: $name
-    port: 10${portNumber}
+    port: ${portNumber}
     protocol: $protocol
     targetPort: $portNumber
   selector:
@@ -73,7 +77,7 @@ spec:
           service:
             name: $svcName
             port:
-              number: 10${portNumber}
+              number: ${portNumber}
         path: /
         pathType: ImplementationSpecific
   tls:
