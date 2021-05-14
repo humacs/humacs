@@ -46,7 +46,7 @@ export ALTERNATE_EDITOR=""
 export INIT_ORG_FILE="${INIT_ORG_FILE:-$HOME}"
 export INIT_DEFAULT_DIR="${INIT_DEFAULT_DIR:-$HOME}"
 export INIT_DEFAULT_REPOS="${INIT_DEFAULT_REPOS}"
-export INIT_DEFAULT_REPOS_FOLDER="${INIT_DEFAULT_REPOS_FOLDER}"
+export INIT_DEFAULT_REPOS_FOLDER="${INIT_DEFAULT_REPOS_FOLDER:-$INIT_DEFAULT_DIR}"
 export INIT_PREFINISH_BLOCK="${INIT_PREFINISH_BLOCK}"
 export HUMACS_PROFILE="${HUMACS_PROFILE:-doom}"
 
@@ -74,9 +74,20 @@ fi
 (
     if [ ! -z "$INIT_DEFAULT_REPOS" ]; then
         mkdir -p $INIT_DEFAULT_REPOS_FOLDER
-        cd $INIT_DEFAULT_REPOS_FOLDER
         for repo in $INIT_DEFAULT_REPOS; do
-            git clone -v --recursive "$repo"
+            cd $INIT_DEFAULT_REPOS_FOLDER
+            re="^(https|git)(:\/\/|@)([^\/:]+)[\/:]([^\/:]+)\/(.+)(.git|)$"
+
+            if [[ $repo =~ $re ]]; then    
+                protocol=${BASH_REMATCH[1]}
+                separator=${BASH_REMATCH[2]}
+                hostname=${BASH_REMATCH[3]}
+                org=${BASH_REMATCH[4]}
+                reponame=${BASH_REMATCH[5]%.git}
+            fi
+
+            mkdir -p ${org}/${reponame}
+            git clone -v --recursive $repo "${org}/${reponame}"
         done
     fi
     cd
