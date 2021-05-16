@@ -85,4 +85,6 @@ if [ "$HUMACS_DISTRO" = "ii" ]; then
     . <(talosctl completion bash)
     . <(gh completion -s bash)
     complete -C /usr/local/go/bin/mc mc
+
+    alias nerdctl="sudo --preserve-env /usr/local/go/bin/nerdctl"
 fi
