@@ -75,6 +75,10 @@ spec:
           {{- if .Values.extraVolumeMounts }}
             {{ toYaml .Values.extraVolumeMounts | trim | nindent 12 }}
           {{ end }}
+      {{- if .Values.initContainers }}
+      initContainers:
+        {{- toYaml .Values.initContainers | nindent 8 }}
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -100,5 +104,5 @@ spec:
             path: /tmp
         {{- end }}
       {{- if .Values.extraVolumes }}
-        {{ toYaml .Values.extraVolumes | trim | nindent 8 }}
-      {{ end }}
+        {{- toYaml .Values.extraVolumes | trim | nindent 8 }}
+      {{- end }}

@@ -76,3 +76,7 @@ extraVolumes: []
 extraVolumeMounts: []
   # - name: home-ii
   #   mountPath: /home/ii
+
+initContainers:
+  - name: init
+    image: alpine:3.12
