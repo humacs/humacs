@@ -37,7 +37,7 @@ variables:
     --context $CI_PROJECT_DIR \
     --dockerfile $CI_PROJECT_DIR/$CONTAINERFILE \
     --destination $CI_REGISTRY_IMAGE/$REPOSITORY:latest$BRANCH_NAME \
-    --build-arg HUMACS_IMAGE=$HUMACS_IMAGE \
+    --build-arg HUMACS_IMAGE=$HUMACS_IMAGE$BRANCH_NAME \
     $KANIKO_EXTRA_ARGS \
     $KANIKO_EXTRA_DESTINATION
 
