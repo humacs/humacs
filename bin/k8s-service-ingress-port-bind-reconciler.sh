@@ -3,6 +3,7 @@
 [ ! -z "$SHARINGIO_PAIR_DISABLE_SVC_INGRESS_BIND_RECONCILER" ] && exit 0
 
 LOAD_BALANCER_IP="$SHARINGIO_PAIR_LOAD_BALANCER_IP"
+K8S_MINOR_VERSION="$(kubectl version --client=false -o=json 2> /dev/null | jq -r '.serverVersion.minor' | tr -dc '[0-9]')"
 
 echo "Watching for processes listening on all interfaces..."
 
@@ -11,81 +12,41 @@ while true; do
     svcNames=""
 
     while IFS= read -r line; do
-        protocol=$(echo ${line} | awk '{print $1}' | grep -o '[a-z]*' | tr '[:lower:]' '[:upper:]')
-        portNumber=$(echo ${line} | awk '{print $2}' | cut -d ':' -f2 | grep -o '[0-9]*')
-        pid=$(echo ${line} | sed 's/.*pid=//g' | sed 's/,.*//g')
+        export protocol=$(echo ${line} | awk '{print $1}' | grep -o '[a-z]*' | tr '[:lower:]' '[:upper:]')
+        export portNumber=$(echo ${line} | awk '{print $2}' | cut -d ':' -f2 | grep -o '[0-9]*')
+        export pid=$(echo ${line} | sed 's/.*pid=//g' | sed 's/,.*//g')
         processName=$(echo ${line} | awk '{print $3}' | cut -d '"' -f2)
         if [ -z "$processName" ]; then
             continue
         fi
         overrideHost=$(cat /proc/$pid/environ | tr '\0' '\n' | grep SHARINGIO_PAIR_SET_HOSTNAME | cut -d '=' -f2)
-        name=$processName
+        export name=$processName
         if [ -n "$overrideHost" ]; then
-          name=$overrideHost
+          export name=$overrideHost
         fi
-        svcName="$name"
+        export svcName="$name"
         if kubectl get ingress -l io.sharing.pair/managed=true 2> /dev/null | grep -q $name && \
             [ ! $(kubectl get ingress -l io.sharing.pair/managed=true -o json | jq -r ".items[] | select(.metadata.name==\"$name\") | .metadata.labels.\"io.sharing.pair/port\"") = "$portNumber" ]; then
             svcName="$name-$portNumber"
         fi
-        hostName="$svcName.$SHARINGIO_PAIR_BASE_DNS_NAME"
+        export hostName="$svcName.$SHARINGIO_PAIR_BASE_DNS_NAME"
 
         if [ $portNumber -lt 1000 ]; then
-          portNumber="1${portNumber}"
+          export portNumber="1${portNumber}"
         fi
 
-        cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: Service
-metadata:
-  name: $svcName
-  labels:
-    io.sharing.pair/managed: "true"
-    io.sharing.pair/port: "${portNumber}"
-    io.sharing.pair/pid: "$pid"
-spec:
-  externalIPs:
-  - ${LOAD_BALANCER_IP}
-  ports:
-  - name: $name
-    port: ${portNumber}
-    protocol: $protocol
-    targetPort: $portNumber
-  selector:
-    app.kubernetes.io/name: humacs
-  type: ClusterIP
-EOF
+        envsubst < /var/local/humacs/templates/k8s-service-ingress-port-bind-reconciler/service.yaml | kubectl apply -f -
 
         if [ ! "$protocol" = "TCP" ]; then
             continue
         fi
-        cat <<EOF | kubectl apply -f -
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: $svcName
-  labels:
-    io.sharing.pair/managed: "true"
-    io.sharing.pair/port: "${portNumber}"
-    io.sharing.pair/pid: "$pid"
-spec:
-  rules:
-  - host: $hostName
-    http:
-      paths:
-      - backend:
-          service:
-            name: $svcName
-            port:
-              number: ${portNumber}
-        path: /
-        pathType: ImplementationSpecific
-  tls:
-  - hosts:
-    - $hostName
-    secretName: letsencrypt-prod
+        if [ $K8S_MINOR_VERSION -lt 18 ] || [ $K8S_MINOR_VERSION = 18  ];
+        then
+          envsubst < /var/local/humacs/templates/k8s-service-ingress-port-bind-reconciler/ingress-v1.18-or-earlier.yaml | kubectl apply -f -
+        else
+          envsubst < /var/local/humacs/templates/k8s-service-ingress-port-bind-reconciler/ingress.yaml | kubectl apply -f -
+        fi
 
-EOF
         svcNames="$svcName $svcNames"
     done < <(echo "$listening")
 

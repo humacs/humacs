@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: $svcName
+  labels:
+    io.sharing.pair/managed: "true"
+    io.sharing.pair/port: "${portNumber}"
+    io.sharing.pair/pid: "${pid}"
+spec:
+  rules:
+  - host: ${hostName}
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: ${svcName}
+          servicePort: ${portNumber}
+        pathType: ImplementationSpecific
+  tls:
+  - hosts:
+    - ${hostName}
+    secretName: letsencrypt-prod
