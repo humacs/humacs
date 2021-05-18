@@ -68,6 +68,10 @@ if [ "$HUMACS_PROFILE" = "doom" ]; then
         cd /var/local/humacs/doom-config
         rm -f config.el users/*.el
     )
+    CONFIG_USER="${SHARINGIO_PAIR_USER:-ii}"
+    if [ -f /var/local/humacs/doom-config/"${CONFIG_USER}".org ]; then
+      /var/local/humacs/doom-emacs/org-tangle /var/local/humacs/doom-config/"${CONFIG_USER}".org
+    fi
     /var/local/humacs/doom-emacs/bin/doom sync
 fi
 
