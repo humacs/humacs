@@ -2,8 +2,9 @@
 
 [ ! -z "$SHARINGIO_PAIR_DISABLE_SVC_INGRESS_BIND_RECONCILER" ] && exit 0
 
+KUBE_CONTEXT="${KUBE_CONTEXT:-in-cluster}"
 LOAD_BALANCER_IP="$SHARINGIO_PAIR_LOAD_BALANCER_IP"
-K8S_MINOR_VERSION="$(kubectl version --client=false -o=json 2> /dev/null | jq -r '.serverVersion.minor' | tr -dc '[0-9]')"
+K8S_MINOR_VERSION="$(kubectl --context "$KUBE_CONTEXT" version --client=false -o=json 2> /dev/null | jq -r '.serverVersion.minor' | tr -dc '[0-9]')"
 
 echo "Watching for processes listening on all interfaces..."
 
@@ -26,7 +27,7 @@ while true; do
         fi
         export svcName="$name"
         if kubectl get ingress -l io.sharing.pair/managed=true 2> /dev/null | grep -q $name && \
-            [ ! $(kubectl get ingress -l io.sharing.pair/managed=true -o json | jq -r ".items[] | select(.metadata.name==\"$name\") | .metadata.labels.\"io.sharing.pair/port\"") = "$portNumber" ]; then
+            [ ! $(kubectl --context "$KUBE_CONTEXT" get ingress -l io.sharing.pair/managed=true -o json | jq -r ".items[] | select(.metadata.name==\"$name\") | .metadata.labels.\"io.sharing.pair/port\"") = "$portNumber" ]; then
             svcName="$name-$portNumber"
         fi
         export hostName="$svcName.$SHARINGIO_PAIR_BASE_DNS_NAME"
@@ -35,22 +36,22 @@ while true; do
           export portNumber="1${portNumber}"
         fi
 
-        envsubst < /var/local/humacs/templates/k8s-service-ingress-port-bind-reconciler/service.yaml | kubectl apply -f -
+        envsubst < /var/local/humacs/templates/k8s-service-ingress-port-bind-reconciler/service.yaml | kubectl --context "$KUBE_CONTEXT" apply -f -
 
         if [ ! "$protocol" = "TCP" ]; then
             continue
         fi
         if [ $K8S_MINOR_VERSION -lt 18 ] || [ $K8S_MINOR_VERSION = 18  ];
         then
-          envsubst < /var/local/humacs/templates/k8s-service-ingress-port-bind-reconciler/ingress-v1.18-or-earlier.yaml | kubectl apply -f -
+          envsubst < /var/local/humacs/templates/k8s-service-ingress-port-bind-reconciler/ingress-v1.18-or-earlier.yaml | kubectl --context "$KUBE_CONTEXT" apply -f -
         else
-          envsubst < /var/local/humacs/templates/k8s-service-ingress-port-bind-reconciler/ingress.yaml | kubectl apply -f -
+          envsubst < /var/local/humacs/templates/k8s-service-ingress-port-bind-reconciler/ingress.yaml | kubectl --context "$KUBE_CONTEXT" apply -f -
         fi
 
         svcNames="$svcName $svcNames"
     done < <(echo "$listening")
 
-    liveSvcs=$(kubectl get svc -l io.sharing.pair/managed=true -o=jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}')
+    liveSvcs=$(kubectl --context "$KUBE_CONTEXT" get svc -l io.sharing.pair/managed=true -o=jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}')
     while IFS= read -r line; do
         if [ -z $line ]; then
             continue
@@ -59,8 +60,8 @@ while true; do
             echo "live: $line"
         else
             echo "gone: $line"
-            kubectl delete svc/$line || true
-            kubectl delete ingress/$line || true
+            kubectl --context "$KUBE_CONTEXT" delete svc/$line || true
+            kubectl --context "$KUBE_CONTEXT" delete ingress/$line || true
         fi
     done < <(echo "$liveSvcs")
 
