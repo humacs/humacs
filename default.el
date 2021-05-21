@@ -209,24 +209,25 @@
 ;; Moved away from +literate-config-file from :config/literate
 ;; Instead we tangle init.el, packages.el, and config.el before they are loaded
 
-(defun ii-pair-or-user-name ()
-    "Getenv SHARINGIO_PAIR_NAME if exists, else USER"
-  (if (getenv "SHARINGIO_PAIR_USER")
-      (getenv "SHARINGIO_PAIR_USER")
-    (getenv "USER")))
+;; (defun ii-pair-or-user-name ()
+;;     "Getenv SHARINGIO_PAIR_NAME if exists, else USER"
+;;   (if (getenv "SHARINGIO_PAIR_USER")
+;;       (getenv "SHARINGIO_PAIR_USER")
+;;     (getenv "USER")))
 
 ;;  IF ./config/USER.org exists... use that, else config.org
-(setq humacs-doom-user-config
-      (expand-file-name
-       (concat humacs-doom-directory "/" (ii-pair-or-user-name) ".org")))
+;; (setq humacs-doom-user-config
+;;       (expand-file-name
+;;        (concat humacs-doom-directory "/" (ii-pair-or-user-name) ".org")))
 
-;; TODO: Check timestamps on literate-config VS generated-config
-(if (file-exists-p humacs-doom-user-config)
-    (progn
-      (message (concat "Tangling literate-config-file to: " humacs-doom-user-config " !!!"))
-      (shell-command (concat humacs-directory "doom-emacs/bin/org-tangle " humacs-doom-user-config))
-      )
-  )
+;; ;; TODO: Check timestamps on literate-config VS generated-config
+;; (if (file-exists-p humacs-doom-user-config)
+;;     (progn
+;;       (message (concat "Tangling literate-config-file to: " humacs-doom-user-config " !!!"))
+;;       (shell-command (concat humacs-directory "doom-emacs/bin/org-tangle " humacs-doom-user-config))
+;;       (shell-command (concat humacs-directory "doom-emacs/bin/doom sync"))
+;;       )
+;;   )
 
 (humacs-check-command-line-args command-line-args)
 
