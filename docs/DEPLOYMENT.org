@@ -21,11 +21,14 @@ git clone --recursive https://github.com/humacs/humacs
 export EMACSLOADPATH=$(pwd)/humacs:
 export DOOMDIR=$(pwd)/humacs/doom-config
 export HUMACS_PROFILE=doom
+$(pwd)/humacs/doom-emacs/bin/doom install --no-env
+$(pwd)/humacs/doom-emacs/bin/doom sync -e
 emacs -nw
 #+end_src
 
 * Notes
-- the environment variable EMACSLOADPATH must be set on your system for the Humacs configuration to load correctly
+- the environment variable /EMACSLOADPATH/ must be set on your system for the Humacs configuration to load correctly
+  - additionally, if /HUMACS_PROFILE/ is set to doom, /DOOMDIR/ must be set to the /doom-config/ folder
 
 * Kubernetes (Helm)
 
