@@ -11,38 +11,42 @@ RUN DEBIAN_FRONTEND=noninteractive \
   apt update \
   && apt upgrade -y \
   && DEBIAN_FRONTEND=noninteractive apt install --no-install-recommends -y \
-  emacs-nox \
-  tmate \
-  bash-completion \
-  less \
-  xz-utils \
-  sudo \
-  curl \
-  ca-certificates \
-  libcap2-bin \
-  git \
-  kitty \
-  openssh-client \
-  postgresql-client-12 \
-  jq \
-  inotify-tools \
-  xtermcontrol \
-  nodejs \
-  gnupg2 \
-  tzdata \
-  wget \
-  python3-dev \
-  xz-utils \
-  apache2-utils \
-  sqlite3 \
-  silversearcher-ag \
-  build-essential \
-  vim \
-  rsync \
-  unzip \
-  direnv \
-  iputils-ping \
-  file \
+    software-properties-common \
+  && yes '\n' | add-apt-repository ppa:git-core/ppa \
+  && apt update \
+  && DEBIAN_FRONTEND=noninteractive apt install --no-install-recommends -y \
+    emacs-nox \
+    tmate \
+    bash-completion \
+    less \
+    xz-utils \
+    sudo \
+    curl \
+    ca-certificates \
+    libcap2-bin \
+    git \
+    kitty \
+    openssh-client \
+    postgresql-client-12 \
+    jq \
+    inotify-tools \
+    xtermcontrol \
+    nodejs \
+    gnupg2 \
+    tzdata \
+    wget \
+    python3-dev \
+    xz-utils \
+    apache2-utils \
+    sqlite3 \
+    silversearcher-ag \
+    build-essential \
+    vim \
+    rsync \
+    unzip \
+    direnv \
+    iputils-ping \
+    file \
   && rm -rf /var/lib/apt/lists/*
 COPY homedir/.tmate.conf /etc/skel
 COPY homedir/.tmux.conf /etc/skel
