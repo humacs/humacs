@@ -26,7 +26,7 @@ while true; do
           export name=$overrideHost
         fi
         export svcName="$name"
-        if kubectl get ingress -l io.sharing.pair/managed=true 2> /dev/null | grep -q $name && \
+        if kubectl --context "$KUBE_CONTEXT" get ingress -l io.sharing.pair/managed=true 2> /dev/null | grep -q $name && \
             [ ! $(kubectl --context "$KUBE_CONTEXT" get ingress -l io.sharing.pair/managed=true -o json | jq -r ".items[] | select(.metadata.name==\"$name\") | .metadata.labels.\"io.sharing.pair/port\"") = "$portNumber" ]; then
             svcName="$name-$portNumber"
         fi
