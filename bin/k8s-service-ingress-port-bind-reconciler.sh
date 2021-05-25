@@ -3,8 +3,8 @@
 [ ! -z "$SHARINGIO_PAIR_DISABLE_SVC_INGRESS_BIND_RECONCILER" ] && exit 0
 
 KUBE_CONTEXT="${KUBE_CONTEXT:-in-cluster}"
-LOAD_BALANCER_IP="$SHARINGIO_PAIR_LOAD_BALANCER_IP"
 K8S_MINOR_VERSION="$(kubectl --context "$KUBE_CONTEXT" version --client=false -o=json 2> /dev/null | jq -r '.serverVersion.minor' | tr -dc '[0-9]')"
+export SHARINGIO_PAIR_BASE_DNS_NAME=${SHARINGIO_PAIR_BASE_DNS_NAME_SVC_ING_RECONCILER_OVERRIDE:-$SHARINGIO_PAIR_BASE_DNS_NAME}
 
 echo "Watching for processes listening on all interfaces..."
 
