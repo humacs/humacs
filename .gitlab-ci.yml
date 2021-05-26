@@ -66,7 +66,7 @@ build-ii:
   timeout: 2d
   before_script:
     - *registry-login
-    - export KANIKO_EXTRA_ARGS="--build-arg BASE_IMAGE=$CI_REGISTRY_IMAGE/humacs:latest"
+    - export KANIKO_EXTRA_ARGS="--build-arg BASE_IMAGE=$CI_REGISTRY_IMAGE/humacs:latest$BRANCH_NAME"
     - *declare-extra-destinations
   script:
     - *build
