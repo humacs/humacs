@@ -56,9 +56,12 @@ echo "$HUMACS_PROFILE" > ~/.emacs-profile
 
 if [ "$REINIT_HOME_FOLDER" = "true" ]; then
     (
-        cd /etc/skel
-        cp -r . /home/ii
-        chmod 0600 $HOME/.kube/config
+        if [ ! -f $HOME/.humacs-has-reinit ]; then
+            cd /etc/skel
+            cp -r . /home/ii
+            chmod 0600 $HOME/.kube/config
+            touch $HOME/.humacs-has-reinit
+        fi
     )
 fi
 
