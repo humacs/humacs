@@ -78,7 +78,7 @@ RUN su ii -c 'curl -L https://github.com/humacs/humacs/releases/download/0.0.1-a
 # spacemacs cache
 RUN su ii -c 'cd && HUMACS_PROFILE=ii emacs -batch -l /var/local/humacs/default.el'
 # doom install/sync
-RUN su ii -c 'cd && yes | /var/local/humacs/doom-emacs/bin/org-tangle /var/local/humacs/config.org'
+RUN su ii -c '/var/local/humacs/doom-emacs/bin/org-tangle /var/local/humacs/config.org'
 RUN su ii -c 'cd && yes | /var/local/humacs/doom-emacs/bin/doom install --no-env'
 RUN su ii -c 'cd && yes | /var/local/humacs/doom-emacs/bin/doom sync -e'
 ADD bin /usr/local/bin
