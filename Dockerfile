@@ -74,7 +74,7 @@ COPY --chown=ii:users spacemacs/ /var/local/humacs/spacemacs/
 COPY --chown=ii:users vagrant/ /var/local/humacs/vagrant/
 COPY --chown=ii:users snippets/ /var/local/humacs/snippets/
 COPY --chown=ii:users config.org /var/local/humacs/
-RUN cd /var/local/humacs && git remote remove origin
+RUN cd /var/local/humacs && git remote remove origin && chown -R ii:users .
 RUN su ii -c 'curl -L https://github.com/humacs/humacs/releases/download/0.0.1-alpha/spacemacs-elpa-cache-2020.08.28.tgz | tar xvzC /var/local/humacs/spacemacs'
 # spacemacs cache
 RUN su ii -c 'cd && HUMACS_PROFILE=ii emacs -batch -l /var/local/humacs/default.el'
