@@ -20,7 +20,7 @@ variables:
 
 .declare-extra-destinations: &declare-extra-destinations |
   if [[ ! "$CI_COMMIT_BRANCH" = "$CI_DEFAULT_BRANCH" ]] && [[ -z "$CI_COMMIT_TAG" ]]; then
-    BRANCH_NAME="-$CI_COMMIT_BRANCH"
+    export BRANCH_NAME="-$CI_COMMIT_BRANCH"
   fi
   export HUMACS_IMAGE=$CI_REGISTRY_IMAGE/$REPOSITORY:latest$BRANCH_NAME
   if [ -n "$CI_COMMIT_TAG" ]; then
@@ -66,7 +66,7 @@ build-ii:
   timeout: 2d
   before_script:
     - *registry-login
-    - export KANIKO_EXTRA_ARGS="--build-arg BASE_IMAGE=$CI_REGISTRY_IMAGE/humacs:latest$BRANCH_NAME"
     - *declare-extra-destinations
+    - export KANIKO_EXTRA_ARGS="--build-arg BASE_IMAGE=$CI_REGISTRY_IMAGE/humacs:latest$BRANCH_NAME"
   script:
     - *build
