@@ -1,0 +1,12 @@
+# -*- snippet -*-
+# name: blog
+# key: <blog
+# --
+** ${1:Enter Title}
+   :PROPERTIES:
+   :EXPORT_FILE_NAME:  ${1:$(downcase(replace-regexp-in-string " " "-" yas-text))}
+   :EXPORT_DATE: `(format-time-string "%Y-%m-%d")`
+   :EXPORT_HUGO_MENU: :menu "main"
+   :EXPORT_HUGO_CUSTOM_FRONT_MATTER: :summary "${2:No Summary Provided}"
+   :END:
+   ${3:"Enter Tags"$(unless yas-modified-p (progn (counsel-org-tag)(kill-whole-line)))}
