@@ -29,6 +29,9 @@ variables:
     export KANIKO_EXTRA_DESTINATION="--destination $CI_REGISTRY_IMAGE/$REPOSITORY:$CI_COMMIT_TAG"
     export HUMACS_IMAGE="$CI_REGISTRY_IMAGE/$REPOSITORY:$CI_COMMIT_TAG"
   fi
+  if [ "$REPOSITORY" = "ii" ]; then
+    export KANIKO_EXTRA_ARGS="--build-arg BASE_IMAGE=$CI_REGISTRY_IMAGE/humacs:latest$BRANCH_NAME"
+  fi
 
 .build: &build |
   /kaniko/executor \
@@ -46,6 +49,7 @@ build-humacs:
   image:
     name: gcr.io/kaniko-project/executor:debug-v1.3.0
     entrypoint: [""]
+  retry: 2
   variables:
     REPOSITORY: humacs
     CONTAINERFILE: Dockerfile
@@ -60,6 +64,7 @@ build-ii:
   image:
     name: gcr.io/kaniko-project/executor:debug-v1.3.0
     entrypoint: [""]
+  retry: 2
   variables:
     REPOSITORY: ii
     CONTAINERFILE: ii.Dockerfile
@@ -67,6 +72,5 @@ build-ii:
   before_script:
     - *registry-login
     - *declare-extra-destinations
-    - export KANIKO_EXTRA_ARGS="--build-arg BASE_IMAGE=$CI_REGISTRY_IMAGE/humacs:latest$BRANCH_NAME"
   script:
     - *build
