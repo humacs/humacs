@@ -65,10 +65,12 @@ fi
 if [ "$HUMACS_PROFILE" = "doom" ]; then
     # ensure that the user and default configs are loaded, based on if the Humacs profile is doom
     (
-        cd /var/local/humacs/doom-config
-        rm -f config.el users/*.el
+        cd /var/local/humacs
+        rm -f config.el init.el packages.el
+        # More logic needed her to have per person config.org
+       /var/local/humacs/doom-emacs/bin/org-tangle /var/local/humacs/config.org
+       /var/local/humacs/doom-emacs/bin/doom sync
     )
-    /var/local/humacs/doom-emacs/bin/doom sync
 fi
 
 (

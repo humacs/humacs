@@ -51,7 +51,7 @@
 (defvar humacs-doom-directory
   (if (getenv "HUMACS_DOOM_DIRECTORY")
       (getenv "HUMACS_DOOM_DIRECTORY")
-    (concat humacs-directory "doom-config")))
+    (concat humacs-directory)))
 
 (defvar humacs-default-profile
   (if (getenv "HUMACS_PROFILE")
