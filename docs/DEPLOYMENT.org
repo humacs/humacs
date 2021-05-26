@@ -18,11 +18,14 @@ Setting up on your host system with doom profile just means adding env vars for 
 
 #+begin_src shell
 git clone --recursive https://github.com/humacs/humacs
-export EMACSLOADPATH=$(pwd)/humacs:
-export DOOMDIR=$(pwd)/humacs/doom-config
+cd humacs
+export EMACSLOADPATH=$(pwd):
+export DOOMDIR=$(pwd)/doom-config
 export HUMACS_PROFILE=doom
-$(pwd)/humacs/doom-emacs/bin/doom install --no-env
-$(pwd)/humacs/doom-emacs/bin/doom sync -e
+rm -f init.el packages.el config.el
+$(pwd)/doom-emacs/bin/doom install --no-env
+$(pwd)/doom-emacs/bin/org-tangle config.org
+$(pwd)/doom-emacs/bin/doom sync -e
 emacs -nw
 #+end_src
 
