@@ -34,7 +34,7 @@ variables:
     export $(cat $CI_PROJECT_DIR/.env | xargs)
   fi
   
-  export HUMACS_IMAGE=$CI_REGISTRY_IMAGE/$REPOSITORY:$BAS_TAG$BRANCH_NAME
+  export HUMACS_IMAGE=$CI_REGISTRY_IMAGE/$REPOSITORY:$BASE_TAG$BRANCH_NAME
   if [ -n "$CI_COMMIT_TAG" ]; then
     export BRANCH_NAME=""
     export HUMACS_HUMACS_TAG="$CI_REGISTRY_IMAGE/humacs:$CI_COMMIT_TAG"
@@ -43,7 +43,7 @@ variables:
     export HUMACS_IMAGE="$CI_REGISTRY_IMAGE/$REPOSITORY:$CI_COMMIT_TAG"
   fi
   if [ "$REPOSITORY" = "ii" ]; then
-    export KANIKO_EXTRA_ARGS="--build-arg BASE_IMAGE=$CI_REGISTRY_IMAGE/humacs:$BAS_TAG$BRANCH_NAME"
+    export KANIKO_EXTRA_ARGS="--build-arg BASE_IMAGE=$CI_REGISTRY_IMAGE/humacs:$BASE_TAG$BRANCH_NAME"
   fi
 
 .build: &build |
@@ -52,7 +52,7 @@ variables:
     --cache=false \
     --context $CI_PROJECT_DIR \
     --dockerfile $CI_PROJECT_DIR/$CONTAINERFILE \
-    --destination $CI_REGISTRY_IMAGE/$REPOSITORY:$BAS_TAG$BRANCH_NAME \
+    --destination $CI_REGISTRY_IMAGE/$REPOSITORY:$BASE_TAG$BRANCH_NAME \
     --build-arg HUMACS_IMAGE=$HUMACS_IMAGE$BRANCH_NAME \
     $KANIKO_EXTRA_ARGS \
     $KANIKO_EXTRA_DESTINATION
