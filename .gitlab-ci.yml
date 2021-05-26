@@ -23,7 +23,18 @@ variables:
     export BRANCH_NAME="-$CI_COMMIT_BRANCH"
   fi
 
-  export HUMACS_IMAGE=$CI_REGISTRY_IMAGE/$REPOSITORY:latest$BRANCH_NAME
+  export BASE_TAG=latest
+  if [[ "$CI_COMMIT_BRANCH" = "$CI_DEFAULT_BRANCH" ]] && [ "$REPOSITORY" = "humacs" ]; then
+    export BASE_TAG="$(date +%Y.%m.%d.%S)"
+    cat << EOF > $CI_PROJECT_DIR/.env
+  BASE_TAG=${BASE_TAG}
+  EOF
+  fi
+  if [ ! "$REPOSITORY" = "humacs" ]; then
+    export $(cat $CI_PROJECT_DIR/.env | xargs)
+  fi
+  
+  export HUMACS_IMAGE=$CI_REGISTRY_IMAGE/$REPOSITORY:$BAS_TAG$BRANCH_NAME
   if [ -n "$CI_COMMIT_TAG" ]; then
     export BRANCH_NAME=""
     export HUMACS_HUMACS_TAG="$CI_REGISTRY_IMAGE/humacs:$CI_COMMIT_TAG"
@@ -32,7 +43,7 @@ variables:
     export HUMACS_IMAGE="$CI_REGISTRY_IMAGE/$REPOSITORY:$CI_COMMIT_TAG"
   fi
   if [ "$REPOSITORY" = "ii" ]; then
-    export KANIKO_EXTRA_ARGS="--build-arg BASE_IMAGE=$CI_REGISTRY_IMAGE/humacs:latest$BRANCH_NAME"
+    export KANIKO_EXTRA_ARGS="--build-arg BASE_IMAGE=$CI_REGISTRY_IMAGE/humacs:$BAS_TAG$BRANCH_NAME"
   fi
 
 .build: &build |
@@ -41,7 +52,7 @@ variables:
     --cache=false \
     --context $CI_PROJECT_DIR \
     --dockerfile $CI_PROJECT_DIR/$CONTAINERFILE \
-    --destination $CI_REGISTRY_IMAGE/$REPOSITORY:latest$BRANCH_NAME \
+    --destination $CI_REGISTRY_IMAGE/$REPOSITORY:$BAS_TAG$BRANCH_NAME \
     --build-arg HUMACS_IMAGE=$HUMACS_IMAGE$BRANCH_NAME \
     $KANIKO_EXTRA_ARGS \
     $KANIKO_EXTRA_DESTINATION
@@ -60,6 +71,10 @@ build-humacs:
     - *declare-extra-destinations
   script:
     - *build
+  artifacts:
+    paths:
+      - .env
+
 
 build-ii:
   stage: build-ii
