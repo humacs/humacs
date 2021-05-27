@@ -2,7 +2,7 @@
 
 cat << EOF >> $HOME/.gitconfig
 [credential "https://github.com"]
-  helper = "!f() { test \\"\\$1\\" = get && echo \\"password=\\$GITHUB_TOKEN\\nusername=\\$SHARINGIO_PAIR_USER\\";}; f"
+  helper = "!f() { test \"\$1\" = get && echo "password=\$GITHUB_TOKEN\nusername=\$SHARINGIO_PAIR_USER\";}; f"
 EOF
 git config --global commit.template $HOME/.git-commit-template
 cat << EOF > $HOME/.git-commit-template
