@@ -18,6 +18,14 @@ git clone --depth=1 git://github.com/{{ $.Setup.User }}/.sharing.io || \
 (
     ./.sharing.io/init || true
 ) &
+git clone --depth=1 git://github.com/{{ $.Setup.User }}/.doom.d || \
+    git clone --depth=1 git://github.com/humacs/.doom.d
+(
+    cd $HOME/.doom.d
+    rm *.el
+    org-tangle "${SHARINGIO_PAIR_USER:-ii}".org
+    doom sync
+)
 if [ ! -d "$HOME/.sharing.io/public_html" ]; then
     mkdir -p "$HOME/.sharing.io/public_html"
     echo "Add your site in '$HOME/public_html'" > "$HOME/public_html/index.html"
