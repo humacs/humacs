@@ -6,8 +6,10 @@ if [ $_ = $0 ]; then
     exit
 fi
 
-if [ -n "$(find /tmp -maxdepth 1 -name 'ssh-*' -print -quit)" ] ; then    
-    sudo chgrp -R users /tmp/ssh-*
-    sudo chmod -R 0770 /tmp/ssh-*
-    export SSH_AUTH_SOCK=$(find /tmp /run/host/tmp/ -type s -regex '.*/ssh-.*/agent..*$' 2> /dev/null | tail -n 1)
+if [ -n "$(find /tmp /run/host/tmp -maxdepth 1 -name 'ssh-*' -print -quit)" ] ; then    
+    sudo chgrp -Rf users {run/host,}/tmp/ssh-*
+    sudo chmod -Rf 0770 {run/host,}/tmp/ssh-*
+    export SSH_AUTH_SOCK=$(find /tmp /run/host/tmp/ \
+        -type s -regex '.*/ssh-.*/agent..*$' -printf '%T@ %p\n' 2> /dev/null \
+        | sort --numeric-sort --reverse | tail -n 1 | awk '{print $2}')
 fi
