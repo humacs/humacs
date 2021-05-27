@@ -5,8 +5,8 @@ ENV TERM=screen-256color \
   HUMACS_CONTAINER=yes \
   HUMACS_DISTRO=humacs \
   HUMACS_PROFILE=doom \
-  EMACSLOADPATH=/var/local/humacs: \
-  DOOMDIR=/var/local/humacs
+  HUMACS_DOOM_CONFIG_REF=2fe6ca9c7768fa00920d353a443c3e3cbc6c8d56 \
+  EMACSLOADPATH=/var/local/humacs:
 RUN DEBIAN_FRONTEND=noninteractive \
   apt update \
   && apt upgrade -y \
@@ -79,7 +79,10 @@ RUN su ii -c 'curl -L https://github.com/humacs/humacs/releases/download/0.0.1-a
 # spacemacs cache
 RUN su ii -c 'cd && HUMACS_PROFILE=ii emacs -batch -l /var/local/humacs/default.el'
 # doom install/sync
-RUN su ii -c '/var/local/humacs/doom-emacs/bin/org-tangle /var/local/humacs/config.org'
+RUN su ii -c "cd $HOME && git clone https://github.com/humacs/.doom.d && \
+  cd .doom.d && \
+  git checkout $HUMACS_DOOM_CONFIG_REF && \
+  /var/local/humacs/doom-emacs/bin/org-tangle ii.org"
 RUN su ii -c 'cd && yes | /var/local/humacs/doom-emacs/bin/doom install --no-env'
 RUN su ii -c 'cd && yes | /var/local/humacs/doom-emacs/bin/doom sync -e'
 ADD bin /usr/local/bin
