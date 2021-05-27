@@ -13,24 +13,27 @@ EOF
 for GUEST_NAME in $SHARINGIO_PAIR_GUEST_NAMES; do
     echo "Co-Authored-By: $GUEST_NAME <$GUEST_NAME@users.noreply.github.com>" >> $HOME/.git-commit-template
 done
-git clone --depth=1 git://github.com/{{ $.Setup.User }}/.sharing.io || \
+git clone --depth=1 "git://github.com/$SHARINGIO_PAIR_USER/.sharing.io" || \
     git clone --depth=1 git://github.com/sharingio/.sharing.io
 (
     ./.sharing.io/init || true
 ) &
-git clone --depth=1 git://github.com/{{ $.Setup.User }}/.doom.d || \
+git clone --depth=1 "git://github.com/$SHARINGIO_PAIR_USER/.doom.d" || \
     git clone --depth=1 git://github.com/humacs/.doom.d
 (
     cd $HOME/.doom.d
     rm *.el
-    org-tangle "${SHARINGIO_PAIR_USER:-ii}".org
+    DOOM_CONFIG_FILE=ii.org
+    if [ -f "${SHARINGIO_PAIR_USER}.org" ]; then
+        DOOM_CONFIG_FILE="${SHARINGIO_PAIR_USER}.org"
+    fi
+    org-tangle "${DOOM_CONFIG_FILE}"
     doom sync
 )
-if [ ! -d "$HOME/.sharing.io/public_html" ]; then
-    mkdir -p "$HOME/.sharing.io/public_html"
+ln -s "$HOME/.sharing.io/public_html" "$HOME/public_html"
+if [ ! -f "$HOME/public_html/index.html" ]; then
     echo "Add your site in '$HOME/public_html'" > "$HOME/.sharing.io/public_html/index.html"
 fi
-ln -s "$HOME/.sharing.io/public_html" "$HOME/public_html"
 for repo in $(find ~ -type d -name ".git"); do
     repoName=$(basename $(dirname $repo))
     if [ -x $HOME/.sharing.io/$repoName/init ]; then
