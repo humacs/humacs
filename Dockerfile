@@ -79,7 +79,7 @@ RUN su ii -c 'curl -L https://github.com/humacs/humacs/releases/download/0.0.1-a
 # spacemacs cache
 RUN su ii -c 'cd && HUMACS_PROFILE=ii emacs -batch -l /var/local/humacs/default.el'
 # doom install/sync
-RUN su ii -c "cd $HOME && git clone https://github.com/humacs/.doom.d && \
+RUN cd /home/ii && su ii -c "cd $HOME && git clone https://github.com/humacs/.doom.d && \
   cd .doom.d && \
   git checkout $HUMACS_DOOM_CONFIG_REF && \
   /var/local/humacs/doom-emacs/bin/org-tangle ii.org"
