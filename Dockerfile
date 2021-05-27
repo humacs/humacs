@@ -6,6 +6,7 @@ ENV TERM=screen-256color \
   HUMACS_DISTRO=humacs \
   HUMACS_PROFILE=doom \
   HUMACS_DOOM_CONFIG_REF=2fe6ca9c7768fa00920d353a443c3e3cbc6c8d56 \
+  DOOMDIR=/home/ii/.doom.d \
   EMACSLOADPATH=/var/local/humacs:
 RUN DEBIAN_FRONTEND=noninteractive \
   apt update \
