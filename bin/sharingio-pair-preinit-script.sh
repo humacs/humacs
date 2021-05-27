@@ -28,7 +28,7 @@ git clone --depth=1 git://github.com/{{ $.Setup.User }}/.doom.d || \
 )
 if [ ! -d "$HOME/.sharing.io/public_html" ]; then
     mkdir -p "$HOME/.sharing.io/public_html"
-    echo "Add your site in '$HOME/public_html'" > "$HOME/.sharing.io/index.html"
+    echo "Add your site in '$HOME/public_html'" > "$HOME/.sharing.io/public_html/index.html"
 fi
 ln -s "$HOME/.sharing.io/public_html" "$HOME/public_html"
 for repo in $(find ~ -type d -name ".git"); do
