@@ -56,10 +56,13 @@ COPY homedir/.bashrc /etc/skel/.bashrc
 COPY homedir/.bash_profile /etc/skel/.bash_profile
 COPY homedir/.gitconfig /etc/skel/.gitconfig
 COPY homedir/kubeconfig /etc/skel/.kube/config
+COPY etc/ /etc/
 RUN mkdir -p /etc/sudoers.d && \
   echo "%sudo    ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/sudo && \
   useradd -m -G users,sudo -u 1000 -s /bin/bash ii && \
-  chmod 0775 /usr/local/lib && chgrp users /usr/local/lib
+  chmod 0775 /usr/local/lib && chgrp users /usr/local/lib && \
+  chmod 0770 -R /etc/service/*/supervise && \
+  chgrp -R users /etc/service/*/supervise
 # required for emacs initialization
 COPY --chown=ii:users default.el /var/local/humacs/
 # copy each needed directory so it is placed in correctly

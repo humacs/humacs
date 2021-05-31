@@ -28,7 +28,7 @@ if [ -d $SERVICE_ACCOUNT_DIR ]; then
     kubectl config set-context $(kubectl config current-context) \
             --namespace=$(cat $SERVICE_ACCOUNT_DIR/namespace)
 
-    /usr/local/bin/k8s-service-ingress-port-bind-reconciler.sh &
+    runsvdir /etc/service &
 else
     export IN_CLUSTER=false
 fi
