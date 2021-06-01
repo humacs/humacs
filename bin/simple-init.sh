@@ -28,7 +28,12 @@ if [ -d $SERVICE_ACCOUNT_DIR ]; then
     kubectl config set-context $(kubectl config current-context) \
             --namespace=$(cat $SERVICE_ACCOUNT_DIR/namespace)
 
-    mkdir -p /etc/service/*/supervise/
+    (
+        cd /etc/service
+        for SVC in $(find . -type f -name 'run' | xargs -I {} dirname {}); do
+            mkdir $SVC/supervise
+        done
+    )
     runsvdir /etc/service &
 else
     export IN_CLUSTER=false
