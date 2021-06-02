@@ -21,6 +21,11 @@ while true; do
             continue
         fi
         overrideHost=$(cat /proc/$pid/environ | tr '\0' '\n' | grep SHARINGIO_PAIR_SET_HOSTNAME | cut -d '=' -f2)
+        allowedPorts=$(cat /proc/$pid/environ | tr '\0' '\n' | grep SHARINGIO_PAIR_INGRESS_RECONCILER_ALLOWED_PORTS | cut -d '=' -f2)
+        if [ -n "$allowedPorts" ] && ! echo ${allowedPorts[*]} | grep -q -E "(^|\(| )$portNumber( |\)|$)"; then
+            echo "Skipping '$processName' (pid $pid) since port '$portNumber' is not allowed in env"
+            continue
+        fi
         disabledPorts=$(cat /proc/$pid/environ | tr '\0' '\n' | grep SHARINGIO_PAIR_INGRESS_RECONCILER_DISABLED_PORTS | cut -d '=' -f2)
         if [ -n "$disabledPorts" ] && echo ${disabledPorts[*]} | grep -q -E "(^|\(| )$portNumber( |\)|$)"; then
             echo "Skipping '$processName' (pid $pid) since port '$portNumber' is disabled in env"
