@@ -13,13 +13,13 @@ EOF
 for GUEST_NAME in $SHARINGIO_PAIR_GUEST_NAMES; do
     echo "Co-Authored-By: $GUEST_NAME <$GUEST_NAME@users.noreply.github.com>" >> $HOME/.git-commit-template
 done
-git clone --depth=1 "git://github.com/$SHARINGIO_PAIR_USER/.sharing.io" || \
-    git clone --depth=1 git://github.com/sharingio/.sharing.io
+git clone --depth=1 "https://github.com/$SHARINGIO_PAIR_USER/.sharing.io" || \
+    git clone --depth=1 https://github.com/sharingio/.sharing.io
 (
     ./.sharing.io/init || true
 ) &
-git clone --depth=1 "git://github.com/$SHARINGIO_PAIR_USER/.doom.d" || \
-    git clone --depth=1 git://github.com/humacs/.doom.d
+git clone --depth=1 "https://github.com/$SHARINGIO_PAIR_USER/.doom.d" || \
+    git clone --depth=1 https://github.com/humacs/.doom.d
 (
     cd $HOME/.doom.d
     rm *.el
