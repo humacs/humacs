@@ -51,7 +51,7 @@ while true; do
         if [ ! "$protocol" = "TCP" ]; then
             continue
         fi
-        if [ $K8S_MINOR_VERSION -lt 18 ] || [ $K8S_MINOR_VERSION = 18  ];
+        if [ $K8S_MINOR_VERSION -lt 18 ] || [ $K8S_MINOR_VERSION = 18 ];
         then
           envsubst < /var/local/humacs/templates/k8s-service-ingress-port-bind-reconciler/ingress-v1.18-or-earlier.yaml | kubectl --context "$KUBE_CONTEXT" apply -f -
         else

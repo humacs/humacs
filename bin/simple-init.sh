@@ -55,6 +55,7 @@ export INIT_DEFAULT_REPOS="${INIT_DEFAULT_REPOS}"
 export INIT_DEFAULT_REPOS_FOLDER="${INIT_DEFAULT_REPOS_FOLDER:-$INIT_DEFAULT_DIR}"
 export INIT_PREFINISH_BLOCK="${INIT_PREFINISH_BLOCK}"
 export HUMACS_PROFILE="${HUMACS_PROFILE:-doom}"
+export PROJECT_CLONE_STRUCTURE="${PROJECT_STRUCTURE:-structured}"
 
 echo "$HUMACS_PROFILE" > ~/.emacs-profile
 
@@ -75,19 +76,11 @@ fi
     if [ ! -z "$INIT_DEFAULT_REPOS" ]; then
         mkdir -p $INIT_DEFAULT_REPOS_FOLDER
         for repo in $INIT_DEFAULT_REPOS; do
-            cd $INIT_DEFAULT_REPOS_FOLDER
-            re="^(https|git)(:\/\/|@)([^\/:]+)[\/:]([^\/:]+)\/(.+)(.git|)$"
-
-            if [[ $repo =~ $re ]]; then    
-                protocol=${BASH_REMATCH[1]}
-                separator=${BASH_REMATCH[2]}
-                hostname=${BASH_REMATCH[3]}
-                org=${BASH_REMATCH[4]}
-                reponame=${BASH_REMATCH[5]%.git}
+            if [ "$PROJECT_CLONE_STRUCTURE" = "structured" ]; then
+                git-clone-structured "$repo"
+            elif [ "$PROJECT_CLONE_STRUCTURE" = "plain" ]; then
+                git clone -v --recursive "$repo"
             fi
-
-            mkdir -p ${org}/${reponame}
-            git clone -v --recursive $repo "${org}/${reponame}"
         done
     fi
     cd
