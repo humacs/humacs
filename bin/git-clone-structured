@@ -1,0 +1,51 @@
+#!/bin/bash
+
+REPOS=${*}
+
+if [ -z "$SSH_AUTH_SOCK" ]; then
+    cat <<EOF
+Warning: missing value for SSH_AUTH_SOCK
+         are you connected via SSH?
+
+Action: to load the agent use
+  . /usr/local/bin/ssh-agent-export.sh
+
+loading the agent inside '$(basename $0)'...
+EOF
+    _= . /usr/local/bin/ssh-agent-export.sh
+fi
+
+cd $INIT_DEFAULT_REPOS_FOLDER
+re="^(https|git)(:\/\/|@)([^\/:]+)[\/:]([^\/:]+)\/(.+)(.git|)$"
+
+for repo in ${REPOS[*]}; do
+    unset protocol separator hostname org reponame
+    if [[ $repo =~ $re ]]; then    
+        protocol=${BASH_REMATCH[1]}
+        separator=${BASH_REMATCH[2]}
+        hostname=${BASH_REMATCH[3]}
+        org=${BASH_REMATCH[4]}
+        reponame=${BASH_REMATCH[5]%.git}
+    else
+        echo "Error: repo URI is invalid for '$repo'" > /dev/stderr
+        continue
+    fi
+
+    DEST="$INIT_DEFAULT_REPOS_FOLDER/${org}/${reponame}"
+    mkdir -p "$DEST"
+    git clone -v --recursive "$repo" "$DEST"
+    code=$?
+    if [ "$protocol" = "git" ] && [ ! $code -eq 0 ] && [ ! -d "$DEST" ]; then
+        cat <<EOF >> $HOME/humacs-retry-clone-repos.sh
+git-clone-restructured $repo # clone $org/$reponame
+EOF
+        chmod +x $HOME/humacs-retry-clone-repos.sh
+    fi
+    if [ -x "$DEST/.sharing.io/init" ]; then
+        cat <<EOF
+
+# initialise $org/$reponame
+$DEST/.sharing.io/init 
+EOF
+    fi
+done
