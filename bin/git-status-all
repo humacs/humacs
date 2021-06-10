@@ -1,0 +1,6 @@
+#!/bin/bash
+
+for d in $(find $HOME -name .git); do
+    echo -e "\n*** Repository: $d ***"
+    git --git-dir=$d --work-tree=$d/.. status
+done
