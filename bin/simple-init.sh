@@ -15,6 +15,7 @@ if tmate -S $TMATE_SOCKET wait-for tmate-ready 2> /dev/null; then
 fi
 
 # Generate an ssh-key if one doesn't exist
+# Ensure that tmate can launch a session
 if [ ! -f ".ssh/id_rsa" ]
 then
     ssh-keygen -b 4096 -t rsa -f ~/.ssh/id_rsa -q -N ""
@@ -25,19 +26,21 @@ chmod 0600 $HOME/.kube/config
 SERVICE_ACCOUNT_DIR=/var/run/secrets/kubernetes.io/serviceaccount
 if [ -d $SERVICE_ACCOUNT_DIR ]; then
     export IN_CLUSTER=true
+    # Ensure that the Humacs Pod's namespace is defaulted to in the local kubeconfig
     kubectl config set-context $(kubectl config current-context) \
             --namespace=$(cat $SERVICE_ACCOUNT_DIR/namespace)
-
-    (
-        cd /etc/service
-        for SVC in $(find . -type f -name 'run' | xargs -I {} dirname {}); do
-            mkdir $SVC/supervise
-        done
-    )
-    runsvdir /etc/service &
 else
     export IN_CLUSTER=false
 fi
+
+# Launch runit, for process management
+(
+    cd /etc/service
+    for SVC in $(find . -type f -name 'run' | xargs -I {} dirname {}); do
+        mkdir $SVC/supervise
+    done
+)
+runsvdir /etc/service &
 
 if [ -z "$GIT_AUTHOR_EMAIL" ]; then
     echo "ERROR: GIT_AUTHOR_EMAIL env Must be set"
@@ -57,10 +60,13 @@ export INIT_PREFINISH_BLOCK="${INIT_PREFINISH_BLOCK}"
 export HUMACS_PROFILE="${HUMACS_PROFILE:-doom}"
 export PROJECT_CLONE_STRUCTURE="${PROJECT_STRUCTURE:-structured}"
 
+# Store the configuration profile of Humacs to use
 echo "$HUMACS_PROFILE" > ~/.emacs-profile
 
-. /usr/local/bin/ssh-agent-export.sh
+# Load SSH_AUTH_SOCK
+_= . /usr/local/bin/ssh-agent-export.sh
 
+# Ensure that the home folder has been repopulated after a PVC recreates it
 if [ "$REINIT_HOME_FOLDER" = "true" ]; then
     (
         if [ ! -f $HOME/.humacs-has-reinit ]; then
@@ -72,6 +78,7 @@ if [ "$REINIT_HOME_FOLDER" = "true" ]; then
     )
 fi
 
+# Clone all projects
 (
     if [ ! -z "$INIT_DEFAULT_REPOS" ]; then
         mkdir -p $INIT_DEFAULT_REPOS_FOLDER
