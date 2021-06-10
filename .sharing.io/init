@@ -1,0 +1,6 @@
+#!/bin/bash
+
+if ! git remote -v | grep -q gitlab; then
+    git remote add gitlab git@gitlab.com:humacs/humacs.git
+fi
+
