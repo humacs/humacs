@@ -1,6 +1,11 @@
 #!/bin/bash
 
+cd $(dirname $0)
+GIT_ROOT=$(git rev-parse --show-toplevel)
+cd $GIT_ROOT
+
 if ! git remote -v | grep -q gitlab; then
     git remote add gitlab git@gitlab.com:humacs/humacs.git
+    echo "Added remote 'gitlab' (git@gitlab.com:humacs/humacs.git) to $GIT_ROOT"
 fi
 
