@@ -65,8 +65,7 @@ if [ -f ~/.bash_aliases ]; then
 fi
 
 if [ -d "$HOME/go/bin" ]; then
-    export PATH=$PATH:"$HOME/go/bin"
-    export PATH=$PATH:"/usr/local/go/bin"
+    export PATH=$PATH:"$HOME/go/bin:/usr/local/go/bin:$HOME/.doom.d/bin"
 fi
 
 if [ "$HUMACS_CONTAINER" = yes ]; then
