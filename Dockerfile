@@ -49,6 +49,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
     direnv \
     iputils-ping \
     file \
+    psmisc \
   && rm -rf /var/lib/apt/lists/*
 COPY homedir/.tmate.conf /etc/skel
 COPY homedir/.tmux.conf /etc/skel

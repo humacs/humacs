@@ -1,0 +1,6 @@
+#!/bin/bash
+
+echo "Waiting for apt to be not locked..."
+while fuser /var/{lib/{dpkg,apt/lists},cache/apt/archives}/lock 2>&1 > /dev/null; do
+   sleep 1
+done
