@@ -69,27 +69,24 @@ if [ -d "$HOME/go/bin" ]; then
     export PATH=$PATH:"/usr/local/go/bin"
 fi
 
-. /usr/local/bin/ssh-agent-export.sh
+if [ "$HUMACS_CONTAINER" = yes ]; then
+    . /usr/local/bin/ssh-agent-export.sh
+    if [ "$HUMACS_DISTRO" = "ii" ]; then
+        export GOPATH=${GOPATH:-$(go env GOPATH)}
+
+        . <(kubectl completion bash)
+        . <(clusterctl completion bash 2> /dev/null)
+        . <(helm completion bash)
+        . <(talosctl completion bash)
+        . <(gh completion -s bash)
+        complete -C /usr/local/go/bin/mc mc
+
+        alias nerdctl="sudo --preserve-env /usr/local/go/bin/nerdctl"
+    fi
+fi
 
 export EDITOR="editor"
 
 alias e=editor
 alias cdr="cd \$(git rev-parse --show-toplevel)"
 
-if [ "$HUMACS_DISTRO" = "ii" ]; then
-    export GOPATH=${GOPATH:-$(go env GOPATH)}
-
-    . <(kubectl completion bash)
-    . <(clusterctl completion bash 2> /dev/null)
-    . <(helm completion bash)
-    . <(talosctl completion bash)
-    . <(gh completion -s bash)
-    complete -C /usr/local/go/bin/mc mc
-
-    alias nerdctl="sudo --preserve-env /usr/local/go/bin/nerdctl"
-fi
-
-if [ -f /var/run/secrets/kubernetes.io/serviceaccount/namespace ]; then
-    export HUMACS_HOME_PVC_LOCAL=$(find /var/run/host/opt/local-path-provisioner/ -type d -name '*_humacs-home-ii' | head -n 1)
-    export HUMACS_HOME_PVC=$(echo $HUMACS_HOME_PVC_LOCAL | sed 's,/var/run/host,,g')
-fi
