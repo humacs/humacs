@@ -64,9 +64,7 @@ if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
 
-if [ -d "$HOME/go/bin" ]; then
-    export PATH=$PATH:"$HOME/go/bin:/usr/local/go/bin:$HOME/.doom.d/bin"
-fi
+export PATH="$PATH:$HOME/go/bin:/usr/local/go/bin:$HOME/.doom.d/bin"
 
 if [ "$HUMACS_CONTAINER" = yes ]; then
     . /usr/local/bin/ssh-agent-export.sh
