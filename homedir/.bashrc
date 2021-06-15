@@ -88,3 +88,8 @@ if [ "$HUMACS_DISTRO" = "ii" ]; then
 
     alias nerdctl="sudo --preserve-env /usr/local/go/bin/nerdctl"
 fi
+
+if [ -f /var/run/secrets/kubernetes.io/serviceaccount/namespace ]; then
+    export HUMACS_HOME_PVC_LOCAL=$(find /var/run/host/opt/local-path-provisioner/ -type d -name '*_humacs-home-ii' | head -n 1)
+    export HUMACS_HOME_PVC=$(echo $HUMACS_HOME_PVC_LOCAL | sed 's,/var/run/host,,g')
+fi
