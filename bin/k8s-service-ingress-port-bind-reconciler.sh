@@ -2,7 +2,12 @@
 
 [ ! -z "$SHARINGIO_PAIR_DISABLE_SVC_INGRESS_BIND_RECONCILER" ] && exit 0
 
-KUBE_CONTEXT="${KUBE_CONTEXT:-in-cluster}"
+KUBE_CONTEXTS="$(kubectl config view -o yaml | yq e .contexts[].name -P -)"
+if echo "${KUBE_CONTEXTS}" | grep -q 'in-cluster'; then
+    KUBE_CONTEXT="in-cluster"
+elif echo "${KUBE_CONTEXTS}" | grep -q "kubernetes-admin@${SHARINGIO_PAIR_NAME}"; then
+    KUBE_CONTEXT="kubernetes-admin@${SHARINGIO_PAIR_NAME}"
+fi
 K8S_MINOR_VERSION="$(kubectl --context "$KUBE_CONTEXT" version --client=false -o=json 2> /dev/null | jq -r '.serverVersion.minor' | tr -dc '[0-9]')"
 export SHARINGIO_PAIR_BASE_DNS_NAME=${SHARINGIO_PAIR_BASE_DNS_NAME_SVC_ING_RECONCILER_OVERRIDE:-$SHARINGIO_PAIR_BASE_DNS_NAME}
 
