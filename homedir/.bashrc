@@ -87,3 +87,6 @@ export EDITOR="editor"
 alias e=editor
 alias cdr="cd \$(git rev-parse --show-toplevel)"
 
+for NUM in $(seq 0 9); do
+    alias "w.${NUM}"="tmate select-window -t ${NUM}"
+done
