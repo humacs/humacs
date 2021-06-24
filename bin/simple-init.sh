@@ -108,4 +108,4 @@ cd "${INIT_DEFAULT_DIR}"
 # This is our primary background process for humacs
 # a tmate session in foreground mode, respawning if it dies
 # A default directory and org file are used to start emacsclient as the main window
-tmate -F -v -S "${TMATE_SOCKET}" new-session -d -c "${INIT_DEFAULT_DIR}" emacs -nw "${INIT_ORG_FILE}"
+tmate -F -v -S "${TMATE_SOCKET}" new-session -d -c "${INIT_DEFAULT_DIR}" emacsclient --tty "${INIT_ORG_FILE}"
