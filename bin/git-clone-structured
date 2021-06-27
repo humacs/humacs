@@ -1,5 +1,13 @@
 #!/bin/bash
 
+if [ $# -eq 0 ]; then
+    cat <<EOF
+Usage: $(basename $0) [REPOS...]
+
+  i.e: $(basename $0) https://github.com/humacs/humacs
+EOF
+fi
+
 REPOS=${*}
 
 if [ -z "$SSH_AUTH_SOCK" ]; then
@@ -31,17 +39,21 @@ for repo in ${REPOS[*]}; do
         continue
     fi
 
-    DEST="$INIT_DEFAULT_REPOS_FOLDER/${org}/${reponame}"
+    DEST="${INIT_DEFAULT_REPOS_FOLDER}"
+    if [ "${GIT_CLONE_STRUCTURED_USE_HOSTNAME}" = "true" ]; then
+        DEST="${DEST}/${hostname}"
+    fi
+    DEST="${DEST}/${org}/${reponame}"
     mkdir -p "$DEST"
     git clone -v --recursive "$repo" "$DEST"
     code=$?
-    if [ "$protocol" = "git" ] && [ ! $code -eq 0 ] && [ ! -d "$DEST" ]; then
+    if [ "$protocol" = "git" ] && [ ! $code -eq 0 ] && [ ! -d "$DEST" ] && [ -n "${SHARINGIO_PAIR_NAME}" ]; then
         cat <<EOF >> $HOME/humacs-retry-clone-repos.sh
 git-clone-restructured $repo # clone $org/$reponame
 EOF
         chmod +x $HOME/humacs-retry-clone-repos.sh
     fi
-    if [ -x "$DEST/.sharing.io/init" ]; then
+    if [ -x "$DEST/.sharing.io/init" ] && [ -n "${SHARINGIO_PAIR_NAME}" ]; then
         cat <<EOF
 
 # initialise $org/$reponame
