@@ -5,15 +5,15 @@ metadata:
   labels:
     io.sharing.pair/managed: "true"
     io.sharing.pair/port: "${portNumber}"
-    io.sharing.pair/pid: "$pid"
+    io.sharing.pair/pid: "${pid}"
 spec:
   externalIPs:
-  - ${SHARINGIO_PAIR_LOAD_BALANCER_IP}
+    - ${SHARINGIO_PAIR_LOAD_BALANCER_IP}
   ports:
-  - name: $name
-    port: ${portNumber}
-    protocol: $protocol
-    targetPort: $portNumber
+    - name: ${name}
+      port: ${portNumberExpose}
+      protocol: ${protocol}
+      targetPort: ${portNumber}
   selector:
     app.kubernetes.io/name: humacs
   type: ClusterIP

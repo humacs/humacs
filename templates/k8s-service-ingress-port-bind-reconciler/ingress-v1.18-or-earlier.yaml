@@ -8,15 +8,15 @@ metadata:
     io.sharing.pair/pid: "${pid}"
 spec:
   rules:
-  - host: ${hostName}
-    http:
-      paths:
-      - path: /
-        backend:
-          serviceName: ${svcName}
-          servicePort: ${portNumber}
-        pathType: ImplementationSpecific
+    - host: ${hostName}
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: ${svcName}
+              servicePort: ${portNumberExpose}
+            pathType: ImplementationSpecific
   tls:
-  - hosts:
-    - ${hostName}
-    secretName: letsencrypt-prod
+    - hosts:
+        - ${hostName}
+      secretName: letsencrypt-prod

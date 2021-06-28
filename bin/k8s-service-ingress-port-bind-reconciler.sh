@@ -41,21 +41,22 @@ while true; do
           export name=$overrideHost
         fi
         export svcName="$name"
-        if kubectl --context "$KUBE_CONTEXT" get ingress -l io.sharing.pair/managed=true 2> /dev/null | grep -q $name && \
-            [ ! $(kubectl --context "$KUBE_CONTEXT" get ingress -l io.sharing.pair/managed=true -o json | jq -r ".items[] | select(.metadata.name==\"$name\") | .metadata.labels.\"io.sharing.pair/port\"") = "$portNumber" ]; then
-            svcName="$name-$portNumber"
-        fi
-        export hostName="$svcName.$SHARINGIO_PAIR_BASE_DNS_NAME"
 
         if [ $portNumber -lt 1000 ]; then
-          export portNumber="1${portNumber}"
+          export portNumberExpose="1${portNumber}"
         fi
+        if kubectl --context "$KUBE_CONTEXT" get ingress -l io.sharing.pair/managed=true 2> /dev/null | grep -q $name && \
+            [ ! $(kubectl --context "$KUBE_CONTEXT" get ingress -l io.sharing.pair/managed=true -o json | jq -r ".items[] | select(.metadata.name==\"$name\") | .metadata.labels.\"io.sharing.pair/port\"") = "$portNumber" ]; then
+            svcName="$name-$portNumberExpose"
+        fi
+        export hostName="$svcName.$SHARINGIO_PAIR_BASE_DNS_NAME"
 
         envsubst < /var/local/humacs/templates/k8s-service-ingress-port-bind-reconciler/service.yaml | kubectl --context "$KUBE_CONTEXT" apply -f -
 
         if [ ! "$protocol" = "TCP" ]; then
             continue
         fi
+
         if [ $K8S_MINOR_VERSION -lt 18 ] || [ $K8S_MINOR_VERSION = 18 ];
         then
           envsubst < /var/local/humacs/templates/k8s-service-ingress-port-bind-reconciler/ingress-v1.18-or-earlier.yaml | kubectl --context "$KUBE_CONTEXT" apply -f -
