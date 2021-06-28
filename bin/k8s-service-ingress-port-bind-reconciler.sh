@@ -42,6 +42,7 @@ while true; do
         fi
         export svcName="$name"
 
+        export portNumberExpose="${portNumber}"
         if [ $portNumber -lt 1000 ]; then
           export portNumberExpose="1${portNumber}"
         fi
