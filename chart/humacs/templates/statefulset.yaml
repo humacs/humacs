@@ -20,6 +20,7 @@ spec:
         {{- toYaml . | nindent 8 }}
     {{- end }}
       serviceAccountName: {{ include "humacs.serviceAccountName" . }}
+      hostNetwork: {{ .Values.options.hostNetwork }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
