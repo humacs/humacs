@@ -5,6 +5,7 @@ if [ $# -eq 0 ]; then
 Usage: $(basename $0) [REPOS...]
 
   i.e: $(basename $0) https://github.com/humacs/humacs
+       $(basename $0) https://github.com/sharingio/pair git@github.com:ii/org.git
 EOF
 fi
 
