@@ -126,7 +126,8 @@ RUN curl -OL https://download.clojure.org/install/linux-install-${CLOJURE_VERSIO
     && bash linux-install-${CLOJURE_VERSION}.sh \
     && rm ./linux-install-${CLOJURE_VERSION}.sh
 # gopls binary
-RUN /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get golang.org/x/tools/gopls@latest \
+RUN set -x \
+  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get golang.org/x/tools/gopls@latest \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/owenthereal/upterm \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get -u github.com/mikefarah/yq/v4 \
 # gocode binary
