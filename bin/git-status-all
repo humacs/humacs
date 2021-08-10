@@ -1,6 +1,7 @@
 #!/bin/bash
 
 for d in $(find $HOME -name .git); do
-    echo -e "\n*** Repository: $d ***"
+    echo -e "\e[4m\e[31m* Repository: \e[35m$d\e[0m"
     git --git-dir=$d --work-tree=$d/.. status
+    echo
 done
