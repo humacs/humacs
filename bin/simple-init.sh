@@ -64,7 +64,7 @@ export PROJECT_CLONE_STRUCTURE="${PROJECT_STRUCTURE:-structured}"
 echo "$HUMACS_PROFILE" > ~/.emacs-profile
 
 # Load SSH_AUTH_SOCK
-_= . /usr/local/bin/ssh-agent-export.sh
+_= . /usr/local/bin/ssh-find-agent.sh
 
 # Ensure that the home folder has been repopulated after a PVC recreates it
 if [ "$REINIT_HOME_FOLDER" = "true" ]; then

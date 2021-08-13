@@ -2,7 +2,7 @@
 
 if [ $_ = $0 ]; then
     echo "Usage:
-    . /usr/local/bin/ssh-agent-export.sh"
+    . /usr/local/bin/ssh-find-agent.sh"
     exit
 fi
 

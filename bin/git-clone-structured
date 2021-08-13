@@ -17,11 +17,11 @@ Warning: missing value for SSH_AUTH_SOCK
          are you connected via SSH?
 
 Action: to load the agent use
-  . /usr/local/bin/ssh-agent-export.sh
+  . /usr/local/bin/ssh-find-agent.sh
 
 loading the agent inside '$(basename $0)'...
 EOF
-    _= . /usr/local/bin/ssh-agent-export.sh
+    _= . /usr/local/bin/ssh-find-agent.sh
 fi
 
 cd $INIT_DEFAULT_REPOS_FOLDER

@@ -67,7 +67,7 @@ fi
 export PATH="$PATH:$HOME/go/bin:/usr/local/go/bin:$HOME/.doom.d/bin"
 
 if [ "$HUMACS_CONTAINER" = yes ]; then
-    . /usr/local/bin/ssh-agent-export.sh
+    . /usr/local/bin/ssh-find-agent.sh
     if [ "$HUMACS_DISTRO" = "ii" ]; then
         export GOPATH=${GOPATH:-$(go env GOPATH)}
 
@@ -86,6 +86,7 @@ export EDITOR="editor"
 
 alias e=editor
 alias cdr="cd \$(git rev-parse --show-toplevel)"
+alias ssh-find-agent='. /usr/local/bin/ssh-find-agent.sh'
 
 for NUM in $(seq 0 9); do
     alias "w.${NUM}"="tmate select-window -t ${NUM}"
