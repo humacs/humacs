@@ -31,8 +31,13 @@ ENV HUMACS_DISTRO=ii \
 RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" \
     | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
   curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg  add - && \
+  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg \
+  && echo \
+  "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null && \
   apt-get update --yes && DEBIAN_FRONTEND=noninteractive \
   apt-get install --no-install-recommends -y \
+  docker-ce-cli \
   tree \
   iproute2 \
   net-tools \
@@ -64,10 +69,6 @@ RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.c
   ssh-import-id \
   && rm -rf /var/lib/apt/lists/* \
   && ln -s /usr/bin/fdfind /usr/local/bin/fd
-# docker client binary
-RUN curl -fsSL https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VERSION}.tgz \
-  | tar --directory=/usr/local/bin --extract --ungzip \
-  --strip-components=1 docker/docker
 # kind binary
 RUN curl -Lo /usr/local/bin/kind \
     https://github.com/kubernetes-sigs/kind/releases/download/v${KIND_VERSION}/kind-linux-amd64 \
