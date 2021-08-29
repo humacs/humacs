@@ -2,6 +2,8 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: $svcName
+  annotations:
+    kubernetes.io/ingress.class: nginx
   labels:
     io.sharing.pair/managed: "true"
     io.sharing.pair/port: "${portNumber}"
