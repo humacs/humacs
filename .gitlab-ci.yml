@@ -23,16 +23,8 @@ variables:
     export BRANCH_NAME="-$CI_COMMIT_BRANCH"
   fi
 
-  export BASE_TAG=latest
+  export BASE_TAG=$(date --date="${CI_COMMIT_TIMESTAMP//[T+]/ }" '+%Y.%m.%d.%H%M')
   if [[ "$CI_COMMIT_BRANCH" = "$CI_DEFAULT_BRANCH" ]]; then
-    if [ "$REPOSITORY" = "humacs" ]; then
-      export BASE_TAG="$(date +%Y.%m.%d.%H%M)"
-      cat << EOF > $CI_PROJECT_DIR/.env
-  BASE_TAG=${BASE_TAG}
-  EOF
-    else
-      export $(cat $CI_PROJECT_DIR/.env | xargs)
-    fi
     export KANIKO_EXTRA_DESTINATION="--destination $CI_REGISTRY_IMAGE/$REPOSITORY:latest$BRANCH_NAME"
   fi
   export HUMACS_IMAGE=$CI_REGISTRY_IMAGE/$REPOSITORY:$BASE_TAG$BRANCH_NAME
@@ -72,9 +64,6 @@ build-humacs:
     - *declare-extra-destinations
   script:
     - *build
-  artifacts:
-    paths:
-      - .env
 
 
 build-ii:
