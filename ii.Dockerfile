@@ -46,7 +46,7 @@ RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.c
   iftop \
   tmux \
   language-pack-en \
-  openjdk-14-jdk \
+  openjdk-16-jdk \
   rlwrap \
   fonts-powerline \
   dnsutils \
