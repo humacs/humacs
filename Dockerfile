@@ -64,6 +64,7 @@ RUN mkdir -p /etc/sudoers.d && \
   chmod 0775 /usr/local/lib && chgrp users /usr/local/lib && \
   chmod 0770 -R /etc/service/ && \
   chgrp -R users /etc/service/ && \
+  mkdir /usr/local/lib/node_modules && \
   chown -R ii:ii /usr/local/lib/node_modules
 # required for emacs initialization
 COPY --chown=ii:users default.el /var/local/humacs/
