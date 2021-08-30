@@ -15,9 +15,10 @@ RUN DEBIAN_FRONTEND=noninteractive \
   && DEBIAN_FRONTEND=noninteractive apt install --no-install-recommends -y \
     software-properties-common \
   && yes '\n' | add-apt-repository ppa:git-core/ppa \
+  && yes '\n' | add-apt-repository ppa:kelleyk/emacs \
   && apt update \
   && DEBIAN_FRONTEND=noninteractive apt install --no-install-recommends -y \
-    emacs-nox \
+    emacs27-nox \
     tmate \
     bash-completion \
     less \
@@ -62,7 +63,8 @@ RUN mkdir -p /etc/sudoers.d && \
   useradd -m -G users,sudo -u 1000 -s /bin/bash ii && \
   chmod 0775 /usr/local/lib && chgrp users /usr/local/lib && \
   chmod 0770 -R /etc/service/ && \
-  chgrp -R users /etc/service/
+  chgrp -R users /etc/service/ && \
+  chown -R ii:ii /usr/local/lib/node_modules
 # required for emacs initialization
 COPY --chown=ii:users default.el /var/local/humacs/
 # copy each needed directory so it is placed in correctly
