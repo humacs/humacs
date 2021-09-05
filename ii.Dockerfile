@@ -23,7 +23,7 @@ ENV HUMACS_DISTRO=ii \
   CRICTL_VERSION=1.20.0 \
   KUBECTX_VERSION=0.9.3 \
   FZF_VERSION=0.26.0 \
-  NERDCTL_VERSION=0.11.1 \
+  NERDCTL_VERSION=0.11.0 \
 # GOLANG, path vars
   GOROOT=/usr/local/go \
   PATH="$PATH:/usr/local/go/bin:/usr/libexec/flatpak-xdg-utils:/home/ii/go/bin" \
