@@ -144,7 +144,7 @@ RUN set -x \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get gitlab.com/safesurfer/go-http-server \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get github.com/google/go-containerregistry/cmd/crane \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get github.com/google/go-containerregistry/cmd/gcrane \
-  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get github.com/containerd/nerdctl@$NERDCTL_VERSION
+  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get github.com/containerd/nerdctl@v$NERDCTL_VERSION
 RUN npm install --global prettier @prettier/plugin-php prettier-plugin-solidity
 COPY templates /var/local/humacs/templates
 RUN localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 \
