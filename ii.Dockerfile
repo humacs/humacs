@@ -24,6 +24,7 @@ ENV HUMACS_DISTRO=ii \
   KUBECTX_VERSION=0.9.3 \
   FZF_VERSION=0.26.0 \
   NERDCTL_VERSION=0.11.0 \
+  METALCLI_VERSION=0.6.0 \
 # GOLANG, path vars
   GOROOT=/usr/local/go \
   PATH="$PATH:/usr/local/go/bin:/usr/libexec/flatpak-xdg-utils:/home/ii/go/bin" \
@@ -144,7 +145,8 @@ RUN set -x \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get gitlab.com/safesurfer/go-http-server \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get github.com/google/go-containerregistry/cmd/crane \
   && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get github.com/google/go-containerregistry/cmd/gcrane \
-  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get github.com/containerd/nerdctl@v$NERDCTL_VERSION
+  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go get github.com/containerd/nerdctl@v$NERDCTL_VERSION \
+  && /bin/env GO111MODULE=on GOPATH=/usr/local/go /usr/local/go/bin/go install github.com/equinix/metal-cli/cmd/metal@$v$METALCLI_VERSION
 RUN npm install --global prettier @prettier/plugin-php prettier-plugin-solidity
 COPY templates /var/local/humacs/templates
 RUN localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 \
