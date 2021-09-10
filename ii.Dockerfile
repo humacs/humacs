@@ -69,6 +69,7 @@ RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.c
   graphviz \
   runit \
   ssh-import-id \
+  bsdmainutils \
   && rm -rf /var/lib/apt/lists/* \
   && ln -s /usr/bin/fdfind /usr/local/bin/fd
 # kind binary
