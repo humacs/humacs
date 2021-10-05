@@ -70,6 +70,7 @@ RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.c
   runit \
   ssh-import-id \
   bsdmainutils \
+  netcat \
   && rm -rf /var/lib/apt/lists/* \
   && ln -s /usr/bin/fdfind /usr/local/bin/fd
 # kind binary
